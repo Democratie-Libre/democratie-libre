@@ -60,6 +60,7 @@ Then the application should then be ready from your browser at the address :
 
 # General
 
+* Proposal versions: the link to go to the previous version should not appear if it is the first version
 * Put submit buttons in templates not in types
 * A service to take care of the versions ? (Einenlum)
 * Logic in the EditProposalType
