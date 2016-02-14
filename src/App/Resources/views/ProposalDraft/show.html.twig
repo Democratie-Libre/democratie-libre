@@ -1,0 +1,55 @@
+{% extends '::layout.html.twig' %}
+
+{% block page_content %}
+
+    <h1>{{proposalDraft.title}}</h1>
+
+    <p>
+        Date de création : {{ proposalDraft.creationDate|date('d/m/Y') }}
+        <br>
+        Date de dernière modification : {{ proposalDraft.editDate|date('d/m/Y') }}
+        <br>
+        Auteur principal : {{ proposalDraft.mainAuthor }}
+    </p>
+
+    <h2>Auteur(es) secondaire(s)</h2>
+
+    <p>
+        {% if proposalDraft.sideAuthors is empty %}
+            <p>Cette proposition n'a pas d'auteur secondaire</p>
+        {% else%}
+            {% for author in proposalDraft.sideAuthors %}
+                {{ author }}
+            {% endfor %}
+        {% endif %}
+
+        {% if is_granted('sideauthor', proposalDraft) %}
+            <br>
+            <a href="{{ path('proposaldraft_removesideauthor', {'slug': proposalDraft.slug}) }}">Je ne veux plus être auteur secondaire</a>
+        {% endif %}
+    </p>
+
+    <h2>Abstract</h2>
+
+    {{ proposalDraft.abstract }}
+
+    <h2>Contenu</h2>
+
+    {{ proposalDraft.content }}
+
+    <hr>
+    <h2>Administration</h2>
+        {% if is_granted('edit', proposalDraft) %}
+            <a href="{{ path('proposaldraft_edit', {'slug': proposalDraft.slug}) }}">Modifier ce brouillon de proposition</a><br>
+        {% endif %}
+        {% if is_granted('delete', proposalDraft) %}
+            <a href="{{ path('proposaldraft_delete', {'slug': proposalDraft.slug}) }}">Supprimer ce brouillon de proposition</a><br>
+        {% endif %}
+        {% if is_granted('publish', proposalDraft) %}
+            <a href="{{ path('proposaldraft_publish', {'slug': proposalDraft.slug}) }}">Publier ce brouillon de proposition</a><br>
+        {% endif %}
+{% endblock page_content %}
+
+{% block javascript %}
+    {{ parent() }}
+{% endblock javascript %}

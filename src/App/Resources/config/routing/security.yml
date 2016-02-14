@@ -1,0 +1,29 @@
+login:
+    path:  /login
+    defaults: { _controller: 'App:Security:login' }
+
+login_check:
+    path:  /login_check
+
+logout:
+    path:   /logout
+
+register:
+    path:  /register
+    defaults: { _controller: App:Security:register }
+
+profile:
+    path: /profile
+    defaults: { _controller: App:Security:profile }
+
+email_edit:
+    path: /email/edit
+    defaults: { _controller: App:Security:emailEdit }
+
+password_edit:
+    path: /password/edit
+    defaults: { _controller: App:Security:passwordEdit }
+
+avatar_edit:
+    path: /avatar/edit
+    defaults: { _controller: App:Security:avatarEdit }

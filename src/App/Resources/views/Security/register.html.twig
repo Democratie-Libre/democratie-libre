@@ -1,0 +1,54 @@
+{% extends '::layout.html.twig' %}
+
+{% block page_content %}
+
+<div class="row">
+    <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <h1>Inscription</h1>
+
+        {{ form_start(registerForm, {'attr': {'class': 'form-horizontal'}}) }}
+            {{ form_errors(registerForm) }}
+            <div class="form-group row">
+                {{ form_label(registerForm.username, 'Nom d’utilisateur', {'label_attr': {'class': 'col-sm-4 control-label'}}) }}
+                {{ form_errors(registerForm.username) }}
+                <div class="col-sm-7">
+                    {{ form_widget(registerForm.username, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+
+            <div class="form-group row">
+                {{ form_label(registerForm.email, 'Email', {'label_attr': {'class': 'col-sm-4 control-label'}}) }}
+                {{ form_errors(registerForm.email) }}
+                <div class="col-sm-7">
+                    {{ form_widget(registerForm.email, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+
+
+
+            <div class="form-group row">
+                {{ form_label(registerForm.plainPassword.first, 'Mot de passe', {'label_attr': {'class': 'col-sm-4 control-label'}}) }}
+                {{ form_errors(registerForm.plainPassword.first) }}
+                <div class="col-sm-7">
+                    {{ form_widget(registerForm.plainPassword.first, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+
+            <div class="form-group row">
+                {{ form_label(registerForm.plainPassword.second, 'Veuillez confirmer le mot de passe', {'label_attr': {'class': 'col-sm-4 control-label'}}) }}
+                {{ form_errors(registerForm.plainPassword.second) }}
+                <div class="col-sm-7">
+                    {{ form_widget(registerForm.plainPassword.second, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+
+
+            <div class="col-sm-7 col-sm-offset-4">
+                {{ form_widget(registerForm.Enregistrer) }}
+            </div>
+        {{ form_end(registerForm) }}
+
+    </div>
+</div>
+
+{% endblock page_content %}

@@ -1,0 +1,4 @@
+App\Entity\Theme:
+    root{1..5}:
+        title: "Racine <current()>"
+        description: <sentence(10)>

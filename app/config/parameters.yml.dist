@@ -1,0 +1,25 @@
+parameters:
+    database_driver:   pdo_mysql
+    database_host:     127.0.0.1
+    database_port:     ~
+    database_name:     projet-dl
+    database_user:     root
+    database_password: ~
+
+    mailer_transport:  smtp
+    mailer_host:       127.0.0.1
+    mailer_user:       ~
+    mailer_password:   ~
+
+    locale:            fr
+    secret:            ThisTokenIsNotSoSecretChangeIt
+
+    # find it with the command `whereis node`
+    node_bin: /usr/bin/node
+
+    admin.name:        admin
+    admin.email:       admin@admin.com
+    admin.pass:        admin
+    user.name:         user
+    user.email:        user@user.com
+    user.pass:         user

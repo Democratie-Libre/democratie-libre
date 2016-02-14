@@ -1,0 +1,40 @@
+security:
+    encoders:
+        App\Entity\User:
+            algorithm:        sha512
+
+
+    role_hierarchy:
+        ROLE_ADMIN:       ROLE_USER
+
+    providers:
+        main:
+            entity:
+                class: App\Entity\User
+                property: username
+
+    firewalls:
+        dev:
+            pattern:  ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        main:
+            pattern:   ^/
+            anonymous: ~
+            form_login:
+                login_path: login
+                check_path: login_check
+                csrf_provider: form.csrf_provider
+            logout:
+                path:   /logout
+                target: /
+            remember_me:
+                key:      "%secret%"
+                lifetime: 31536000 # 365 jours en secondes
+                path:     /
+                domain:   ~ # Prend la valeur par défaut du domaine courant depuis $_SERVER
+
+    access_control:
+        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin^, roles: ROLE_ADMIN }

@@ -1,0 +1,39 @@
+imports:
+    - { resource: services/repository.yml }
+
+services:
+    userManager:
+        class: App\Service\UserManager
+        arguments: ["@security.encoder_factory", "@doctrine.orm.entity_manager", "@session", "@security.context"]
+
+    app.twig.tree_extension:
+        class: App\Twig\TreeExtension
+        tags:
+            - { name: twig.extension }
+        arguments: ["@router"]
+
+    proposalVoter:
+        class: App\Security\Authorization\Voter\ProposalVoter
+        public: false
+        tags:
+            - { name: security.voter }
+        arguments: ["@service_container"]
+
+    proposalDraftVoter:
+        class: App\Security\Authorization\Voter\ProposalDraftVoter
+        public: false
+        tags:
+            - { name: security.voter }
+        arguments: ["@service_container"]
+
+    proposalVersionVoter:
+        class: App\Security\Authorization\Voter\ProposalVersionVoter
+        public: false
+        tags:
+            - { name: security.voter }
+
+    messageVoter:
+        class: App\Security\Authorization\Voter\MessageVoter
+        public: false
+        tags:
+            - { name: security.voter }

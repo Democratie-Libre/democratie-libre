@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns#">
+    <head>
+        {% block stylesheets %}
+            <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+            <link rel="stylesheet" href="{{ asset('css/custom.css') }}">        
+        {% endblock %}
+
+        <title>{% block header_title %}Projet DL{% endblock %}</title>
+        {% if app.request.attributes.get('_route') == 'index' %}
+        <meta name="description" content="DESCRIPTION GOOGLE" />
+        <meta property="og:title" content="TITRE" />
+        <meta property="og:description" content="DESCRIPTION FB" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="URL" />
+        <meta property="og:image" content="IMAGE FB" />
+        {% endif %}
+    </head>
+
+<body>
+
+    {% block body %}
+
+
+
+
+        {% block menu_top %}
+
+        <nav class="navbar navbar-default" role="navigation">
+          <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="{{ path('index') }}">Projet DL</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+              <ul class="nav navbar-nav">
+                <li><a href="#">Menu 1</a></li>
+                <li><a href="#">Menu 2</a></li>
+                <li><a href="#">Menu 2</a></li>
+              </ul>
+              <ul class="nav navbar-nav navbar-right">
+    
+                {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %} 
+                    <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ app.user.username }}</a>
+                      <ul class="dropdown-menu">
+                        <li><a href="{{ path('profile') }}">Mon compte</a></li>
+                        <li><a href="{{ path('message_send') }}">Envoyer un message</a></li>
+                        <li><a href="{{ path('proposaldraft_add') }}">Rédiger une proposition</a></li>
+                        <li><a href="{{ path('logout') }}">Déconnexion</a></li>
+                      </ul>
+                    </li>
+
+                {% else %}
+                    <li><a href="{{ path('register') }}">S’enregistrer</a></li>
+                    <li><a href="{{ path('login') }}">Se connecter</a></li>
+
+                {% endif %}
+
+              </ul>
+            </div><!-- /.navbar-collapse -->
+          </div><!-- /.container-fluid -->
+        </nav>
+
+        {% endblock menu_top %} 
+
+
+<div class="container-fluid">
+
+    <div class="row"> <!-- CONTENU GENERAL -->
+        
+        <div class="col-sx-12 col-sm-12 col-md-10 col-md-offset-1">
+      
+        {% block alerts %}      
+            <div id="errors">
+                {% for label, flashes in app.session.flashbag.all %}
+                    {% for flash in flashes %}
+                        <div class="alert alert-{{ label }}">
+                            {{ flash|raw }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endblock alerts %}
+
+            {% block content %}
+                {% block page_content %}
+                {% endblock page_content %}
+            {% endblock content %}
+
+        </div>
+
+    </div> <!-- ./ row -->
+</div> <!-- ./ container-fluid -->
+
+{% endblock %} {# fin du block body #}
+
+{% block javascript %}
+
+        <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+<script>
+//Fonction pour scroller de façon fluide
+function juizScrollTo(element){  
+    $(element).click(function(){  
+        var goscroll = false;  
+        var the_hash = $(this).attr("href");  
+        var regex = new RegExp("\#(.*)","gi");  
+        var the_element = '';  
+   
+        if(the_hash.match("\#(.+)")) {  
+            the_hash = the_hash.replace(regex,"$1");  
+   
+            if($("#"+the_hash).length>0) {  
+                the_element = "#" + the_hash;  
+                goscroll = true;  
+            }  
+            else if($("a[name=" + the_hash + "]").length>0) {  
+                the_element = "a[name=" + the_hash + "]";  
+                goscroll = true;  
+            }  
+   
+            if(goscroll) {  
+                $('html, body').animate({  
+                    scrollTop:$(the_element).offset().top  
+                }, 'slow');  
+                return false;  
+            }  
+        }  
+    });  
+};  
+juizScrollTo('a[href^="#"]');  
+</script>
+
+{% endblock javascript %}
+
+</body>
+</html>

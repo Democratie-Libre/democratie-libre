@@ -1,0 +1,29 @@
+app_index:
+    resource: "@App/Resources/config/routing/index.yml"
+
+app_security:
+    resource: "@App/Resources/config/routing/security.yml"
+
+app_admin:
+    resource: "@App/Resources/config/routing/admin.yml"
+    prefix: "/admin"
+
+app_theme:
+    resource: "@App/Resources/config/routing/theme.yml"
+    prefix: "/theme"
+
+app_proposal:
+    resource: "@App/Resources/config/routing/proposal.yml"
+    prefix: "/proposal"
+
+app_proposalversion:
+    resource: "@App/Resources/config/routing/proposal_version.yml"
+    prefix: "/proposalversion"
+
+app_proposaldraft:
+    resource: "@App/Resources/config/routing/proposal_draft.yml"
+    prefix: "/proposaldraft"
+
+app_message:
+    resource: "@App/Resources/config/routing/message.yml"
+    prefix: "/message"

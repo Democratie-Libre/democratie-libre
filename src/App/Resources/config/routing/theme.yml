@@ -1,0 +1,19 @@
+theme_show:
+    path: /show/{slug}
+    defaults: { _controller: 'App:Theme:show'}
+
+theme_add:
+    path: /add/{slug}
+    defaults: { _controller: 'App:Theme:add' }
+
+theme_addroot:
+    path: /addroot
+    defaults: { _controller: 'App:Theme:addRoot' }
+
+theme_delete:
+    path: /delete/{slug}
+    defaults: { _controller: 'App:Theme:delete' }
+
+theme_edit:
+    path: /edit/{slug}
+    defaults: { _controller: 'App:Theme:edit' }

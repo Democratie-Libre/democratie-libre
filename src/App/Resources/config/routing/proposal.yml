@@ -1,0 +1,35 @@
+proposal_show:
+    path: /show/{slug}
+    defaults: { _controller: 'App:Proposal:show'}
+
+proposal_add:
+    path: /add/{themeSlug}
+    defaults: { _controller: 'App:Proposal:add' }
+
+proposal_delete:
+    path: /delete/{slug}
+    defaults: { _controller: 'App:Proposal:delete' }
+
+proposal_edit:
+    path: /edit/{slug}
+    defaults: { _controller: 'App:Proposal:edit' }
+
+proposal_support:
+    path: /support/{slug}
+    defaults: { _controller: 'App:Proposal:support' }
+
+proposal_removesupport:
+    path: /removesupport/{slug}
+    defaults: { _controller: 'App:Proposal:removeSupport' }
+
+proposal_oppose:
+    path: /oppose/{slug}
+    defaults: { _controller: 'App:Proposal:oppose' }
+
+proposal_removeoppose:
+    path: /removeoppose/{slug}
+    defaults: { _controller: 'App:Proposal:removeOppose' }
+
+proposal_removesideauthor:
+    path: /removesideauthor/{slug}
+    defaults: { _controller: 'App:Proposal:removeSideAuthor' }
