@@ -1,0 +1,19 @@
+{% extends '::layout.html.twig' %}
+
+{% block page_content %}
+
+    <h1>Discussions globales</h1>
+
+    {% for discussion in discussions %}
+        <a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}">{{ discussion.title }}</a><br>
+    {% else %}
+        Pas de discussion !<br><br>
+    {% endfor %}
+
+    <hr>
+
+    {% if is_granted('ROLE_USER') %}
+        <a href="{{ path('public_discussion_add_global')}}">Ouvrir une discussion</a>
+    {% endif %}
+
+{% endblock page_content %}

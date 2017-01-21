@@ -32,8 +32,16 @@ services:
         tags:
             - { name: security.voter }
 
-    messageVoter:
-        class: App\Security\Authorization\Voter\MessageVoter
+    privateDiscussionVoter:
+        class: App\Security\Authorization\Voter\PrivateDiscussionVoter
         public: false
         tags:
-            - { name: security.voter }
+           - { name: security.voter }
+        arguments: ["@service_container"]
+
+    publicDiscussionVoter:
+        class: App\Security\Authorization\Voter\PublicDiscussionVoter
+        public: false
+        tags:
+           - { name: security.voter }
+        arguments: ["@service_container"]

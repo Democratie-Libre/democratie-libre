@@ -106,30 +106,6 @@ class User implements UserInterface, \Serializable, HasPassword, HasSalt
     private $opposedProposals;
 
     /**
-     * @ORM\OneToMany(targetEntity="Message", mappedBy="sender")
-     * @Assert\Valid()
-     */
-    private $sentMessages;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="Message", mappedBy="addressees")
-     * @Assert\Valid()
-     */
-    private $addressedMessages;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="Message", mappedBy="readers")
-     * @Assert\Valid()
-     */
-    private $readMessages;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="Message", mappedBy="unreaders")
-     * @Assert\Valid()
-     */
-    private $unreadMessages;
-
-    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * Stores the name of the image file associated to the user
      */
@@ -153,6 +129,30 @@ class User implements UserInterface, \Serializable, HasPassword, HasSalt
      */
     private $file;
 
+    /**
+     * @ORM\OneToMany(targetEntity="PrivateDiscussion", mappedBy="admin")
+     * @Assert\Valid()
+     */
+    private $adminDiscussions;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="PrivateDiscussion", mappedBy="members", cascade={"persist"})
+     * @Assert\Valid()
+     */
+    private $privateDiscussions;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="PublicDiscussion", mappedBy="followers", cascade={"persist"})
+     * @Assert\Valid()
+     */
+    private $followedDiscussions;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="AbstractDiscussion", mappedBy="unreaders", cascade={"persist"})
+     * @Assert\Valid()
+     */
+    private $unreadDiscussions;
+
     public function __construct()
     {
         $this->roles = ['ROLE_USER'];
@@ -163,10 +163,10 @@ class User implements UserInterface, \Serializable, HasPassword, HasSalt
         $this->sideProposals = new ArrayCollection();
         $this->supportedProposals = new ArrayCollection();
         $this->opposedProposals = new ArrayCollection();
-        $this->sentMessages = new ArrayCollection();
-        $this->addressedMessages = new ArrayCollection();
-        $this->readMessages = new ArrayCollection();
-        $this->unreadMessages = new ArrayCollection();
+        $this->adminDiscussions = new ArrayCollection();
+        $this->privateDiscussions = new ArrayCollection();
+        $this->followedDiscussions = new ArrayCollection();
+        $this->unreadDiscussions = new ArrayCollection();
     }
 
     public function __toString()
@@ -390,102 +390,6 @@ class User implements UserInterface, \Serializable, HasPassword, HasSalt
         return $this->opposedProposals;
     }
 
-    public function addSentMessage(Message $sentMessage)
-    {
-        $this->sentMessages->add($sentMessage);
-
-        return $this;
-    }
-
-    public function hasSentMessage(Message $sentMessage)
-    {
-        return $this->sentMessages->contains($sentMessage);
-    }
-
-    public function removeSentMessage(Message $sentMessage)
-    {
-        $this->sentMessages->removeElement($sentMessage);
-
-        return $this;
-    }
-
-    public function getSentMessages()
-    {
-        return $this->sentMessages;
-    }
-
-    public function addAddressedMessage(Message $addressedMessage)
-    {
-        $this->addressedMessages->add($addressedMessage);
-
-        return $this;
-    }
-
-    public function hasAddressedMessage(Message $addressedMessage)
-    {
-        return $this->addressedMessages->contains($addressedMessage);
-    }
-
-    public function removeAddressedMessage(Message $addressedMessage)
-    {
-        $this->addressedMessages->removeElement($addressedMessage);
-
-        return $this;
-    }
-
-    public function getAddressedMessages()
-    {
-        return $this->addressedMessages;
-    }
-
-    public function addReadMessage(Message $readMessage)
-    {
-        $this->readMessages->add($readMessage);
-
-        return $this;
-    }
-
-    public function hasReadMessage(Message $readMessage)
-    {
-        return $this->readMessages->contains($readMessage);
-    }
-
-    public function removeReadMessage(Message $readMessage)
-    {
-        $this->readMessages->removeElement($readMessage);
-
-        return $this;
-    }
-
-    public function getReadMessages()
-    {
-        return $this->readMessages;
-    }
-
-    public function addUnreadMessage(Message $unreadMessage)
-    {
-        $this->unreadMessages->add($unreadMessage);
-
-        return $this;
-    }
-
-    public function hasUnreadMessage(Message $unreadMessage)
-    {
-        return $this->unreadMessages->contains($unreadMessage);
-    }
-
-    public function removeUnreadMessage(Message $unreadMessage)
-    {
-        $this->unreadMessages->removeElement($unreadMessage);
-
-        return $this;
-    }
-
-    public function getUnreadMessages()
-    {
-        return $this->unreadMessages;
-    }
-
     /**
      * Removes sensitive data from the user.
      */
@@ -511,6 +415,97 @@ class User implements UserInterface, \Serializable, HasPassword, HasSalt
     public function unserialize($serialized)
     {
         list($this->id, $this->username) = unserialize($serialized);
+    }
+
+    public function addAdminDiscussion(PrivateDiscussion $discussion)
+    {
+        $this->adminDiscussions->add($discussion);
+
+        return $this;
+    }
+
+    public function removeAdminDiscussion(PrivateDiscussion $discussion)
+    {
+        $this->adminDiscussions->removeElement($discussion);
+
+        return $this;
+    }
+
+    public function getAdminDiscussions()
+    {
+        return $this->adminDiscussions;
+    }
+
+    public function addPrivateDiscussion(PrivateDiscussion $discussion)
+    {
+        $this->privateDiscussions->add($discussion);
+
+        return $this;
+    }
+
+    public function hasPrivateDiscussion(PrivateDiscussion $discussion)
+    {
+        return $this->privateDiscussions->contains($discussion);
+    }
+
+    public function removePrivateDiscussion(PrivateDiscussion $discussion)
+    {
+        $this->privateDiscussions->removeElement($discussion);
+
+        return $this;
+    }
+
+    public function getPrivateDiscussions()
+    {
+        return $this->privateDiscussions;
+    }
+
+    public function addFollowedDiscussion(PublicDiscussion $discussion)
+    {
+        $this->followedDiscussions->add($discussion);
+
+        return $this;
+    }
+
+    public function hasFollowedDiscussion(PublicDiscussion $discussion)
+    {
+        return $this->publicDiscussions->contains($discussion);
+    }
+
+    public function removeFollowedDiscussion(PublicDiscussion $discussion)
+    {
+        $this->followedDiscussions->removeElement($discussion);
+
+        return $this;
+    }
+
+    public function getFollowedDiscussions()
+    {
+        return $this->followedDiscussions;
+    }
+
+    public function addUnreadDiscussion(AbstractDiscussion $discussion)
+    {
+        $this->unreadDiscussions->add($discussion);
+
+        return $this;
+    }
+
+    public function hasUnreadDiscussion(AbstractDiscussion $discussion)
+    {
+        return $this->unreadDiscussions->contains($discussion);
+    }
+
+    public function removeUnreadDiscussion(AbstractDiscussion $discussion)
+    {
+        $this->unreadDiscussions->removeElement($discussion);
+
+        return $this;
+    }
+
+    public function getUnreadDiscussions()
+    {
+        return $this->unreadDiscussions;
     }
 
     /*****************************************************
