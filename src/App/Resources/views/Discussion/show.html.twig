@@ -1,0 +1,100 @@
+{% extends '::layout.html.twig' %}
+
+{% block page_content %}
+
+    <h1>{{ discussion.title }}</h1>
+
+    Abstract : {{ discussion.abstract }}<br>
+    Date de création : {{ discussion.creationDate|date('d/m/Y') }}<br>
+    Date de dernière modification : {{ discussion.lastEditDate|date('d/m/Y') }}<br>
+    Admin : {{ discussion.admin }}<br>
+
+    {% if not discussion.public %}
+        Discussion privée.<br>
+    {% else %}
+        {% if discussion.themeDiscussion %}
+            Discussion publique sur la thématique : <a href="{{ path('theme_show', {'slug': discussion.theme.slug}) }}">{{ discussion.theme.title }}</a><br>
+        {% elseif discussion.proposalDiscussion %}
+            Discussion publique sur la proposition : <a href="{{ path('proposal_show', {'slug': discussion.proposal.slug}) }}">{{ discussion.proposal.title }}</a><br>
+        {% elseif discussion.globalDiscussion %}
+            Discussion publique globale<br>
+        {% endif %}
+    {% endif %}
+
+    {% if discussion.locked %}
+        Discussion fermée !<br>
+    {% else %}
+        Discussion ouverte !<br>
+    {% endif %}
+
+    <div class="container">
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#discussion">Discussion</a></li>
+            {% if not discussion.public %}
+                <li><a data-toggle="tab" href="#members">Membres</a></li>
+            {% endif %}
+            {% if is_granted('edit', discussion) %}
+                <li><a data-toggle="tab" href="#administration">Administration</a></li>
+            {% endif %}
+        </ul>
+        <div class="tab-content">
+            <div id="discussion" class="tab-pane fade in active">
+                {% for comment in discussion.comments %}
+                    {{ comment.date|date('d/m/Y') }}<br>
+                    {{ comment.author }}<br>
+                    {{ comment.content }}<br>
+                {% else %}
+                    <p>La discussion n'a pas encore débuté !</p>
+                {% endfor %}
+
+                {% if form is defined %}
+                    {{ form(form) }}
+                {% endif %}
+            </div>
+            <div id="members" class="tab-pane fade">
+                {% for privateMember in discussion.privateMembers %}
+                    {{ privateMember.username }}
+                    {% if is_granted('edit_private', discussion) %}
+                        {% if privateMember == discussion.admin %}
+                            <a href="{{ path('discussion_change_admin', {'slug': discussion.slug}) }}">Changer d'administrateur</a>
+                        {% elseif privateMember == app.user %}
+                            <a href="{{ path('discussion_remove_private_member', {'slug': discussion.slug}) }}" class="btn btn-default">Me retirer de la discussion</a><br>
+                        {% else %}
+                            <a href="{{ path('discussion_remove_private_member', {'discussionSlug': discussion.slug, 'privateMemberId': privateMember.id}) }}">Éjecter de la discussion</a>
+                        {% endif %}
+                    {% elseif privateMember == app.user %}
+                        <a href="{{ path('discussion_remove_private_member', {'discussionSlug': discussion.slug, 'privateMemberId': privateMember.id}) }}">Me retirer de la discussion</a><br>
+                    {% endif %}
+                    <br>
+                {% endfor %}
+                {% if is_granted('edit_private', discussion) %}
+                    <a href="{{ path('discussion_add_private_member', {'slug': discussion.slug}) }}" class="btn btn-default">Ajouter un membre</a><br>
+                {% endif %}
+            </div>
+            {% if is_granted('edit', discussion) %}
+                <div id="administration" class="tab-pane fade">
+                    <a href="{{ path('discussion_edit', {'slug': discussion.slug}) }}">Éditer la discussion</a><br>
+                    {% if (discussion.public and is_granted('ROLE_ADMIN')) or (not discussion.public) %}
+                        <a href="{{ path('discussion_delete', {'slug': discussion.slug}) }}">Supprimer la discussion</a><br>
+                    {% endif %}
+                    {% if is_granted('ROLE_ADMIN') %}
+                        {% if discussion.globalDiscussion %}
+                            <a href="{{ path('discussion_move_to_theme', {'slug': discussion.slug}) }}">Déplacer la discussion vers une thématique</a><br>
+                            <a href="{{ path('discussion_move_to_proposal', {'slug': discussion.slug}) }}">Déplacer la discussion vers une proposition</a><br>
+                        {% elseif discussion.themeDiscussion %}
+                            <a href="{{ path('discussion_move_to_global', {'slug': discussion.slug}) }}">Déplacer vers les discussions globales</a><br>
+                            <a href="{{ path('discussion_move_to_proposal', {'slug': discussion.slug}) }}">Déplacer la discussion vers une proposition</a><br>
+                        {% elseif discussion.proposalDiscussion %}
+                            <a href="{{ path('discussion_move_to_global', {'slug': discussion.slug}) }}">Déplacer vers les discussions globales</a><br>
+                            <a href="{{ path('discussion_move_to_theme', {'slug': discussion.slug}) }}">Déplacer la discussion vers une thématique</a><br>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock page_content %}
+
+{% block javascript %}
+    {{ parent() }}
+{% endblock javascript %}

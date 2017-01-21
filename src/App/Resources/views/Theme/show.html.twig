@@ -2,111 +2,102 @@
 
 {% block page_content %}
 
-<h1>{{theme.title}}</h1>
+    <h1>{{theme.title}}</h1>
 
-{% if theme.webPath is empty %}
-	<img src="{{ asset('img/science128.png') }}" class="marginAuto">
-{% else %}
-	<img src="{{ asset(theme.webPath) }}" class="marginAuto">
-{% endif %}
-
-<p>
-	{{ theme.description }}
-	<br>
-	{% if theme.lvl > 0 %}
-		Niveau : {{theme.lvl}}
-		<br>
-		Thématique mère : <a href="{{ path('theme_show', {'slug': theme.parent.slug}) }}">{{theme.parent.title}}</a>
-	{% else %}
-		Niveau : Racine de l'arbre
-	{% endif %}
-	<br>
-	Date de création : {{ theme.creationDate|date('d/m/Y') }}
-	<br>
-	Date de dernière modification : {{ theme.editDate|date('d/m/Y') }}
-</p>
-
-<hr>
-
-<h2>Thématiques filles</h2>
-
-{% if theme.children is empty %}
-	<p>Il n'y a pas encore de thématique fille !</p>
-{% else%}
-    <ul class="tree">
-        {{ tree(theme)|raw }}
-    </ul>
-{% endif %}
-
-<hr>
-
-<h2>Propositions</h2>
-
-{% if theme.proposals is empty %}
-	<p>Il n'y a pas encore de propositions !</p>
-{% else%}
-	{% for proposal in theme.proposals %}
-		<a href="{{ path('proposal_show', {'slug': proposal.slug}) }}">{{ proposal.title }}</a><br>
-	{% endfor %}
-{% endif %}
-
-<hr>
-
-<h2>Discussion</h2>
-
-{% if theme.comments is empty %}
-	<p>La discussion n'a pas encore débuté !</p>
-{% else%}
-	{% for comment in theme.comments %}
-		<p>
-			{{ comment.creationDate|date('d/m/Y') }}
-			<br>
-			{{ comment.author }}
-			<br>
-			{{ comment.content }}
-			<br>
-		</p>
-	{% endfor %}
-{% endif %}
-
-{% if form is defined %}
-	{{ form(form) }}
-{% endif %}
-
-<hr>
-
-{% if is_granted('ROLE_ADMIN') %}
-<h2>Administration</h2>
-	<a href="{{ path('theme_add', {'slug': theme.slug}) }}">Ajouter une thématique fille</a><br>
-	<a href="{{ path('theme_edit', {'slug': theme.slug}) }}">Modifier cette thématique</a><br>
-    {% if theme.isEmpty %}
-        <a href="{{ path('theme_delete', {'slug': theme.slug}) }}">Supprimer cette thématique</a>
+    {% if theme.webPath is empty %}
+        <img src="{{ asset('img/science128.png') }}" class="marginAuto"><br>
+    {% else %}
+        <img src="{{ asset(theme.webPath) }}" class="marginAuto"><br>
     {% endif %}
-{% endif %}
 
+    {{ theme.description }}<br>
+
+    {% if theme.lvl > 0 %}
+        Niveau : {{theme.lvl}}<br>
+        Thématique mère : <a href="{{ path('theme_show', {'slug': theme.parent.slug}) }}">{{theme.parent.title}}</a><br>
+    {% else %}
+        Niveau : Racine de l'arbre<br>
+    {% endif %}
+        Date de création : {{ theme.creationDate|date('d/m/Y') }}<br>
+        Date de dernière modification : {{ theme.editDate|date('d/m/Y') }}<br><br>
+
+    <div class="container">
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#proposals">Propositions</a></li>
+            <li><a data-toggle="tab" href="#children">Thématiques filles</a></li>
+            <li><a data-toggle="tab" href="#discussions">Discussions</a></li>
+            {% if is_granted('ROLE_ADMIN') %}
+                <li><a data-toggle="tab" href="#administration">Administration</a></li>
+            {% endif %}
+        </ul>
+        <div class="tab-content">
+            <div id="proposals" class="tab-pane fade in active">
+                <h2>Propositions</h2>
+                {% if theme.proposals is empty %}
+                    <p>Il n'y a pas encore de propositions !</p>
+                {% else %}
+                    {% for proposal in theme.proposals %}
+                        <a href="{{ path('proposal_show', {'slug': proposal.slug}) }}">{{ proposal.title }}</a><br>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div id="children" class="tab-pane fade">
+                <h2>Thématiques filles</h2>
+                {% if theme.children is empty %}
+                    <p>Il n'y a pas encore de thématique fille !</p>
+                {% else %}
+                    <ul class="tree">
+                        {{ tree(theme)|raw }}
+                    </ul>
+                {% endif %}
+            </div>
+            <div id="discussions" class="tab-pane fade">
+                <h2>Discussions</h2>
+                {% for discussion in theme.discussions %}
+                    <a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}">{{ discussion.title }}</a><br>
+                {% else %}
+                    Pas de discussion !<br>
+                {% endfor %}
+                {% if is_granted('ROLE_USER') %}
+                    <a href="{{ path('public_discussion_add_theme', {'slug': theme.slug}) }}" class="btn btn-default">Ouvrir une discussion</a>
+                {% endif %}
+            </div>
+            {% if is_granted('ROLE_ADMIN') %}
+                <div id="administration" class="tab-pane fade">
+                    <h2>Administration</h2>
+                    <a href="{{ path('theme_add', {'slug': theme.slug}) }}" class="btn btn-default">Ajouter une thématique fille</a><br>
+                    <a href="{{ path('theme_edit', {'slug': theme.slug}) }}" class="btn btn-default">Modifier cette thématique</a><br>
+                    {% if theme.isEmpty %}
+                        <a href="{{ path('theme_delete', {'slug': theme.slug}) }}" class="btn btn-default">Supprimer cette thématique</a><br>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
 {% endblock page_content %}
 
 {% block javascript %}
-	{{ parent() }}
-	{# Script used for dynamic navigation through all the childs of each theme #}
-	<script>
-	    //dom ready handler
-	    jQuery(function () {
-	        $('ul.tree > li').attr('unselectable','on').css('user-select','none').on('selectstart',false);
-	        $('ul.tree').on('click', 'li', function (e) {
-	            if(window.getSelection){
-	               // window.getSelection().removeAllRanges();
-	            }
-	            //stop propagation else parent li elements click handlers will get triggered
-	            e.stopPropagation();
-	            console.log(e.target);
-	            //use toggleClasss
-	            $(this).children('ul').toggleClass('hidden visible');
-	            if($(this).attr('class') != 'noChild')
-	            {
-	                $(this).toggleClass('closed open');
-	            }
-	        });
-	    });
-	</script>
+    {{ parent() }}
+
+    {# Script used for dynamic navigation through all the childs of each theme #}
+    <script>
+        //dom ready handler
+        jQuery(function () {
+            $('ul.tree > li').attr('unselectable','on').css('user-select','none').on('selectstart',false);
+            $('ul.tree').on('click', 'li', function (e) {
+                if(window.getSelection){
+                   // window.getSelection().removeAllRanges();
+                }
+                //stop propagation else parent li elements click handlers will get triggered
+                e.stopPropagation();
+                console.log(e.target);
+                //use toggleClasss
+                $(this).children('ul').toggleClass('hidden visible');
+                if($(this).attr('class') != 'noChild')
+                {
+                    $(this).toggleClass('closed open');
+                }
+            });
+        });
+    </script>
 {% endblock javascript %}

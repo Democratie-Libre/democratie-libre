@@ -6,43 +6,19 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use App\Entity\Theme;
-use App\Entity\ThemeComment;
-use App\Form\ThemeCommentType;
 use App\Form\ThemeType;
 use App\Form\EditThemeType;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class ThemeController extends Controller
 {
-    public function showAction(Request $request, $slug)
+    public function showAction($slug)
     {
         $theme = $this->getDoctrine()->getRepository('App:Theme')->findOneBySlug($slug);
         $user  = $this->getUser();
 
         if (null ===  $theme) {
             throw $this->createNotFoundException();
-        }
-
-        if ($user instanceof UserInterface) {
-            $comment = new ThemeComment();
-            $form = $this->createForm(new ThemeCommentType(), $comment);
-            $form->handleRequest($request);
-
-            if ($form->isValid()) {
-                $comment->setAuthor($user)->setTheme($theme);
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($comment);
-                $em->flush();
-
-                return $this->redirect($this->generateUrl('theme_show', [
-                    'slug' => $theme->getSlug(),
-                ]));
-            }
-
-            return $this->render('App:Theme:show.html.twig', [
-                'theme' => $theme,
-                'form'  => $form->createView(),
-            ]);
         }
 
         return $this->render('App:Theme:show.html.twig', [
@@ -174,6 +150,21 @@ class ThemeController extends Controller
 
         return $this->render('App:Theme:edit.html.twig', [
             'form' => $form->createView(),
+        ]);
+    }
+
+    public function showDiscussionsAction(Request $request, $slug)
+    {
+        $theme = $this->getDoctrine()->getRepository('App:Theme')->findOneBySlug($slug);
+
+        if (null ===  $theme) {
+            throw $this->createNotFoundException();
+        }
+
+        $discussions = $this->getDoctrine()->getRepository('App:Discussion')->findThemeDiscussions($theme);
+
+        return $this->render('App:Theme:discussions.html.twig', [
+            'discussions' => $discussions,
         ]);
     }
 }

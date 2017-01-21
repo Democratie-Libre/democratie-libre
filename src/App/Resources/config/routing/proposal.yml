@@ -33,3 +33,7 @@ proposal_removeoppose:
 proposal_removesideauthor:
     path: /removesideauthor/{slug}
     defaults: { _controller: 'App:Proposal:removeSideAuthor' }
+
+proposal_discussions:
+    path: /{slug}/discussions
+    defaults: { _controller: 'App:Proposal:showDiscussions' }

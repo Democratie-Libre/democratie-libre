@@ -114,12 +114,6 @@ class Proposal
     private $opposedUsers;
 
     /**
-     * @ORM\OneToMany(targetEntity="ProposalComment", mappedBy="proposal", cascade={"persist", "remove"})
-     * @Assert\Valid()
-     */
-    private $comments;
-
-    /**
      * @ORM\OneToMany(targetEntity="ProposalVersion", mappedBy="proposal", cascade={"persist", "remove"})
      * @Assert\Valid()
      */
@@ -154,6 +148,12 @@ class Proposal
      */
     private $file;
 
+    /**
+     * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="proposal")
+     * @Assert\Valid()
+     */
+    private $discussions;
+
     public function __construct()
     {
         $this->versionNumber = 1;
@@ -161,6 +161,7 @@ class Proposal
         $this->supportiveUsers = new ArrayCollection();
         $this->opposedUsers = new ArrayCollection();
         $this->versions = new ArrayCollection();
+        $this->discussions = new ArrayCollection();
     }
 
     public function getId()
@@ -377,25 +378,6 @@ class Proposal
         return $this->opposedUsers;
     }
 
-    public function addComment(ProposalComment $comment)
-    {
-        $this->comments->add($comment);
-
-        return $this;
-    }
-
-    public function removeComment(ProposalComment $comment)
-    {
-        $this->comments->removeElement($comment);
-
-        return $this;
-    }
-
-    public function getComments()
-    {
-        return $this->comments;
-    }
-
     public function addVersion(ProposalVersion $version)
     {
         $this->versions->add($version);
@@ -438,6 +420,25 @@ class Proposal
         foreach ($proposalDraft->getSideAuthors() as $sideAuthor) {
             $this->addSideAuthor($sideAuthor);
         }
+    }
+
+    public function addDiscussion(PublicDiscussion $discussion)
+    {
+        $this->discussions->add($discussion);
+
+        return $this;
+    }
+
+    public function removeDiscussion(PublicDiscussion $discussion)
+    {
+        $this->discussions->removeElement($discussion);
+
+        return $this;
+    }
+
+    public function getDiscussions()
+    {
+        return $this->discussions;
     }
 
     /*****************************************************

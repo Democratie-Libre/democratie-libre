@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Form;
+namespace App\Form\Post;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class ProposalCommentType extends AbstractType
+class EditPostType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -19,12 +19,12 @@ class ProposalCommentType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'App\Entity\ProposalComment',
+            'data_class' => 'App\Entity\Post',
         ]);
     }
 
     public function getName()
     {
-        return 'proposalComment';
+        return 'edit_post';
     }
 }

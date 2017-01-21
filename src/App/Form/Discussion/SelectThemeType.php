@@ -1,30 +1,34 @@
 <?php
 
-namespace App\Form;
+namespace App\Form\Discussion;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class ThemeCommentType extends AbstractType
+class SelectThemeType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('content', 'textarea')
-            ->add('Envoyer', 'submit')
+            ->add('theme', 'entity', [
+                'class' => 'App:Theme',
+                'property' => 'title',
+                'required' => true,
+            ])
+            ->add('save', 'submit')
         ;
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'App\Entity\ThemeComment',
+            'data_class' => 'App\Entity\PublicDiscussion',
         ]);
     }
 
     public function getName()
     {
-        return 'themeComment';
+        return 'public_discussion_select_theme';
     }
 }
