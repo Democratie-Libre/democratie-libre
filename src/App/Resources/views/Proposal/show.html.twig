@@ -75,7 +75,7 @@
                     <p>Pas de discussion !</p>
                 {% endfor %}
                 {% if is_granted('ROLE_USER') %}
-                    <a href="{{ path('public_discussion_add_proposal', {'slug': proposal.slug}) }}">Ouvrir une discussion</a>
+                    <a href="{{ path('public_discussion_add_to_proposal', {'slug': proposal.slug}) }}">Ouvrir une discussion</a>
                 {% endif %}
             </div>
             <div id="history" class="tab-pane fade">

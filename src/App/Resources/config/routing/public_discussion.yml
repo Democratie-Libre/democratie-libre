@@ -2,17 +2,17 @@ public_discussion_show:
     path: /show/{slug}
     defaults: { _controller: 'App:PublicDiscussion:show'}
 
-public_discussion_add_global:
-    path: /add_global
-    defaults: { _controller: 'App:PublicDiscussion:addGlobal' }
+public_discussion_add_to_global_discussions:
+    path: /add_to_global_discussions
+    defaults: { _controller: 'App:PublicDiscussion:addToGlobalDiscussions' }
 
-public_discussion_add_theme:
-    path: /add_theme/{slug}
-    defaults: { _controller: 'App:PublicDiscussion:addTheme' }
+public_discussion_add_to_theme:
+    path: /add_to_theme/{slug}
+    defaults: { _controller: 'App:PublicDiscussion:addToTheme' }
 
-public_discussion_add_proposal:
-    path: /add_proposal/{slug}
-    defaults: { _controller: 'App:PublicDiscussion:addProposal' }
+public_discussion_add_to_proposal:
+    path: /add_to_proposal/{slug}
+    defaults: { _controller: 'App:PublicDiscussion:addToProposal' }
 
 public_discussion_edit:
     path: /edit/{slug}

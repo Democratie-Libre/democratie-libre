@@ -23,14 +23,14 @@ class User implements UserInterface, \Serializable, HasPassword, HasSalt
     use HasSalt\HasSalt;
 
     /**
-     * @ORM\Column(name="id", type="integer")
+     * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
     /**
-     * @ORM\Column(name="username", type="string", length=30, unique=true)
+     * @ORM\Column(type="string", length=30, unique=true)
      */
     private $username;
 
@@ -45,23 +45,23 @@ class User implements UserInterface, \Serializable, HasPassword, HasSalt
     private $salt;
 
     /**
-     * @ORM\Column(name="email", type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255, unique=true)
      * @Assert\Email(message="This email adress is not valid.")
      */
     private $email;
 
     /**
-     * @ORM\Column(name="registrationDate", type="datetime")
+     * @ORM\Column(type="datetime")
      */
     private $registrationDate;
 
     /**
-     * @ORM\Column(name="roles", type="array")
+     * @ORM\Column(type="array")
      */
     private $roles;
 
     /**
-     * @ORM\Column(name="banned", type="boolean")
+     * @ORM\Column(type="boolean")
      */
     private $banned;
 

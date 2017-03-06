@@ -30,39 +30,39 @@ class PrivateDiscussionController extends Controller
 
         if (false === $this->get('security.context')->isGranted('view', $discussion)) {
             throw new AccessDeniedException();
-        } else {
-            $discussion->removeUnreader($this->getUser());
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($discussion);
-            $em->flush();
         }
 
-        if (false === $discussion->isLocked()) {
-            $post = new Post();
-            $form = $this->createForm(new EditPostType(), $post);
-            $form->handleRequest($request);
+        $discussion->removeUnreader($this->getUser());
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($discussion);
+        $em->flush();
 
-            if ($form->isValid()) {
-                $post->setAuthor($this->getUser())->setDiscussion($discussion);
-                $discussion->resetUnreaders();
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($post);
-                $em->flush();
-
-                return $this->redirect($this->generateUrl('private_discussion_show', [
-                    'slug' => $discussion->getSlug(),
-                ]));
-            }
-
+        if ($discussion->isLocked()) {
             return $this->render('App:PrivateDiscussion:show.html.twig', [
                 'discussion' => $discussion,
-                'form'       => $form->createView(),
-                ]);
+            ]);
+        }
+
+        $post = new Post();
+        $form = $this->createForm(new EditPostType(), $post);
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $post->setAuthor($this->getUser())->setDiscussion($discussion);
+            $discussion->resetUnreaders();
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($post);
+            $em->flush();
+
+            return $this->redirect($this->generateUrl('private_discussion_show', [
+                'slug' => $discussion->getSlug(),
+            ]));
         }
 
         return $this->render('App:PrivateDiscussion:show.html.twig', [
             'discussion' => $discussion,
-        ]);
+            'form'       => $form->createView(),
+            ]);
     }
 
     /**
@@ -71,8 +71,8 @@ class PrivateDiscussionController extends Controller
     public function addAction(Request $request)
     {
         $discussion = new PrivateDiscussion();
-        $user = $this->getUser();
-        $form = $this->createForm(new AddPrivateDiscussionType($user->getId()), $discussion);
+        $user       = $this->getUser();
+        $form       = $this->createForm(new AddPrivateDiscussionType($user->getId()), $discussion);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
@@ -135,21 +135,11 @@ class PrivateDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $users         = $this->getDoctrine()->getRepository('App:User')->findAll();
-        $usersNumber   = count($users);
-        $members       = $discussion->getMembers();
-        $membersNumber = count($members);
-
-        if ($usersNumber === $membersNumber) {
-            throw new \Exception(
-                'No more users to add.'
-            );
-        }
-
-        if (false === $this->get('security.context')->isGranted('edit', $discussion)) {
+        if (false === $this->get('security.context')->isGranted('add_member', $discussion)) {
             throw new AccessDeniedException();
         }
 
+        $members    = $discussion->getMembers();
         $membersIds = [];
 
         foreach ($members as $member) {

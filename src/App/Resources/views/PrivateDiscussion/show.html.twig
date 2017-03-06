@@ -62,7 +62,7 @@
                     {% endif %}
                     <br>
                 {% endfor %}
-                {% if is_granted('edit', discussion) %}
+                {% if is_granted('add_member', discussion) %}
                     <a href="{{ path('private_discussion_add_member', {'slug': discussion.slug}) }}" class="btn btn-default">Ajouter un membre</a><br>
                 {% endif %}
             </div>

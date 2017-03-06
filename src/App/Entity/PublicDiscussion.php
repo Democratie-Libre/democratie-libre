@@ -7,11 +7,18 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\PublicDiscussionRepository")
+ * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks
  */
 class PublicDiscussion extends AbstractDiscussion
 {
+    /**
+     * A public discussion can be of three different types : GLOBAL_DISCUSSION, THEME_DISCUSSION or PROPOSAL_DISCUSSION
+     *
+     * @ORM\Column(type="string", length=255)
+     */
+    private $type;
+
     /**
      * @ORM\ManyToOne(targetEntity="Theme", inversedBy="discussions", cascade={"persist"})
      * @Assert\Valid()
@@ -35,6 +42,18 @@ class PublicDiscussion extends AbstractDiscussion
     {
         parent::__construct();
         $this->followers  = new ArrayCollection();
+    }
+
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getType()
+    {
+        return $this->type;
     }
 
     public function setTheme(Theme $theme = null)
@@ -115,19 +134,19 @@ class PublicDiscussion extends AbstractDiscussion
         return $this->followers;
     }
 
-    public function globalDiscussion()
+    public function isGlobalDiscussion()
     {
-       return (($this->theme === null) and ($this->proposal === null));
+       return $this->type === 'GLOBAL_DISCUSSION';
     }
 
-    public function themeDiscussion()
+    public function isThemeDiscussion()
     {
-        return !($this->theme === null);
+        return $this->type === 'THEME_DISCUSSION';
     }
 
-    public function proposalDiscussion()
+    public function isProposalDiscussion()
     {
-        return !($this->proposal === null);
+        return $this->type === 'PROPOSAL_DISCUSSION';
     }
 
     public function resetUnreaders()

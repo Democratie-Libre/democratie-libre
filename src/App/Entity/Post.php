@@ -12,20 +12,20 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Post
 {
     /**
-     * @ORM\Column(name="id", type="integer", unique=true)
+     * @ORM\Column(type="integer", unique=true)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
     /**
-     * @ORM\Column(name="date", type="datetime")
+     * @ORM\Column(type="datetime")
      * @Assert\DateTime()
      */
     private $date;
 
     /**
-     * @ORM\Column(name="content", type="text")
+     * @ORM\Column(type="text")
      */
     private $content;
 

@@ -13,7 +13,7 @@
     <hr>
 
     {% if is_granted('ROLE_USER') %}
-        <a href="{{ path('public_discussion_add_global')}}">Ouvrir une discussion</a>
+        <a href="{{ path('public_discussion_add_to_global_discussions')}}">Ouvrir une discussion</a>
     {% endif %}
 
 {% endblock page_content %}

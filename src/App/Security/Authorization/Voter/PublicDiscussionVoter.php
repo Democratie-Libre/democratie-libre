@@ -5,19 +5,11 @@ namespace App\Security\Authorization\Voter;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class PublicDiscussionVoter implements VoterInterface
 {
     const FOLLOW   = 'follow';
     const UNREADER = 'unreader';
-
-    private $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
 
     public function supportsAttribute($attribute)
     {

@@ -153,15 +153,15 @@ class ThemeController extends Controller
         ]);
     }
 
-    public function showDiscussionsAction(Request $request, $slug)
+    public function showDiscussionsAction($slug)
     {
         $theme = $this->getDoctrine()->getRepository('App:Theme')->findOneBySlug($slug);
 
-        if (null ===  $theme) {
+        if (null === $theme) {
             throw $this->createNotFoundException();
         }
 
-        $discussions = $this->getDoctrine()->getRepository('App:Discussion')->findThemeDiscussions($theme);
+        $discussions = $this->getDoctrine()->getRepository('App:Discussion')->findByTheme($theme);
 
         return $this->render('App:Theme:discussions.html.twig', [
             'discussions' => $discussions,

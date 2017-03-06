@@ -20,7 +20,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Theme
 {
     /**
-     * @ORM\Column(name="id", type="integer", unique=true)
+     * @ORM\Column(type="integer", unique=true)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
@@ -33,7 +33,7 @@ class Theme
     private $slug;
 
     /**
-     * @ORM\Column(name="title", type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255, unique=true)
      * @Assert\Length(
      *      min = "2",
      *      max = "255"
@@ -42,7 +42,7 @@ class Theme
     private $title;
 
     /**
-     * @ORM\Column(name="description", type="string", length=255)
+     * @ORM\Column(type="string", length=255)
      * @Assert\Length(
      *      min = "2",
      *      max = "255"
@@ -51,38 +51,38 @@ class Theme
     private $description;
 
     /**
-     * @ORM\Column(name="creationDate", type="datetime")
+     * @ORM\Column(type="datetime")
      * @Assert\DateTime()
      */
     private $creationDate;
 
     /**
-     * @ORM\Column(name="editDate", type="datetime")
+     * @ORM\Column(type="datetime")
      * @Assert\DateTime()
      */
     private $editDate;
 
     /**
      * @Gedmo\TreeLeft
-     * @ORM\Column(name="lft", type="integer")
+     * @ORM\Column(type="integer")
      */
     private $lft;
 
     /**
      * @Gedmo\TreeLevel
-     * @ORM\Column(name="lvl", type="integer")
+     * @ORM\Column(type="integer")
      */
     private $lvl;
 
     /**
      * @Gedmo\TreeRight
-     * @ORM\Column(name="rgt", type="integer")
+     * @ORM\Column(type="integer")
      */
     private $rgt;
 
     /**
      * @Gedmo\TreeRoot
-     * @ORM\Column(name="root", type="integer", nullable=true)
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $root;
 

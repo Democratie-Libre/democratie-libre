@@ -247,11 +247,11 @@ class ProposalController extends Controller
     {
         $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
 
-        if (null ===  $proposal) {
+        if (null === $proposal) {
             throw $this->createNotFoundException();
         }
 
-        $discussions = $this->getDoctrine()->getRepository('App:Discussion')->findProposalDiscussions($proposal);
+        $discussions = $this->getDoctrine()->getRepository('App:Discussion')->findByProposal($proposal);
 
         return $this->render('App:Proposal:discussions.html.twig', [
             'discussions' => $discussions,

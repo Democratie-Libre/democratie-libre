@@ -18,7 +18,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Proposal
 {
     /**
-     * @ORM\Column(name="id", type="integer", unique=true)
+     * @ORM\Column(type="integer", unique=true)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
@@ -31,7 +31,7 @@ class Proposal
     private $slug;
 
     /**
-     * @ORM\Column(name="title", type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255, unique=true)
      * @Assert\Length(
      *      min = "2",
      *      max = "255",
@@ -42,25 +42,25 @@ class Proposal
     private $title;
 
     /**
-     * @ORM\Column(name="abstract", type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255, unique=true)
      * @Assert\NotBlank(message="Vous devez faire un résumé de votre proposition")
      */
     private $abstract;
 
     /**
-     * @ORM\Column(name="content", type="text")
+     * @ORM\Column(type="text")
      * @Assert\NotBlank(message="N'oubliez pas de renseigner le contenu de votre proposition")
      */
     private $content;
 
     /**
-     * @ORM\Column(name="creationDate", type="datetime")
+     * @ORM\Column(type="datetime")
      * @Assert\DateTime()
      */
     private $creationDate;
 
     /**
-     * @ORM\Column(name="editDate", type="datetime")
+     * @ORM\Column(type="datetime")
      * @Assert\DateTime()
      */
     private $editDate;
@@ -91,7 +91,7 @@ class Proposal
     /**
      * If the proposal is public any user can edit the proposal.
      *
-     * @ORM\Column(name="is_public", type="boolean")
+     * @ORM\Column(type="boolean")
      */
     private $isPublic;
 
@@ -120,7 +120,7 @@ class Proposal
     private $versions;
 
     /**
-     * @ORM\Column(name="versionnumber", type="integer")
+     * @ORM\Column(type="integer")
      */
     private $versionNumber;
 

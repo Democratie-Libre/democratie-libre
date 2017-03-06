@@ -5,19 +5,20 @@ namespace App\Security\Authorization\Voter;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Doctrine\Bundle\DoctrineBundle\Registry as Doctrine;
 
 class PrivateDiscussionVoter implements VoterInterface
 {
-    const VIEW = 'view';
-    const EDIT = 'edit';
-    const UNREADER = 'unreader';
+    const VIEW       = 'view';
+    const EDIT       = 'edit';
+    const ADD_MEMBER = 'add_member';
+    const UNREADER   = 'unreader';
 
-    private $container;
+    private $doctrine;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(Doctrine $doctrine)
     {
-        $this->container = $container;
+        $this->doctrine = $doctrine;
     }
 
     public function supportsAttribute($attribute)
@@ -25,6 +26,7 @@ class PrivateDiscussionVoter implements VoterInterface
         return in_array($attribute, array(
             self::VIEW,
             self::EDIT,
+            self::ADD_MEMBER,
             self::UNREADER,
         ));
     }
@@ -65,9 +67,11 @@ class PrivateDiscussionVoter implements VoterInterface
             return VoterInterface::ACCESS_DENIED;
         }
 
-        $isMember   = $discussion->hasMember($user);
-        $isAdmin    = $user === $discussion->getAdmin();
-        $isUnreader = $discussion->hasUnreader($user);
+        $isMember      = $discussion->hasMember($user);
+        $isAdmin       = $user === $discussion->getAdmin();
+        $isUnreader    = $discussion->hasUnreader($user);
+        $usersNumber   = $this->doctrine->getRepository('App:User')->count();
+        $membersNumber = count($discussion->getMembers());
 
         switch ($attribute) {
             case self::VIEW:
@@ -77,6 +81,11 @@ class PrivateDiscussionVoter implements VoterInterface
                 break;
             case self::EDIT:
                 if ($isAdmin) {
+                    return VoterInterface::ACCESS_GRANTED;
+                }
+                break;
+            case self::ADD_MEMBER:
+                if ($isAdmin and $usersNumber !== $membersNumber) {
                     return VoterInterface::ACCESS_GRANTED;
                 }
                 break;

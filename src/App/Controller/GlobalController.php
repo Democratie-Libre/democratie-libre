@@ -20,7 +20,7 @@ class GlobalController extends Controller
 
     public function globalDiscussionsAction()
     {
-        $discussions = $this->getDoctrine()->getRepository('App:PublicDiscussion')->findGlobalDiscussions();
+        $discussions = $this->getDoctrine()->getRepository('App:PublicDiscussion')->findByType('GLOBAL_DISCUSSION');
 
         return $this->render('App:Global:global_discussions.html.twig', ['discussions' => $discussions]);
     }

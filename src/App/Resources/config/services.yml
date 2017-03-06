@@ -12,7 +12,7 @@ services:
             - { name: twig.extension }
         arguments: ["@router"]
 
-    proposalVoter:
+    app.proposal_voter:
         class: App\Security\Authorization\Voter\ProposalVoter
         public: false
         tags:
@@ -32,16 +32,15 @@ services:
         tags:
             - { name: security.voter }
 
-    privateDiscussionVoter:
+    app.private_discussion_voter:
         class: App\Security\Authorization\Voter\PrivateDiscussionVoter
         public: false
         tags:
            - { name: security.voter }
-        arguments: ["@service_container"]
+        arguments: ["@doctrine"]
 
-    publicDiscussionVoter:
+    app.public_discussion_voter:
         class: App\Security\Authorization\Voter\PublicDiscussionVoter
         public: false
         tags:
            - { name: security.voter }
-        arguments: ["@service_container"]

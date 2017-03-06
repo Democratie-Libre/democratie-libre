@@ -19,7 +19,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 class AbstractDiscussion
 {
     /**
-     * @ORM\Column(name="id", type="integer", unique=true)
+     * @ORM\Column(type="integer", unique=true)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
@@ -32,7 +32,7 @@ class AbstractDiscussion
     protected $slug;
 
     /**
-     * @ORM\Column(name="title", type="string", length=255)
+     * @ORM\Column(type="string", length=255)
      * @Assert\Length(
      *      min = "2",
      *      max = "255"
@@ -41,19 +41,19 @@ class AbstractDiscussion
     protected $title;
 
     /**
-     * @ORM\Column(name="abstract", type="string", length=255)
+     * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank()
      */
     protected $abstract;
 
     /**
-     * @ORM\Column(name="creationDate", type="datetime")
+     * @ORM\Column(type="datetime")
      * @Assert\DateTime()
      */
     protected $creationDate;
 
     /**
-     * @ORM\Column(name="lastEditDate", type="datetime")
+     * @ORM\Column(type="datetime")
      * @Assert\DateTime()
      */
     protected $lastEditDate;
@@ -61,7 +61,7 @@ class AbstractDiscussion
     /**
      * If the discussion is locked the users cannot comment but can still access it.
      *
-     * @ORM\Column(name="locked", type="boolean")
+     * @ORM\Column(type="boolean")
      */
     protected $locked;
 

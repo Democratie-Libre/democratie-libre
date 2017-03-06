@@ -59,7 +59,7 @@
                     Pas de discussion !<br>
                 {% endfor %}
                 {% if is_granted('ROLE_USER') %}
-                    <a href="{{ path('public_discussion_add_theme', {'slug': theme.slug}) }}" class="btn btn-default">Ouvrir une discussion</a>
+                    <a href="{{ path('public_discussion_add_to_theme', {'slug': theme.slug}) }}" class="btn btn-default">Ouvrir une discussion</a>
                 {% endif %}
             </div>
             {% if is_granted('ROLE_ADMIN') %}
@@ -80,24 +80,5 @@
     {{ parent() }}
 
     {# Script used for dynamic navigation through all the childs of each theme #}
-    <script>
-        //dom ready handler
-        jQuery(function () {
-            $('ul.tree > li').attr('unselectable','on').css('user-select','none').on('selectstart',false);
-            $('ul.tree').on('click', 'li', function (e) {
-                if(window.getSelection){
-                   // window.getSelection().removeAllRanges();
-                }
-                //stop propagation else parent li elements click handlers will get triggered
-                e.stopPropagation();
-                console.log(e.target);
-                //use toggleClasss
-                $(this).children('ul').toggleClass('hidden visible');
-                if($(this).attr('class') != 'noChild')
-                {
-                    $(this).toggleClass('closed open');
-                }
-            });
-        });
-    </script>
+    <script src="{{ asset('js/theme_children.js') }}"></script>
 {% endblock javascript %}

@@ -1,46 +1,23 @@
 {% extends '::layout.html.twig' %}
 
 {% block page_content %}
+    <h1>Racines de l'arbre</h1>
 
-<h1>Racines de l'arbre</h1>
+    {% for root in roots %}
+        <ul class="tree">
+            {{ tree(root)|raw }}
+        </ul>
+    {% else %}
+        Pas de racine !
+    {% endfor %}
 
-{% for root in roots %}
-    <ul class="tree">
-        {{ tree(root)|raw }}
-    </ul>
-{% else %}
-    Pas de racine !
-{% endfor %}
+    <hr>
 
-<hr>
-
-{% if is_granted('ROLE_ADMIN') %}
-	<a href="{{ path('theme_addroot')}}">Ajouter une racine</a>
-{% endif %}
-
+    {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('theme_addroot')}}">Ajouter une racine</a>
+    {% endif %}
 {% endblock page_content %}
 
 {% block javascript %}
-	{{ parent() }}
-	{# Script used for dynamic navigation through all the childs of each theme #}
-	<script>
-	    //dom ready handler
-	    jQuery(function () {
-	        $('ul.tree > li').attr('unselectable','on').css('user-select','none').on('selectstart',false);
-	        $('ul.tree').on('click', 'li', function (e) {
-	            if(window.getSelection){
-	               // window.getSelection().removeAllRanges();
-	            }
-	            //stop propagation else parent li elements click handlers will get triggered
-	            e.stopPropagation();
-	            console.log(e.target);
-	            //use toggleClasss
-	            $(this).children('ul').toggleClass('hidden visible');
-	            if($(this).attr('class') != 'noChild')
-	            {
-	                $(this).toggleClass('closed open');
-	            }
-	        });
-	    });
-	</script>
+    {{ parent() }}
 {% endblock javascript %}

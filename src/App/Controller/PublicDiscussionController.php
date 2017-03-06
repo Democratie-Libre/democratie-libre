@@ -25,56 +25,60 @@ class PublicDiscussionController extends Controller
 
         $user = $this->getUser();
 
-        if (($user instanceof UserInterface)) {
+        if (!$user instanceof UserInterface) {
+            return $this->render('App:PublicDiscussion:show.html.twig', [
+                'discussion' => $discussion,
+            ]);
+        }
 
-            if (true === $this->get('security.context')->isGranted('follow', $discussion)) {
-                $discussion->removeUnreader($user);
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($discussion);
-                $em->flush();
-            }
+        if ($this->get('security.context')->isGranted('follow', $discussion)) {
+            $discussion->removeUnreader($user);
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($discussion);
+            $em->flush();
+        }
 
-            if(false === $discussion->isLocked()) {
-                $post = new Post();
-                $form = $this->createForm(new EditPostType(), $post);
-                $form->handleRequest($request);
+        if ($discussion->isLocked()) {
+            return $this->render('App:PublicDiscussion:show.html.twig', [
+                'discussion' => $discussion,
+            ]);
+        }
 
-                if ($form->isValid()) {
-                    $post->setAuthor($user)->setDiscussion($discussion);
-                    $discussion->resetUnreaders();
-                    $em = $this->getDoctrine()->getManager();
-                    $em->persist($post);
-                    $em->flush();
+        $post = new Post();
+        $form = $this->createForm(new EditPostType(), $post);
+        $form->handleRequest($request);
 
-                    return $this->redirect($this->generateUrl('public_discussion_show', [
-                        'slug' => $discussion->getSlug(),
-                    ]));
-                }
+        if ($form->isValid()) {
+            $post->setAuthor($user)->setDiscussion($discussion);
+            $discussion->resetUnreaders();
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($post);
+            $em->flush();
 
-                return $this->render('App:PublicDiscussion:show.html.twig', [
-                    'discussion' => $discussion,
-                    'form'       => $form->createView(),
-                    ]);
-            }
+            return $this->redirect($this->generateUrl('public_discussion_show', [
+                'slug' => $discussion->getSlug(),
+            ]));
         }
 
         return $this->render('App:PublicDiscussion:show.html.twig', [
             'discussion' => $discussion,
+            'form'       => $form->createView(),
         ]);
     }
 
     /**
      * @Security("has_role('ROLE_USER')")
      */
-    public function addGlobalAction(Request $request)
+    public function addToGlobalDiscussionsAction(Request $request)
     {
         $discussion = new PublicDiscussion();
         $form       = $this->createForm(new EditDiscussionType(), $discussion);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+            $discussion->setType('GLOBAL_DISCUSSION')
+                ->addFollower($this->getUser());
             $em = $this->getDoctrine()->getManager();
-            $discussion->addFollower($this->getUser());
             $em->persist($discussion);
             $em->flush();
 
@@ -91,7 +95,7 @@ class PublicDiscussionController extends Controller
     /**
      * @Security("has_role('ROLE_USER')")
      */
-    public function addThemeAction(Request $request, $slug)
+    public function addToThemeAction(Request $request, $slug)
     {
         $theme = $this->getDoctrine()->getRepository('App:Theme')->findOneBySlug($slug);
 
@@ -104,7 +108,9 @@ class PublicDiscussionController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $discussion->setTheme($theme)->addFollower($this->getUser());
+            $discussion->setType('THEME_DISCUSSION')
+                ->setTheme($theme)
+                ->addFollower($this->getUser());
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
             $em->flush();
@@ -122,7 +128,7 @@ class PublicDiscussionController extends Controller
     /**
      * @Security("has_role('ROLE_USER')")
      */
-    public function addProposalAction(Request $request, $slug)
+    public function addToProposalAction(Request $request, $slug)
     {
         $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
 
@@ -135,7 +141,9 @@ class PublicDiscussionController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $discussion->setProposal($proposal)->addFollower($this->getUser());
+            $discussion->setType('PROPOSAL_DISCUSSION')
+                ->setProposal($proposal)
+                ->addFollower($this->getUser());
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
             $em->flush();
@@ -192,12 +200,14 @@ class PublicDiscussionController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        if ($discussion->globalDiscussion()) {
+        if ($discussion->isGlobalDiscussion()) {
             $em->remove($discussion);
             $em->flush();
 
             return $this->redirect($this->generateUrl('global_discussions'));
-        } elseif ($discussion->themeDiscussion()) {
+        }
+
+        if ($discussion->isThemeDiscussion()) {
             $themeSlug = $discussion->getTheme()->getSlug();
             $em->remove($discussion);
             $em->flush();
@@ -205,7 +215,9 @@ class PublicDiscussionController extends Controller
             return $this->redirect($this->generateUrl('theme_show', [
                 'slug' => $themeSlug,
             ]));
-        } else {
+        }
+
+        if ($discussion->isProposalDiscussion()) {
             $proposalSlug = $discussion->getProposal()->getSlug();
             $em->remove($discussion);
             $em->flush();
@@ -223,11 +235,13 @@ class PublicDiscussionController extends Controller
     {
         $discussion = $this->getDoctrine()->getRepository('App:PublicDiscussion')->findOneBySlug($slug);
 
-        if (null ===  $discussion) {
+        if (null === $discussion) {
             throw $this->createNotFoundException();
         }
 
-        $discussion->setProposal(null)->setTheme(null);
+        $discussion->setType('GLOBAL_DISCUSSION')
+            ->setProposal(null)
+            ->setTheme(null);
         $em = $this->getDoctrine()->getManager();
         $em->persist($discussion);
         $em->flush();
@@ -244,11 +258,13 @@ class PublicDiscussionController extends Controller
     {
         $discussion = $this->getDoctrine()->getRepository('App:PublicDiscussion')->findOneBySlug($slug);
 
-        if (null ===  $discussion) {
+        if (null === $discussion) {
             throw $this->createNotFoundException();
         }
 
-        $discussion->setProposal(null)->setTheme(null);
+        $discussion->setType('THEME_DISCUSSION')
+            ->setProposal(null)
+            ->setTheme(null);
         $form = $this->createForm(new SelectThemeType(), $discussion);
         $form->handleRequest($request);
 
@@ -278,7 +294,9 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $discussion->setProposal(null)->setTheme(null);
+        $discussion->setType('PROPOSAL_DISCUSSION')
+            ->setProposal(null)
+            ->setTheme(null);
         $form = $this->createForm(new SelectProposalType(), $discussion);
         $form->handleRequest($request);
 
