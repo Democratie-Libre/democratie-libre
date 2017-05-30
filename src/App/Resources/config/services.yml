@@ -19,15 +19,8 @@ services:
             - { name: security.voter }
         arguments: ["@service_container"]
 
-    proposalDraftVoter:
-        class: App\Security\Authorization\Voter\ProposalDraftVoter
-        public: false
-        tags:
-            - { name: security.voter }
-        arguments: ["@service_container"]
-
-    proposalVersionVoter:
-        class: App\Security\Authorization\Voter\ProposalVersionVoter
+    app.old_proposal_voter:
+        class: App\Security\Authorization\Voter\OldProposalVoter
         public: false
         tags:
             - { name: security.voter }

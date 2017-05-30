@@ -3,16 +3,20 @@ proposal_show:
     defaults: { _controller: 'App:Proposal:show'}
 
 proposal_add:
-    path: /add/{themeSlug}
+    path: /add
     defaults: { _controller: 'App:Proposal:add' }
-
-proposal_delete:
-    path: /delete/{slug}
-    defaults: { _controller: 'App:Proposal:delete' }
 
 proposal_edit:
     path: /edit/{slug}
     defaults: { _controller: 'App:Proposal:edit' }
+
+proposal_publish:
+    path: /publish/{slug}
+    defaults: { _controller: 'App:Proposal:publish' }
+
+proposal_delete:
+    path: /delete/{slug}
+    defaults: { _controller: 'App:Proposal:delete' }
 
 proposal_support:
     path: /support/{slug}
@@ -29,10 +33,6 @@ proposal_oppose:
 proposal_removeoppose:
     path: /removeoppose/{slug}
     defaults: { _controller: 'App:Proposal:removeOppose' }
-
-proposal_removesideauthor:
-    path: /removesideauthor/{slug}
-    defaults: { _controller: 'App:Proposal:removeSideAuthor' }
 
 proposal_discussions:
     path: /{slug}/discussions

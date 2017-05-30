@@ -1,28 +1,30 @@
 <?php
 
-namespace App\Form;
+namespace App\Form\Proposal;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use App\Entity\Proposal;
 
 class EditProposalType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('file')
             ->add('title', 'text')
             ->add('abstract', 'textarea')
-            ->add('content', 'textarea')
-            ->add('file')
-            ->add('enregistrer', 'submit')
+            ->add('argumentation', 'textarea')
+            ->add('executionProcedure', 'textarea')
+            ->add('save', 'submit')
         ;
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'App\Entity\Proposal',
+            'data_class' => Proposal::class,
         ]);
     }
 

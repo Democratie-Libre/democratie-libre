@@ -2,7 +2,7 @@
 
 {% block page_content %}
 
-    <h1>{{proposal.title}}</h1>
+    <h1>{{ proposal.title }}</h1>
 
     {% if proposal.webPath is empty %}
         <img src="{{ asset('img/science128.png') }}" class="marginAuto">
@@ -10,52 +10,60 @@
         <img src="{{ asset(proposal.webPath) }}" class="marginAuto">
     {% endif %}
 
-    Classée dans la thématique : <a href="{{ path('theme_show', {'slug': proposal.theme.slug}) }}">{{proposal.theme.title}}</a><br>
+    {% if proposal.isPublished %}
+        Classée dans la thématique : <a href="{{ path('theme_show', {'slug': proposal.theme.slug}) }}">{{proposal.theme.title}}</a><br>
+    {% else %}
+        Proposition non-publiée !<br>
+    {% endif %}
+
     Date de création : {{ proposal.creationDate|date('d/m/Y') }}<br>
-    Date de dernière modification : {{ proposal.editDate|date('d/m/Y') }}<br>
-    Auteur principal : {{ proposal.mainAuthor }}<br>
-    {% if proposal.isPublic %}
-        Proposition publique !<br>
+    Date de dernière modification : {{ proposal.lastEditDate|date('d/m/Y') }}<br>
+    Auteur principal : {{ proposal.author }}<br>
+    {% if proposal.isAWiki %}
+        Proposition wiki : tous les utilisateurs peuvent l'éditer !<br>
     {% endif %}
     Abstract : {{ proposal.abstract }}
 
-    <h2>Soutien(s)</h2>
-        {% if is_granted('neutral', proposal) %}
-            <a href="{{ path('proposal_support', {'slug': proposal.slug}) }}" class="btn btn-default">Soutenir cette proposition</a>
-        {% elseif is_granted('supporter', proposal) %}
-            <a href="{{ path('proposal_removesupport', {'slug': proposal.slug}) }}" class="btn btn-default">Ne plus soutenir cette proposition</a>
-        {% endif %}
+    {% if proposal.isPublished %}
+        <h2>Soutien(s)</h2>
+            {% if is_granted('neutral', proposal) %}
+                <a href="{{ path('proposal_support', {'slug': proposal.slug}) }}" class="btn btn-default">Soutenir cette proposition</a>
+            {% elseif is_granted('supporter', proposal) %}
+                <a href="{{ path('proposal_removesupport', {'slug': proposal.slug}) }}" class="btn btn-default">Ne plus soutenir cette proposition</a>
+            {% endif %}
 
-    <p>
-        {% if proposal.supportiveUsers is empty %}
-            <p>Cette proposition n'a pas de soutien</p>
-        {% else%}
-            {% for user in proposal.supportiveUsers %}
-                {{ user }}
-            {% endfor %}
-        {% endif %}
-    </p>
+        <p>
+            {% if proposal.supporters is empty %}
+                <p>Cette proposition n'a pas de soutien</p>
+            {% else%}
+                {% for user in proposal.supporters %}
+                    {{ user }}
+                {% endfor %}
+            {% endif %}
+        </p>
 
-    <h2>Contestataire(s)</h2>
-        {% if is_granted('neutral', proposal) %}
-            <a href="{{ path('proposal_oppose', {'slug': proposal.slug}) }}" class="btn btn-default">Contester cette proposition</a>
-        {% elseif is_granted('opponent', proposal) %}
-            <a href="{{ path('proposal_removeoppose', {'slug': proposal.slug}) }}" class="btn btn-default">Ne plus contester cette proposition</a>
-        {% endif %}
+        <h2>Contestataire(s)</h2>
+            {% if is_granted('neutral', proposal) %}
+                <a href="{{ path('proposal_oppose', {'slug': proposal.slug}) }}" class="btn btn-default">Contester cette proposition</a>
+            {% elseif is_granted('opponent', proposal) %}
+                <a href="{{ path('proposal_removeoppose', {'slug': proposal.slug}) }}" class="btn btn-default">Ne plus contester cette proposition</a>
+            {% endif %}
 
-    <p>
-        {% if proposal.opposedUsers is empty %}
-            <p>Cette proposition n'a pas de contestataire</p>
-        {% else%}
-            {% for user in proposal.opposedUsers %}
-                {{ user }}
-            {% endfor %}
-        {% endif %}
-    </p>
+        <p>
+            {% if proposal.opponents is empty %}
+                <p>Cette proposition n'a pas de contestataire</p>
+            {% else%}
+                {% for user in proposal.opponents %}
+                    {{ user }}
+                {% endfor %}
+            {% endif %}
+        </p>
+    {% endif %}
 
     <div class="container">
         <ul class="nav nav-tabs">
-            <li class="active"><a data-toggle="tab" href="#content">Contenu</a></li>
+            <li class="active"><a data-toggle="tab" href="#argumentation">Argumentation</a></li>
+            <li><a data-toggle="tab" href="#executionProcedure">Procédure d'exécution</a></li>
             <li><a data-toggle="tab" href="#discussion">Discussions</a></li>
             <li><a data-toggle="tab" href="#history">Historique</a></li>
             {% if is_granted('edit', proposal) %}
@@ -63,9 +71,13 @@
             {% endif %}
         </ul>
         <div class="tab-content">
-            <div id="content" class="tab-pane fade in active">
-                <h2>Contenu</h2>
-                {{ proposal.content }}
+            <div id="argumentation" class="tab-pane fade in active">
+                <h2>Argumentation</h2>
+                {{ proposal.argumentation }}
+            </div>
+            <div id="executionProcedure" class="tab-pane fade">
+                <h2>Procédure d'exécution</h2>
+                {{ proposal.executionProcedure }}
             </div>
             <div id="discussion" class="tab-pane fade">
                 <h2>Discussions</h2>
@@ -75,16 +87,16 @@
                     <p>Pas de discussion !</p>
                 {% endfor %}
                 {% if is_granted('ROLE_USER') %}
-                    <a href="{{ path('public_discussion_add_to_proposal', {'slug': proposal.slug}) }}">Ouvrir une discussion</a>
+                    <a href="{{ path('public_discussion_add_to_proposal', {'slug': proposal.slug}) }}" class="btn btn-default">Ouvrir une discussion</a>
                 {% endif %}
             </div>
             <div id="history" class="tab-pane fade">
                 <h2>Historique</h2>
                 <p>Version actuelle : {{ proposal.versionNumber }}</p>
 
-                {% for version in proposal.versions %}
+                {% for oldProposal in proposal.history %}
                     <p>
-                        <a href="{{ path('proposalversion_show', {'slug': version.slug}) }}"> version {{ version.versionNumber }}</a> par {{ version.modifyingAuthor.username }} {{ version.date|date('d/m/Y') }}<br>
+                        <a href="{{ path('old_proposal_show', {'slug': oldProposal.slug}) }}"> version {{ oldProposal.oldVersionNumber }}</a> par {{ oldProposal.oldAuthor.username }} {{ oldProposal.snapDate|date('d/m/Y') }}<br>
                     </p>
                 {% else %}
                     <p>Pas d'historique !</p>
@@ -93,9 +105,12 @@
             {% if is_granted('edit', proposal) %}
                 <div id="administration" class="tab-pane fade">
                     <h2>Administration</h2>
-                    <a href="{{ path('proposal_edit', {'slug': proposal.slug}) }}">Modifier cette proposition</a><br>
+                    <a href="{{ path('proposal_edit', {'slug': proposal.slug}) }}" class="btn btn-default">Modifier cette proposition</a><br>
+                    {% if is_granted('author', proposal) and not proposal.isPublished %}
+                        <a href="{{ path('proposal_publish', {'slug': proposal.slug}) }}" class="btn btn-default">Publier cette proposition</a><br>
+                    {% endif %}
                     {% if is_granted('ROLE_ADMIN') %}
-                        <a href="{{ path('proposal_delete', {'slug': proposal.slug}) }}">Supprimer cette proposition</a>
+                        <a href="{{ path('proposal_delete', {'slug': proposal.slug}) }}" class="btn btn-default">Supprimer cette proposition</a>
                     {% endif %}
                 </div>
             {% endif %}

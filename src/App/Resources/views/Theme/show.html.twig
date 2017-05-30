@@ -40,6 +40,7 @@
                         <a href="{{ path('proposal_show', {'slug': proposal.slug}) }}">{{ proposal.title }}</a><br>
                     {% endfor %}
                 {% endif %}
+                <a href="{{ path('proposal_add', {'themeSlug': theme.slug}) }}" class="btn btn-default">Ajouter une proposition</a>
             </div>
             <div id="children" class="tab-pane fade">
                 <h2>Thématiques filles</h2>
@@ -50,6 +51,7 @@
                         {{ tree(theme)|raw }}
                     </ul>
                 {% endif %}
+                <a href="{{ path('theme_add', {'slug': theme.slug}) }}" class="btn btn-default">Ajouter une thématique fille</a><br>
             </div>
             <div id="discussions" class="tab-pane fade">
                 <h2>Discussions</h2>
@@ -65,8 +67,7 @@
             {% if is_granted('ROLE_ADMIN') %}
                 <div id="administration" class="tab-pane fade">
                     <h2>Administration</h2>
-                    <a href="{{ path('theme_add', {'slug': theme.slug}) }}" class="btn btn-default">Ajouter une thématique fille</a><br>
-                    <a href="{{ path('theme_edit', {'slug': theme.slug}) }}" class="btn btn-default">Modifier cette thématique</a><br>
+                    <a href="{{ path('theme_edit', {'slug': theme.slug}) }}" class="btn btn-default">Éditer cette thématique</a><br>
                     {% if theme.isEmpty %}
                         <a href="{{ path('theme_delete', {'slug': theme.slug}) }}" class="btn btn-default">Supprimer cette thématique</a><br>
                     {% endif %}

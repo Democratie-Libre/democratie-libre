@@ -11,14 +11,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity
- * @UniqueEntity(fields="slug")
- * @UniqueEntity(fields="title", message="Ce titre est déjà attribué")
+ * @UniqueEntity(fields={"slug","title"})
  * @ORM\HasLifecycleCallbacks
  */
 class Proposal
 {
     /**
-     * @ORM\Column(type="integer", unique=true)
+     * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
@@ -32,26 +31,13 @@ class Proposal
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Assert\Length(
-     *      min = "2",
-     *      max = "255",
-     *      minMessage = "Votre titre doit au moins contenir {{ limit }} caractères",
-     *      maxMessage = "Votre titre ne doit pas contenir plus de {{ limit }} caractères"
-     * )
      */
     private $title;
 
     /**
-     * @ORM\Column(type="string", length=255, unique=true)
-     * @Assert\NotBlank(message="Vous devez faire un résumé de votre proposition")
+     * @ORM\Column(type="string", length=255)
      */
     private $abstract;
-
-    /**
-     * @ORM\Column(type="text")
-     * @Assert\NotBlank(message="N'oubliez pas de renseigner le contenu de votre proposition")
-     */
-    private $content;
 
     /**
      * @ORM\Column(type="datetime")
@@ -63,66 +49,38 @@ class Proposal
      * @ORM\Column(type="datetime")
      * @Assert\DateTime()
      */
-    private $editDate;
+    private $lastEditDate;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Theme", inversedBy="proposals", cascade={"persist"})
-     * @Assert\Valid()
+     * @ORM\Column(type="text")
      */
-    private $theme;
+    private $argumentation;
 
     /**
-     * The main author can hire/fire side authors and edit the proposal.
-     *
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="mainProposals", cascade={"persist"})
-     * @Assert\Valid()
+     * @ORM\Column(type="text")
      */
-    private $mainAuthor;
-
-    /**
-     * The side authors can edit the proposal.
-     *
-     * @ORM\ManyToMany(targetEntity="User", inversedBy="sideProposals", cascade={"persist"})
-     * @ORM\JoinTable(name="proposals_sideAuthors")
-     * @Assert\Valid()
-     */
-    private $sideAuthors;
-
-    /**
-     * If the proposal is public any user can edit the proposal.
-     *
-     * @ORM\Column(type="boolean")
-     */
-    private $isPublic;
-
-    /**
-     * Users that claim their support to the proposal.
-     *
-     * @ORM\ManyToMany(targetEntity="User", inversedBy="supportedProposals", cascade={"persist"})
-     * @ORM\JoinTable(name="proposals_supportiveUsers")
-     * @Assert\Valid()
-     */
-    private $supportiveUsers;
-
-    /**
-     * Users that claim their opposition to the proposal.
-     *
-     * @ORM\ManyToMany(targetEntity="User", inversedBy="opposedProposals", cascade={"persist"})
-     * @ORM\JoinTable(name="proposals_opposedUsers")
-     * @Assert\Valid()
-     */
-    private $opposedUsers;
-
-    /**
-     * @ORM\OneToMany(targetEntity="ProposalVersion", mappedBy="proposal", cascade={"persist", "remove"})
-     * @Assert\Valid()
-     */
-    private $versions;
+    private $executionProcedure;
 
     /**
      * @ORM\Column(type="integer")
      */
     private $versionNumber;
+
+    /**
+     * If the proposal is published it is classified in a theme and visible by all the users.
+     * The author is the only one that can publish it.
+     *
+     * @ORM\Column(type="boolean")
+     */
+    private $isPublished;
+
+    /**
+     * If the proposal is a wiki, every user can edit it.
+     * The author is the only one that can make it a wiki.
+     *
+     * @ORM\Column(type="boolean")
+     */
+    private $isAWiki;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -149,6 +107,44 @@ class Proposal
     private $file;
 
     /**
+     * @ORM\ManyToOne(targetEntity="Theme", inversedBy="proposals", cascade={"persist"})
+     * @Assert\Valid()
+     */
+    private $theme;
+
+    /**
+     * The author is initially the creator of the proposal.
+     *
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="proposals", cascade={"persist"})
+     * @Assert\Valid()
+     */
+    private $author;
+
+    /**
+     * Users that claim their support to the proposal.
+     *
+     * @ORM\ManyToMany(targetEntity="User", inversedBy="supportedProposals", cascade={"persist"})
+     * @ORM\JoinTable(name="proposals_supporters")
+     * @Assert\Valid()
+     */
+    private $supporters;
+
+    /**
+     * Users that claim their opposition to the proposal.
+     *
+     * @ORM\ManyToMany(targetEntity="User", inversedBy="opposedProposals", cascade={"persist"})
+     * @ORM\JoinTable(name="proposals_opposents")
+     * @Assert\Valid()
+     */
+    private $opponents;
+
+    /**
+     * @ORM\OneToMany(targetEntity="OldProposal", mappedBy="recordedProposal", cascade={"persist", "remove"})
+     * @Assert\Valid()
+     */
+    private $history;
+
+    /**
      * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="proposal")
      * @Assert\Valid()
      */
@@ -157,23 +153,17 @@ class Proposal
     public function __construct()
     {
         $this->versionNumber = 1;
-        $this->sideAuthors = new ArrayCollection();
-        $this->supportiveUsers = new ArrayCollection();
-        $this->opposedUsers = new ArrayCollection();
-        $this->versions = new ArrayCollection();
-        $this->discussions = new ArrayCollection();
+        $this->isPublished   = false;
+        $this->isAWiki       = false;
+        $this->supporters    = new ArrayCollection();
+        $this->opponents     = new ArrayCollection();
+        $this->oldProposals  = new ArrayCollection();
+        $this->discussions   = new ArrayCollection();
     }
 
     public function getId()
     {
         return $this->id;
-    }
-
-    public function setSlug($slug)
-    {
-        $this->slug = $slug;
-
-        return $this;
     }
 
     public function getSlug()
@@ -205,18 +195,6 @@ class Proposal
         return $this->abstract;
     }
 
-    public function setContent($content)
-    {
-        $this->content = $content;
-
-        return $this;
-    }
-
-    public function getContent()
-    {
-        return $this->content;
-    }
-
     /**
      * @ORM\PrePersist()
      */
@@ -236,16 +214,81 @@ class Proposal
      * @ORM\PrePersist()
      * @ORM\PreUpdate()
      */
-    public function setEditDate()
+    public function setLastEditDate()
     {
-        $this->editDate = new \Datetime();
+        $this->lastEditDate = new \Datetime();
 
         return $this;
     }
 
-    public function getEditDate()
+    public function getLastEditDate()
     {
-        return $this->editDate;
+        return $this->lastEditDate;
+    }
+
+    public function setArgumentation($argumentation)
+    {
+        $this->argumentation = $argumentation;
+
+        return $this;
+    }
+
+    public function getArgumentation()
+    {
+        return $this->argumentation;
+    }
+
+    public function setExecutionProcedure($executionProcedure)
+    {
+        $this->executionProcedure = $executionProcedure;
+
+        return $this;
+    }
+
+    public function getExecutionProcedure()
+    {
+        return $this->executionProcedure;
+    }
+
+    public function setVersionNumber($number)
+    {
+        $this->versionNumber = $number;
+
+        return $this;
+    }
+
+    public function getVersionNumber()
+    {
+        return $this->versionNumber;
+    }
+
+    public function setIsPublished($isPublished)
+    {
+        $this->isPublished = $isPublished;
+
+        return $this;
+    }
+
+    public function isPublished()
+    {
+        return $this->isPublished;
+    }
+
+    public function setIsAWiki($isAWiki = true)
+    {
+        $this->isAWiki = $isAWiki;
+
+        if ($isAWiki) {
+            $this->author->removeProposal($this);
+            $this->author = null;
+        }
+
+        return $this;
+    }
+
+    public function isAWiki()
+    {
+        return $this->isAWiki;
     }
 
     public function setTheme(Theme $theme)
@@ -265,161 +308,77 @@ class Proposal
         return $this->theme;
     }
 
-    public function setMainAuthor(User $user = null)
+    public function setAuthor(User $user = null)
     {
-        if ($this->mainAuthor) {
-            $this->mainAuthor->removeMainProposal($this);
+        if ($this->author) {
+            $this->author->removeProposal($this);
         }
 
-        $this->mainAuthor = $user;
+        $this->author = $user;
         if ($user) {
-            $user->addMainProposal($this);
+            $user->addProposal($this);
         }
 
         return $this;
     }
 
-    public function removeMainAuthor()
+    public function getAuthor()
     {
-        if ($this->mainAuthor) {
-            $this->mainAuthor->removeMainProposal($this);
-        }
+        return $this->author;
+    }
 
-        $this->mainAuthor = null;
+    public function addSupporter(User $supporter)
+    {
+        $this->supporters->add($supporter);
+        $supporter->addSupportedProposal($this);
 
         return $this;
     }
 
-    public function getMainAuthor()
+    public function removeSupporter(User $supporter)
     {
-        return $this->mainAuthor;
-    }
-
-    public function addSideAuthor(User $sideAuthor)
-    {
-        $this->sideAuthors->add($sideAuthor);
-        $sideAuthor->addSideProposal($this);
+        $this->supporters->removeElement($supporter);
+        $supporter->removeSupportedProposal($this);
 
         return $this;
     }
 
-    public function removeSideAuthor(User $sideAuthor)
+    public function getSupporters()
     {
-        $this->sideAuthors->removeElement($sideAuthor);
-        $sideAuthor->removeSideProposal($this);
+        return $this->supporters;
+    }
+
+    public function addOpponent(User $opponent)
+    {
+        $this->opponents->add($opponent);
+        $opponent->addOpposedProposal($this);
 
         return $this;
     }
 
-    public function getSideAuthors()
+    public function removeOpponent(User $opponent)
     {
-        return $this->sideAuthors;
-    }
-
-    /**
-     * @ORM\PrePersist()
-     * @ORM\PreUpdate()
-     */
-    public function setIsPublic()
-    {
-        if (($this->mainAuthor == null) and ($this->sideAuthors->isEmpty())) {
-            $this->isPublic = true;
-        } else {
-            $this->isPublic = false;
-        }
+        $this->opponents->removeElement($opponent);
+        $opponent->removeOpposedProposal($this);
 
         return $this;
     }
 
-    public function isPublic()
+    public function getOpponents()
     {
-        return $this->isPublic;
+        return $this->opponents;
     }
 
-    public function addSupportiveUser(User $supportiveUser)
+    public function addToHistory(OldProposal $oldProposal)
     {
-        $this->supportiveUsers->add($supportiveUser);
-        $supportiveUser->addSupportedProposal($this);
+        $this->history->add($oldProposal);
 
         return $this;
     }
 
-    public function removeSupportiveUser(User $supportiveUser)
+    public function getHistory()
     {
-        $this->supportiveUsers->removeElement($supportiveUser);
-        $supportiveUser->removeSupportedProposal($this);
-
-        return $this;
-    }
-
-    public function getSupportiveUsers()
-    {
-        return $this->supportiveUsers;
-    }
-
-    public function addOpposedUser(User $opposedUser)
-    {
-        $this->opposedUsers->add($opposedUser);
-        $opposedUser->addOpposedProposal($this);
-
-        return $this;
-    }
-
-    public function removeOpposedUser(User $opposedUser)
-    {
-        $this->opposedUsers->removeElement($opposedUser);
-        $opposedUser->removeOpposedProposal($this);
-
-        return $this;
-    }
-
-    public function getOpposedUsers()
-    {
-        return $this->opposedUsers;
-    }
-
-    public function addVersion(ProposalVersion $version)
-    {
-        $this->versions->add($version);
-
-        return $this;
-    }
-
-    public function removeVersion(ProposalVersion $version)
-    {
-        $this->versions->removeElement($version);
-
-        return $this;
-    }
-
-    public function getVersions()
-    {
-        return $this->versions;
-    }
-
-    public function setVersionNumber($number)
-    {
-        $this->versionNumber = $number;
-
-        return $this;
-    }
-
-    public function getVersionNumber()
-    {
-        return $this->versionNumber;
-    }
-
-    public function editFromDraft(ProposalDraft $proposalDraft)
-    {
-        $this
-            ->setTitle($proposalDraft->getTitle())
-            ->setAbstract($proposalDraft->getAbstract())
-            ->setContent($proposalDraft->getContent())
-            ->setMainAuthor($proposalDraft->getMainAuthor())
-        ;
-        foreach ($proposalDraft->getSideAuthors() as $sideAuthor) {
-            $this->addSideAuthor($sideAuthor);
-        }
+        return $this->history;
     }
 
     public function addDiscussion(PublicDiscussion $discussion)

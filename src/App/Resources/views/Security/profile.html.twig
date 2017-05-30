@@ -24,7 +24,7 @@
             <ul class="nav nav-tabs">
                 <li class="active"><a data-toggle="tab" href="#private_discussions">Messagerie</a></li>
                 <li ><a data-toggle="tab" href="#followed_discussions">Discussions suivies</a></li>
-                <li ><a data-toggle="tab" href="#proposals">Propositions</a></li>
+                <li ><a data-toggle="tab" href="#programme">Programme</a></li>
             </ul>
             <div class="tab-content">
                 <div id="private_discussions" class="tab-pane fade in active">
@@ -52,30 +52,25 @@
                         Pas de discussion suivie. 
                     {% endfor %}
                 </div>
-                <div id="proposals" class="tab-pane fade">
-                    <h2>Propositions publiées</h2>
-                    {% for proposal in app.user.mainProposals %}
+                <div id="programme" class="tab-pane fade">
+                    <h2>Propositions personnelles</h2>
+                    {% for proposal in app.user.proposals %}
                         <a href="{{ path('proposal_show', {'slug': proposal.slug}) }}">{{ proposal.title }}</a><br>
                     {% else %}
-                        <p>Pas de publication</p>
+                        <p>Pas de proposition personnelle</p>
                     {% endfor %}
-                    <h2>Brouillons</h2>
-                    {% for draft in app.user.mainProposalDrafts %}
-                        <a href="{{ path('proposal_draft_show', {'slug': draft.slug}) }}">{{ draft.title }}</a><br>
-                    {% else %}
-                        <p>Pas de brouillon</p>
-                    {% endfor %}
+                    <li><a href="{{ path('proposal_add') }}" class="btn btn-default">Rédiger une proposition</a></li>
                     <h2>Propositions supportées</h2>
                     {% for proposal in app.user.supportedProposals %}
                         <a href="{{ path('proposal_show', {'slug': proposal.slug}) }}">{{ proposal.title }}</a><br>
                     {% else %}
-                        <p>Pas de proposition supportées</p>
+                        <p>Pas de proposition supportée</p>
                     {% endfor %}
                     <h2>Propositions contestées</h2>
                     {% for proposal in app.user.opposedProposals %}
                         <a href="{{ path('proposal_show', {'slug': proposal.slug}) }}">{{ proposal.title }}</a><br>
                     {% else %}
-                        <p>Pas de proposition contestées</p>
+                        <p>Pas de proposition contestée</p>
                     {% endfor %}
                 </div>
             </div>
