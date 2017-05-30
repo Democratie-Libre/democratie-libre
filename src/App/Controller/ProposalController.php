@@ -7,7 +7,6 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use App\Entity\Proposal;
-use App\Entity\ProposalComment;
 use App\Entity\ProposalVersion;
 use App\Form\EditProposalType;
 use App\Form\EditProposalMainAuthorType;
@@ -21,30 +20,6 @@ class ProposalController extends Controller
 
         if (null === $proposal) {
             throw $this->createNotFoundException();
-        }
-
-        $user = $this->getUser();
-
-        if ($user instanceof UserInterface) {
-            $comment = new ProposalComment();
-            $form    = $this->createForm(new ProposalCommentType(), $comment);
-            $form->handleRequest($request);
-
-            if ($form->isValid()) {
-                $comment->setAuthor($user)->setProposal($proposal);
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($comment);
-                $em->flush();
-
-                return $this->redirect($this->generateUrl('proposal_show', [
-                    'slug' => $proposal->getSlug(),
-                ]));
-            }
-
-            return $this->render('App:Proposal:show.html.twig', [
-                'proposal' => $proposal,
-                'form'     => $form->createView(),
-            ]);
         }
 
         return $this->render('App:Proposal:show.html.twig', [
@@ -266,5 +241,20 @@ class ProposalController extends Controller
         return $this->redirect($this->generateUrl('proposal_show', [
             'slug' => $proposal->getSlug(),
         ]));
+    }
+
+    public function showDiscussionsAction(Request $request, $slug)
+    {
+        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+
+        if (null === $proposal) {
+            throw $this->createNotFoundException();
+        }
+
+        $discussions = $this->getDoctrine()->getRepository('App:Discussion')->findByProposal($proposal);
+
+        return $this->render('App:Proposal:discussions.html.twig', [
+            'discussions' => $discussions,
+        ]);
     }
 }

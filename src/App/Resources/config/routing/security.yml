@@ -27,3 +27,7 @@ password_edit:
 avatar_edit:
     path: /avatar/edit
     defaults: { _controller: App:Security:avatarEdit }
+
+profile_discussions:
+    path: /profile/discussions
+    defaults: { _controller: App:Security:profileDiscussions }

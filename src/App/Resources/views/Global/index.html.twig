@@ -2,21 +2,11 @@
 
 {% block page_content %}
 
-<h1>Racines de l'arbre</h1>
+    <h1>Projet dL</h1>
 
-{% for root in roots %}
-    <ul class="tree">
-        {{ tree(root)|raw }}
-    </ul>
-{% else %}
-    Pas de racine !
-{% endfor %}
-
-<hr>
-
-{% if is_granted('ROLE_ADMIN') %}
-	<a href="{{ path('theme_addroot')}}">Ajouter une racine</a>
-{% endif %}
+    <p>
+        Blbllaalallebe lb lte tastireatn.
+    <p>
 
 {% endblock page_content %}
 

@@ -1,0 +1,7 @@
+post_move:
+    path: /move/{id}
+    defaults: { _controller: 'App:Post:move' }
+
+post_delete:
+    path: /delete/{id}
+    defaults: { _controller: 'App:Post:delete' }

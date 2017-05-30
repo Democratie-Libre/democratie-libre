@@ -27,3 +27,15 @@ app_proposaldraft:
 app_message:
     resource: "@App/Resources/config/routing/message.yml"
     prefix: "/message"
+
+app_public_discussion:
+    resource: "@App/Resources/config/routing/public_discussion.yml"
+    prefix: "/public_discussion"
+
+app_private_discussion:
+    resource: "@App/Resources/config/routing/private_discussion.yml"
+    prefix: "/private_discussion"
+
+app_post:
+    resource: "@App/Resources/config/routing/post.yml"
+    prefix: "/post"

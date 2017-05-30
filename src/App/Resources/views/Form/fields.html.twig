@@ -1,16 +1,3 @@
-{% block form_errors %}
-{% spaceless %}
-    {% if errors|length > 0 %}
-        <div id="errors">
-            {% for error in errors %}
-                <div class="alert alert-danger">
-                    {{ error.messagePluralization is null
-                        ? error.messageTemplate|trans(error.messageParameters, 'validators')
-                        : error.messageTemplate|transchoice(error.messagePluralization, error.messageParameters, 'validators')
-                    }}
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-{% endspaceless %}
-{% endblock form_errors %}
+{{ form_start(form) }}
+{{ form_widget(form) }}
+{{ form_end(form) }}

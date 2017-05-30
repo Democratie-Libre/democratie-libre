@@ -20,7 +20,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Theme
 {
     /**
-     * @ORM\Column(name="id", type="integer", unique=true)
+     * @ORM\Column(type="integer", unique=true)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
@@ -33,60 +33,56 @@ class Theme
     private $slug;
 
     /**
-     * @ORM\Column(name="title", type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255, unique=true)
      * @Assert\Length(
      *      min = "2",
-     *      max = "255",
-     *      minMessage = "Votre titre doit au moins contenir {{ limit }} caractères",
-     *      maxMessage = "Votre titre ne doit pas contenir plus de {{ limit }} caractères"
+     *      max = "255"
      * )
      */
     private $title;
 
     /**
-     * @ORM\Column(name="description", type="string", length=255)
+     * @ORM\Column(type="string", length=255)
      * @Assert\Length(
      *      min = "2",
-     *      max = "255",
-     *      minMessage = "Votre description doit au moins contenir {{ limit }} caractères",
-     *      maxMessage = "Votre description ne doit pas contenir plus de {{ limit }} caractères"
+     *      max = "255"
      * )
      */
     private $description;
 
     /**
-     * @ORM\Column(name="creationDate", type="datetime")
+     * @ORM\Column(type="datetime")
      * @Assert\DateTime()
      */
     private $creationDate;
 
     /**
-     * @ORM\Column(name="editDate", type="datetime")
+     * @ORM\Column(type="datetime")
      * @Assert\DateTime()
      */
     private $editDate;
 
     /**
      * @Gedmo\TreeLeft
-     * @ORM\Column(name="lft", type="integer")
+     * @ORM\Column(type="integer")
      */
     private $lft;
 
     /**
      * @Gedmo\TreeLevel
-     * @ORM\Column(name="lvl", type="integer")
+     * @ORM\Column(type="integer")
      */
     private $lvl;
 
     /**
      * @Gedmo\TreeRight
-     * @ORM\Column(name="rgt", type="integer")
+     * @ORM\Column(type="integer")
      */
     private $rgt;
 
     /**
      * @Gedmo\TreeRoot
-     * @ORM\Column(name="root", type="integer", nullable=true)
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $root;
 
@@ -104,12 +100,6 @@ class Theme
      * @Assert\Valid()
      */
     private $children;
-
-    /**
-     * @ORM\OneToMany(targetEntity="ThemeComment", mappedBy="theme")
-     * @Assert\Valid()
-     */
-    private $comments;
 
     /**
      * @ORM\OneToMany(targetEntity="Proposal", mappedBy="theme")
@@ -141,11 +131,17 @@ class Theme
      */
     private $file;
 
+    /**
+     * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="theme")
+     * @Assert\Valid()
+     */
+    private $discussions;
+
     public function __construct()
     {
         $this->children = new ArrayCollection();
-        $this->comments = new ArrayCollection();
         $this->proposals = new ArrayCollection();
+        $this->discussions = new ArrayCollection();
     }
 
     public function getId()
@@ -303,25 +299,6 @@ class Theme
         return $this->children;
     }
 
-    public function addComment(ThemeComment $comment)
-    {
-        $this->comments->add($comment);
-
-        return $this;
-    }
-
-    public function removeComment(ThemeComment $comment)
-    {
-        $this->comments->removeElement($comment);
-
-        return $this;
-    }
-
-    public function getComments()
-    {
-        return $this->comments;
-    }
-
     public function addProposal(Proposal $proposal)
     {
         $this->proposals->add($proposal);
@@ -344,6 +321,25 @@ class Theme
     public function isEmpty()
     {
         return $this->proposals->isEmpty();
+    }
+
+    public function addDiscussion(PublicDiscussion $discussion)
+    {
+        $this->discussions->add($discussion);
+
+        return $this;
+    }
+
+    public function removeDiscussion(PublicDiscussion $discussion)
+    {
+        $this->discussions->removeElement($discussion);
+
+        return $this;
+    }
+
+    public function getDiscussions()
+    {
+        return $this->discussions;
     }
 
     /*****************************************************

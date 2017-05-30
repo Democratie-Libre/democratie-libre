@@ -1,0 +1,51 @@
+public_discussion_show:
+    path: /show/{slug}
+    defaults: { _controller: 'App:PublicDiscussion:show'}
+
+public_discussion_add_to_global_discussions:
+    path: /add_to_global_discussions
+    defaults: { _controller: 'App:PublicDiscussion:addToGlobalDiscussions' }
+
+public_discussion_add_to_theme:
+    path: /add_to_theme/{slug}
+    defaults: { _controller: 'App:PublicDiscussion:addToTheme' }
+
+public_discussion_add_to_proposal:
+    path: /add_to_proposal/{slug}
+    defaults: { _controller: 'App:PublicDiscussion:addToProposal' }
+
+public_discussion_edit:
+    path: /edit/{slug}
+    defaults: { _controller: 'App:PublicDiscussion:edit' }
+
+public_discussion_delete:
+    path: /delete/{slug}
+    defaults: { _controller: 'App:PublicDiscussion:delete' }
+
+public_discussion_move_to_global:
+    path: /move_to_global/{slug}
+    defaults: { _controller: 'App:PublicDiscussion:moveToGlobal' }
+
+public_discussion_move_to_theme:
+    path: /move_to_theme/{slug}
+    defaults: { _controller: 'App:PublicDiscussion:moveToTheme' }
+
+public_discussion_move_to_proposal:
+    path: /move_to_proposal/{slug}
+    defaults: { _controller: 'App:PublicDiscussion:moveToProposal' }
+
+public_discussion_lock:
+    path: /lock/{slug}
+    defaults: { _controller: 'App:PublicDiscussion:lock' }
+
+public_discussion_unlock:
+    path: /unlock/{slug}
+    defaults: { _controller: 'App:PublicDiscussion:unlock' }
+
+public_discussion_follow:
+    path: /follow/{slug}
+    defaults: { _controller: 'App:PublicDiscussion:follow' }
+
+public_discussion_stop_following:
+    path: /stop_following/{slug}
+    defaults: { _controller: 'App:PublicDiscussion:stopFollowing' }

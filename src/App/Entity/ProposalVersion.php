@@ -17,7 +17,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 class ProposalVersion
 {
     /**
-     * @ORM\Column(name="id", type="integer", unique=true)
+     * @ORM\Column(type="integer", unique=true)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
@@ -30,7 +30,7 @@ class ProposalVersion
     private $slug;
 
     /**
-     * @ORM\Column(name="title", type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255, unique=true)
      * @Assert\Length(
      *      min = "2",
      *      max = "255"
@@ -39,19 +39,19 @@ class ProposalVersion
     private $title;
 
     /**
-     * @ORM\Column(name="abstract", type="string", length=255)
+     * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank()
      */
     private $abstract;
 
     /**
-     * @ORM\Column(name="content", type="text")
+     * @ORM\Column(type="text")
      * @Assert\NotBlank(message="N'oubliez pas de renseigner le contenu de votre proposition")
      */
     private $content;
 
     /**
-     * @ORM\Column(name="date", type="datetime")
+     * @ORM\Column(type="datetime")
      * @Assert\DateTime()
      */
     private $date;
@@ -102,7 +102,7 @@ class ProposalVersion
     private $proposal;
 
     /**
-     * @ORM\Column(name="versionnumber", type="integer")
+     * @ORM\Column(type="integer")
      */
     private $versionNumber;
 

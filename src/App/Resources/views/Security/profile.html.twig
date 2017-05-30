@@ -17,97 +17,68 @@
             <li>Email: {{ user.email }}</li>
         </ul>
 
-        <a href="{{ path('email_edit') }}" class="btn btn-default">Modifier mon email</a>
-        <a href="{{ path('password_edit') }}" class="btn btn-default">Modifier mon mot de passe</a>
+        <a href="{{ path('email_edit') }}" class="btn btn-default">Modifier mon email</a><br>
+        <a href="{{ path('password_edit') }}" class="btn btn-default">Modifier mon mot de passe</a><br><br>
 
-        <h3>Mes propositions publiées (auteur principal)</h3>
-
-        {% if app.user.mainProposals|length > 0 %}
-            {% for proposal in app.user.mainProposals %}
-                <a href="{{ path('proposal_show', {'slug': proposal.slug}) }}">{{ proposal.title }}</a><br>
-            {% endfor %}
-        {% else %}
-            <p>Vous n'avez pas publié de proposition</p>
-        {% endif %}
-
-        <h3>Mes brouillons de propositions (auteur principal)</h3>
-
-        {% if app.user.mainProposalDrafts|length > 0 %}
-            {% for proposalDraft in app.user.mainProposalDrafts %}
-                <a href="{{ path('proposaldraft_show', {'slug': proposalDraft.slug}) }}">{{ proposalDraft.title }}</a><br>
-            {% endfor %}
-        {% else %}
-            <p>Vous n'avez pas de brouillon de proposition</p>
-        {% endif %}
-
-        <h3>Les propositions publiées dont je suis auteur secondaire</h3>
-
-        {% if app.user.sideProposals|length > 0 %}
-            {% for proposal in app.user.sideProposals %}
-                <a href="{{ path('proposal_show', {'slug': proposal.slug}) }}">{{ proposal.title }}</a><br>
-            {% endfor %}
-        {% else %}
-            <p>Il n'y a pas de proposition dont vous êtes auteur secondaire</p>
-        {% endif %}
-
-        <h3>Les brouillons de proposition dont je suis auteur secondaire</h3>
-
-        {% if app.user.sideProposalDrafts|length > 0 %}
-            {% for proposalDraft in app.user.sideProposalDrafts %}
-                <a href="{{ path('proposaldraft_show', {'slug': proposalDraft.slug}) }}">{{ proposalDraft.title }}</a><br>
-            {% endfor %}
-        {% else %}
-            <p>Il n'y a pas de brouillon de proposition dont vous êtes auteur secondaire</p>
-        {% endif %}
-
-        <h3>Propositions soutenues</h3>
-
-        {% if app.user.supportedProposals|length > 0 %}
-            {% for proposal in app.user.supportedProposals %}
-                <a href="{{ path('proposal_show', {'slug': proposal.slug}) }}">{{ proposal.title }}</a><br>
-            {% endfor %}
-        {% else %}
-            <p>Vous ne soutenez aucune proposition !</p>
-        {% endif %}
-
-        <h3>Propositions contestées</h3>
-
-        {% if app.user.opposedProposals|length > 0 %}
-            {% for proposal in app.user.opposedProposals %}
-                <a href="{{ path('proposal_show', {'slug': proposal.slug}) }}">{{ proposal.title }}</a><br>
-            {% endfor %}
-        {% else %}
-            <p>Vous ne contestez aucune proposition !</p>
-        {% endif %}
-
-        <h3>Messages reçus non lus</h3>
-
-        {% if not (app.user.unreadMessages is empty) %}
-            {% for message in app.user.unreadMessages %}
-                <a href="{{ path('message_show', {'slug': message.slug}) }}">{{ message.title }}</a><br>
-            {% endfor %}
-        {% else %}
-            <p>Vous n'avez pas de message non lu !</p>
-        {% endif %}
-
-        <h3>Messages reçus lus</h3>
-
-        {% if not (app.user.readMessages is empty) %}
-            {% for message in app.user.readMessages %}
-                <a href="{{ path('message_show', {'slug': message.slug}) }}">{{ message.title }}</a><br>
-            {% endfor %}
-        {% else %}
-            <p>Vous n'avez pas de message lu !</p>
-        {% endif %}
-
-        <h3>Messages envoyés</h3>
-
-        {% if app.user.sentMessages|length > 0 %}
-            {% for message in app.user.sentMessages %}
-                <a href="{{ path('message_show', {'slug': message.slug}) }}">{{ message.title }}</a><br>
-            {% endfor %}
-        {% else %}
-            <p>Vous n'avez pas envoyé de message !</p>
-        {% endif %}
+        <div class="container">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#private_discussions">Messagerie</a></li>
+                <li ><a data-toggle="tab" href="#followed_discussions">Discussions suivies</a></li>
+                <li ><a data-toggle="tab" href="#proposals">Propositions</a></li>
+            </ul>
+            <div class="tab-content">
+                <div id="private_discussions" class="tab-pane fade in active">
+                    <h2>Messagerie</h2>
+                    {% for discussion in app.user.privateDiscussions %}
+                        {% if is_granted('unreader', discussion) %}
+                            Non lu<a href="{{ path('private_discussion_show', {'slug': discussion.slug}) }}">{{ discussion.title }}</a><br>
+                        {% else %}
+                            Lu<a href="{{ path('private_discussion_show', {'slug': discussion.slug}) }}">{{ discussion.title }}</a><br>
+                        {% endif %}
+                    {% else %}
+                        Pas de discussion en cours
+                    {% endfor %}
+                    <li><a href="{{ path('private_discussion_add') }}" class="btn btn-default">Ouvrir une discussion privée</a></li>
+                </div>
+                <div id="followed_discussions" class="tab-pane fade">
+                    <h2>Discussions suivies</h2>
+                    {% for discussion in app.user.followedDiscussions %}
+                        {% if is_granted('unreader', discussion) %}
+                            Non lu<a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}">{{ discussion.title }}</a><br>
+                        {% else %}
+                            Lu<a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}">{{ discussion.title }}</a><br>
+                        {% endif %}
+                    {% else %}
+                        Pas de discussion suivie. 
+                    {% endfor %}
+                </div>
+                <div id="proposals" class="tab-pane fade">
+                    <h2>Propositions publiées</h2>
+                    {% for proposal in app.user.mainProposals %}
+                        <a href="{{ path('proposal_show', {'slug': proposal.slug}) }}">{{ proposal.title }}</a><br>
+                    {% else %}
+                        <p>Pas de publication</p>
+                    {% endfor %}
+                    <h2>Brouillons</h2>
+                    {% for draft in app.user.mainProposalDrafts %}
+                        <a href="{{ path('proposal_draft_show', {'slug': draft.slug}) }}">{{ draft.title }}</a><br>
+                    {% else %}
+                        <p>Pas de brouillon</p>
+                    {% endfor %}
+                    <h2>Propositions supportées</h2>
+                    {% for proposal in app.user.supportedProposals %}
+                        <a href="{{ path('proposal_show', {'slug': proposal.slug}) }}">{{ proposal.title }}</a><br>
+                    {% else %}
+                        <p>Pas de proposition supportées</p>
+                    {% endfor %}
+                    <h2>Propositions contestées</h2>
+                    {% for proposal in app.user.opposedProposals %}
+                        <a href="{{ path('proposal_show', {'slug': proposal.slug}) }}">{{ proposal.title }}</a><br>
+                    {% else %}
+                        <p>Pas de proposition contestées</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
     {% endblock page_content %}
 {% endblock content %}

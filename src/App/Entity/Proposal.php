@@ -18,7 +18,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Proposal
 {
     /**
-     * @ORM\Column(name="id", type="integer", unique=true)
+     * @ORM\Column(type="integer", unique=true)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
@@ -31,7 +31,7 @@ class Proposal
     private $slug;
 
     /**
-     * @ORM\Column(name="title", type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255, unique=true)
      * @Assert\Length(
      *      min = "2",
      *      max = "255",
@@ -42,25 +42,25 @@ class Proposal
     private $title;
 
     /**
-     * @ORM\Column(name="abstract", type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255, unique=true)
      * @Assert\NotBlank(message="Vous devez faire un résumé de votre proposition")
      */
     private $abstract;
 
     /**
-     * @ORM\Column(name="content", type="text")
+     * @ORM\Column(type="text")
      * @Assert\NotBlank(message="N'oubliez pas de renseigner le contenu de votre proposition")
      */
     private $content;
 
     /**
-     * @ORM\Column(name="creationDate", type="datetime")
+     * @ORM\Column(type="datetime")
      * @Assert\DateTime()
      */
     private $creationDate;
 
     /**
-     * @ORM\Column(name="editDate", type="datetime")
+     * @ORM\Column(type="datetime")
      * @Assert\DateTime()
      */
     private $editDate;
@@ -91,7 +91,7 @@ class Proposal
     /**
      * If the proposal is public any user can edit the proposal.
      *
-     * @ORM\Column(name="is_public", type="boolean")
+     * @ORM\Column(type="boolean")
      */
     private $isPublic;
 
@@ -114,19 +114,13 @@ class Proposal
     private $opposedUsers;
 
     /**
-     * @ORM\OneToMany(targetEntity="ProposalComment", mappedBy="proposal", cascade={"persist", "remove"})
-     * @Assert\Valid()
-     */
-    private $comments;
-
-    /**
      * @ORM\OneToMany(targetEntity="ProposalVersion", mappedBy="proposal", cascade={"persist", "remove"})
      * @Assert\Valid()
      */
     private $versions;
 
     /**
-     * @ORM\Column(name="versionnumber", type="integer")
+     * @ORM\Column(type="integer")
      */
     private $versionNumber;
 
@@ -154,6 +148,12 @@ class Proposal
      */
     private $file;
 
+    /**
+     * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="proposal")
+     * @Assert\Valid()
+     */
+    private $discussions;
+
     public function __construct()
     {
         $this->versionNumber = 1;
@@ -161,6 +161,7 @@ class Proposal
         $this->supportiveUsers = new ArrayCollection();
         $this->opposedUsers = new ArrayCollection();
         $this->versions = new ArrayCollection();
+        $this->discussions = new ArrayCollection();
     }
 
     public function getId()
@@ -377,25 +378,6 @@ class Proposal
         return $this->opposedUsers;
     }
 
-    public function addComment(ProposalComment $comment)
-    {
-        $this->comments->add($comment);
-
-        return $this;
-    }
-
-    public function removeComment(ProposalComment $comment)
-    {
-        $this->comments->removeElement($comment);
-
-        return $this;
-    }
-
-    public function getComments()
-    {
-        return $this->comments;
-    }
-
     public function addVersion(ProposalVersion $version)
     {
         $this->versions->add($version);
@@ -438,6 +420,25 @@ class Proposal
         foreach ($proposalDraft->getSideAuthors() as $sideAuthor) {
             $this->addSideAuthor($sideAuthor);
         }
+    }
+
+    public function addDiscussion(PublicDiscussion $discussion)
+    {
+        $this->discussions->add($discussion);
+
+        return $this;
+    }
+
+    public function removeDiscussion(PublicDiscussion $discussion)
+    {
+        $this->discussions->removeElement($discussion);
+
+        return $this;
+    }
+
+    public function getDiscussions()
+    {
+        return $this->discussions;
     }
 
     /*****************************************************
