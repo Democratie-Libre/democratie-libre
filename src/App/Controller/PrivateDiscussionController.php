@@ -62,7 +62,7 @@ class PrivateDiscussionController extends Controller
         return $this->render('App:PrivateDiscussion:show.html.twig', [
             'discussion' => $discussion,
             'form'       => $form->createView(),
-            ]);
+        ]);
     }
 
     /**

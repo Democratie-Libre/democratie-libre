@@ -80,9 +80,10 @@ class AbstractDiscussion
 
     public function __construct()
     {
-        $this->locked = false;
-        $this->posts  = new ArrayCollection();
-        $this->unreaders = new ArrayCollection();
+        $this->creationDate = new \Datetime();
+        $this->locked       = false;
+        $this->posts        = new ArrayCollection();
+        $this->unreaders    = new ArrayCollection();
     }
 
     public function setSlug($slug)
@@ -119,16 +120,6 @@ class AbstractDiscussion
     public function getAbstract()
     {
         return $this->abstract;
-    }
-
-    /**
-     * @ORM\PrePersist()
-     */
-    public function setCreationDate()
-    {
-        $this->creationDate = new \Datetime();
-
-        return $this;
     }
 
     public function getCreationDate()

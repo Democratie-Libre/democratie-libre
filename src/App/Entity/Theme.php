@@ -139,9 +139,10 @@ class Theme
 
     public function __construct()
     {
-        $this->children = new ArrayCollection();
-        $this->proposals = new ArrayCollection();
-        $this->discussions = new ArrayCollection();
+        $this->creationDate = new \Datetime();
+        $this->children     = new ArrayCollection();
+        $this->proposals    = new ArrayCollection();
+        $this->discussions  = new ArrayCollection();
     }
 
     public function getId()
@@ -183,16 +184,6 @@ class Theme
     public function getDescription()
     {
         return $this->description;
-    }
-
-    /**
-     * @ORM\PrePersist()
-     */
-    public function setCreationDate()
-    {
-        $this->creationDate = new \Datetime();
-
-        return $this;
     }
 
     public function getCreationDate()

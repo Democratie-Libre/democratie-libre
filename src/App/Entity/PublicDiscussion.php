@@ -12,6 +12,10 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class PublicDiscussion extends AbstractDiscussion
 {
+    const GLOBAL_DISCUSSION   = 'global_discussion';
+    const THEME_DISCUSSION    = 'theme_discussion';
+    const PROPOSAL_DISCUSSION = 'proposal_discussion';
+
     /**
      * A public discussion can be of three different types : GLOBAL_DISCUSSION, THEME_DISCUSSION or PROPOSAL_DISCUSSION
      *
@@ -41,7 +45,7 @@ class PublicDiscussion extends AbstractDiscussion
     public function __construct()
     {
         parent::__construct();
-        $this->followers  = new ArrayCollection();
+        $this->followers = new ArrayCollection();
     }
 
     public function setType($type)
@@ -136,17 +140,17 @@ class PublicDiscussion extends AbstractDiscussion
 
     public function isGlobalDiscussion()
     {
-       return $this->type === 'GLOBAL_DISCUSSION';
+       return $this->type === self::GLOBAL_DISCUSSION;
     }
 
     public function isThemeDiscussion()
     {
-        return $this->type === 'THEME_DISCUSSION';
+        return $this->type === self::THEME_DISCUSSION;
     }
 
     public function isProposalDiscussion()
     {
-        return $this->type === 'PROPOSAL_DISCUSSION';
+        return $this->type === self::PROPOSAL_DISCUSSION;
     }
 
     public function resetUnreaders()

@@ -76,7 +76,7 @@ class PublicDiscussionController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $discussion->setType('GLOBAL_DISCUSSION')
+            $discussion->setType(PublicDiscussion::GLOBAL_DISCUSSION)
                 ->addFollower($this->getUser());
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
@@ -108,7 +108,7 @@ class PublicDiscussionController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $discussion->setType('THEME_DISCUSSION')
+            $discussion->setType(PublicDiscussion::THEME_DISCUSSION)
                 ->setTheme($theme)
                 ->addFollower($this->getUser());
             $em = $this->getDoctrine()->getManager();
@@ -141,7 +141,7 @@ class PublicDiscussionController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $discussion->setType('PROPOSAL_DISCUSSION')
+            $discussion->setType(PublicDiscussion::PROPOSAL_DISCUSSION)
                 ->setProposal($proposal)
                 ->addFollower($this->getUser());
             $em = $this->getDoctrine()->getManager();
@@ -239,7 +239,7 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $discussion->setType('GLOBAL_DISCUSSION')
+        $discussion->setType(PublicDiscussion::GLOBAL_DISCUSSION)
             ->setProposal(null)
             ->setTheme(null);
         $em = $this->getDoctrine()->getManager();
@@ -262,7 +262,7 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $discussion->setType('THEME_DISCUSSION')
+        $discussion->setType(PublicDiscussion::THEME_DISCUSSION)
             ->setProposal(null)
             ->setTheme(null);
         $form = $this->createForm(new SelectThemeType(), $discussion);
@@ -294,7 +294,7 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $discussion->setType('PROPOSAL_DISCUSSION')
+        $discussion->setType(PublicDiscussion::PROPOSAL_DISCUSSION)
             ->setProposal(null)
             ->setTheme(null);
         $form = $this->createForm(new SelectProposalType(), $discussion);

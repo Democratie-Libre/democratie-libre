@@ -152,6 +152,7 @@ class Proposal
 
     public function __construct()
     {
+        $this->creationDate  = new \Datetime();
         $this->versionNumber = 1;
         $this->isPublished   = false;
         $this->isAWiki       = false;
@@ -193,16 +194,6 @@ class Proposal
     public function getAbstract()
     {
         return $this->abstract;
-    }
-
-    /**
-     * @ORM\PrePersist()
-     */
-    public function setCreationDate()
-    {
-        $this->creationDate = new \Datetime();
-
-        return $this;
     }
 
     public function getCreationDate()

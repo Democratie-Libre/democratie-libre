@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use App\Entity\PublicDiscussion;
 
 class GlobalController extends Controller
 {
@@ -20,7 +21,7 @@ class GlobalController extends Controller
 
     public function globalDiscussionsAction()
     {
-        $discussions = $this->getDoctrine()->getRepository('App:PublicDiscussion')->findByType('GLOBAL_DISCUSSION');
+        $discussions = $this->getDoctrine()->getRepository('App:PublicDiscussion')->findByType(PublicDiscussion::GLOBAL_DISCUSSION);
 
         return $this->render('App:Global:global_discussions.html.twig', ['discussions' => $discussions]);
     }

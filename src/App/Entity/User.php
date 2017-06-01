@@ -136,6 +136,7 @@ class User implements UserInterface, \Serializable, HasPassword, HasSalt
 
     public function __construct()
     {
+        $this->registrationDate    = new \Datetime;
         $this->roles               = ['ROLE_USER'];
         $this->banned              = false;
         $this->email               = null;
@@ -180,16 +181,6 @@ class User implements UserInterface, \Serializable, HasPassword, HasSalt
     public function getEmail()
     {
         return $this->email;
-    }
-
-    /**
-     * @ORM\PrePersist()
-     */
-    public function setRegistrationDate()
-    {
-        $this->registrationDate = new \Datetime;
-
-        return $this;
     }
 
     public function getRegistrationDate()
