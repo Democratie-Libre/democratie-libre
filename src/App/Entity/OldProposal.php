@@ -41,8 +41,11 @@ class OldProposal
     private $oldTitle;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="text")
      * @Assert\NotBlank()
+     * @Assert\Length(
+     *      max = 400,
+     * )
      */
     private $oldAbstract;
 
@@ -53,14 +56,9 @@ class OldProposal
     private $snapDate;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
-    private $oldArgumentation;
-
-    /**
-     * @ORM\Column(type="text")
-     */
-    private $oldExecutionProcedure;
+    private $oldMotivation;
 
     /**
      * @ORM\Column(type="integer")
@@ -114,8 +112,7 @@ class OldProposal
         $this->oldTitle              = sprintf('%s_v%s', $proposal->getTitle(), $proposal->getVersionNumber());
         $this->oldAbstract           = $proposal->getAbstract();
         $this->snapDate              = new \Datetime(); 
-        $this->oldArgumentation      = $proposal->getArgumentation();
-        $this->oldExecutionProcedure = $proposal->getExecutionProcedure();
+        $this->oldMotivation         = $proposal->getMotivation();
         $this->oldVersionNumber      = $proposal->getVersionNumber();
         $this->wasPublished          = $proposal->isPublished();
         $this->wasAWiki              = $proposal->isAWiki();
@@ -152,14 +149,9 @@ class OldProposal
         return $this->snapDate;
     }
 
-    public function getOldArgumentation()
+    public function getOldMotivation()
     {
-        return $this->oldArgumentation;
-    }
-
-    public function getOldExecutionProcedure()
-    {
-        return $this->oldExecutionProcedure;
+        return $this->oldMotivation;
     }
 
     public function getOldVersionNumber()

@@ -14,6 +14,8 @@ use App\Form\Discussion\AddPrivateDiscussionType;
 use App\Form\Discussion\EditDiscussionType;
 use App\Form\SelectUserType;
 use App\Form\Discussion\ChangeAdminType;
+use Aptoma\Twig\Extension\MarkdownExtension;
+use Aptoma\Twig\Extension\MarkdownEngine;
 
 class PrivateDiscussionController extends Controller
 {
@@ -32,13 +34,17 @@ class PrivateDiscussionController extends Controller
             throw new AccessDeniedException();
         }
 
+        $engine = new MarkdownEngine\MichelfMarkdownEngine();
+        $twig   = $this->container->get('twig');
+        $twig->addExtension(new MarkdownExtension($engine));
+
         $discussion->removeUnreader($this->getUser());
         $em = $this->getDoctrine()->getManager();
         $em->persist($discussion);
         $em->flush();
 
         if ($discussion->isLocked()) {
-            return $this->render('App:PrivateDiscussion:show.html.twig', [
+            return $this->render('App:Discussion:show_private_discussion.html.twig', [
                 'discussion' => $discussion,
             ]);
         }
@@ -59,7 +65,7 @@ class PrivateDiscussionController extends Controller
             ]));
         }
 
-        return $this->render('App:PrivateDiscussion:show.html.twig', [
+        return $this->render('App:Discussion:show_private_discussion.html.twig', [
             'discussion' => $discussion,
             'form'       => $form->createView(),
         ]);
@@ -86,7 +92,7 @@ class PrivateDiscussionController extends Controller
             ]));
         }
 
-        return $this->render('App:PrivateDiscussion:form.html.twig', [
+        return $this->render('App:Discussion:add_private_discussion.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -119,7 +125,8 @@ class PrivateDiscussionController extends Controller
              ]));
         }
 
-        return $this->render('App:PrivateDiscussion:form.html.twig', [
+        return $this->render('App:Discussion:edit_discussion.html.twig', [
+            'discussion' => $discussion,
             'form' => $form->createView(),
         ]);
     }
@@ -161,7 +168,8 @@ class PrivateDiscussionController extends Controller
              ]));
         }
 
-        return $this->render('App:PrivateDiscussion:form.html.twig', [
+        return $this->render('App:Discussion:add_member.html.twig', [
+            'discussion' => $discussion,
             'form' => $form->createView(),
         ]);
     }
@@ -236,8 +244,9 @@ class PrivateDiscussionController extends Controller
              ]));
         }
 
-        return $this->render('App:PrivateDiscussion:form.html.twig', [
-            'form' => $form->createView(),
+        return $this->render('App:Discussion:change_admin_private_discussion.html.twig', [
+            'discussion' => $discussion,
+            'form'       => $form->createView(),
         ]);
     }
 

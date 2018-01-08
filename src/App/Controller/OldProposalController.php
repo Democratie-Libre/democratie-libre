@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Aptoma\Twig\Extension\MarkdownExtension;
+use Aptoma\Twig\Extension\MarkdownEngine;
 
 class OldProposalController extends Controller
 {
@@ -15,7 +17,11 @@ class OldProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
-        return $this->render('App:OldProposal:show.html.twig', [
+        $engine = new MarkdownEngine\MichelfMarkdownEngine();
+        $twig   = $this->container->get('twig');
+        $twig->addExtension(new MarkdownExtension($engine));
+
+        return $this->render('App:OldProposal:show_old_proposal.html.twig', [
             'oldProposal' => $oldProposal,
         ]);
     }
