@@ -12,6 +12,8 @@ use App\Form\Post\EditPostType;
 use App\Form\Discussion\EditDiscussionType;
 use App\Form\Discussion\SelectThemeType;
 use App\Form\Discussion\SelectProposalType;
+use Aptoma\Twig\Extension\MarkdownExtension;
+use Aptoma\Twig\Extension\MarkdownEngine;
 
 class PublicDiscussionController extends Controller
 {
@@ -23,10 +25,14 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
+        $engine = new MarkdownEngine\MichelfMarkdownEngine();
+        $twig   = $this->container->get('twig');
+        $twig->addExtension(new MarkdownExtension($engine));
+
         $user = $this->getUser();
 
         if (!$user instanceof UserInterface) {
-            return $this->render('App:PublicDiscussion:show.html.twig', [
+            return $this->render('App:Discussion:show_public_discussion.html.twig', [
                 'discussion' => $discussion,
             ]);
         }
@@ -39,7 +45,7 @@ class PublicDiscussionController extends Controller
         }
 
         if ($discussion->isLocked()) {
-            return $this->render('App:PublicDiscussion:show.html.twig', [
+            return $this->render('App:Discussion:show_public_discussion.html.twig', [
                 'discussion' => $discussion,
             ]);
         }
@@ -60,7 +66,7 @@ class PublicDiscussionController extends Controller
             ]));
         }
 
-        return $this->render('App:PublicDiscussion:show.html.twig', [
+        return $this->render('App:Discussion:show_public_discussion.html.twig', [
             'discussion' => $discussion,
             'form'       => $form->createView(),
         ]);
@@ -87,8 +93,9 @@ class PublicDiscussionController extends Controller
             ]));
         }
 
-        return $this->render('App:PublicDiscussion:form.html.twig', [
-            'form' => $form->createView(),
+        return $this->render('App:Discussion:add_global_discussion.html.twig', [
+            'discussion' => $discussion,
+            'form'       => $form->createView(),
         ]);
     }
 
@@ -120,8 +127,9 @@ class PublicDiscussionController extends Controller
             ]));
         }
 
-        return $this->render('App:PublicDiscussion:form.html.twig', [
-            'form' => $form->createView(),
+        return $this->render('App:Discussion:add_theme_discussion.html.twig', [
+            'theme' => $theme,
+            'form'  => $form->createView(),
         ]);
     }
 
@@ -153,8 +161,9 @@ class PublicDiscussionController extends Controller
             ]));
         }
 
-        return $this->render('App:PublicDiscussion:form.html.twig', [
-            'form' => $form->createView(),
+        return $this->render('App:Discussion:add_proposal_discussion.html.twig', [
+            'proposal' => $proposal,
+            'form'     => $form->createView(),
         ]);
     }
 
@@ -182,7 +191,8 @@ class PublicDiscussionController extends Controller
              ]));
         }
 
-        return $this->render('App:PublicDiscussion:form.html.twig', [
+        return $this->render('App:Discussion:edit_discussion.html.twig', [
+            'discussion' => $discussion,
             'form' => $form->createView(),
         ]);
     }
@@ -204,7 +214,7 @@ class PublicDiscussionController extends Controller
             $em->remove($discussion);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('global_discussions'));
+            return $this->redirect($this->generateUrl('global_room'));
         }
 
         if ($discussion->isThemeDiscussion()) {
@@ -278,7 +288,7 @@ class PublicDiscussionController extends Controller
              ]));
         }
 
-        return $this->render('App:PublicDiscussion:form.html.twig', [
+        return $this->render('App:Discussion:form.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -310,7 +320,7 @@ class PublicDiscussionController extends Controller
              ]));
         }
 
-        return $this->render('App:PublicDiscussion:form.html.twig', [
+        return $this->render('App:Discussion:form.html.twig', [
             'form' => $form->createView(),
         ]);
     }

@@ -1,23 +1,37 @@
 {% extends '::layout.html.twig' %}
 
 {% block page_content %}
-    <h1>Racines de l'arbre</h1>
-
-    {% for root in roots %}
-        <ul class="tree">
-            {{ tree(root)|raw }}
-        </ul>
-    {% else %}
-        Pas de racine !
-    {% endfor %}
-
-    <hr>
-
-    {% if is_granted('ROLE_ADMIN') %}
-        <a href="{{ path('theme_addroot')}}">Ajouter une racine</a>
-    {% endif %}
+    <div class="row">
+        {% for root in roots %}
+            <div class="root-frame col-md-4 col-xs-6">
+                <a href="{{ path('theme_show', {'slug': root.slug}) }}" class="root-link">
+                    <div class="root-title row">
+                        {{ root.title }}
+                    </div>
+                    <div class="row">
+                        {% if root.webPath is empty %}
+                            <img src="{{ asset('img/science128.png') }}" class="img-responsive custom-img">
+                        {% else %}
+                            <img src="{{ asset(root.webPath) }}" class="img-responsive custom-img">
+                        {% endif %}
+                    </div>
+                </a>
+                {% if not root.children is empty %}
+                    <div class="btn-group root-btn-group">
+                        <button class="dropdown-toggle root-dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
+                        <ul class="dropdown-menu root-dropdown-menu">
+                            {% for child in root.children %}
+                                <li><a href="{{ path('theme_show', {'slug': child.slug}) }}">{{ child.title }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    <div class="row">
+        {% if is_granted('ROLE_ADMIN') %}
+            <a href="{{ path('theme_addroot')}}" class="btn btn-default custom-admin-btn">Ajouter une racine</a>
+        {% endif %}
+    </div>
 {% endblock page_content %}
-
-{% block javascript %}
-    {{ parent() }}
-{% endblock javascript %}

@@ -2,9 +2,9 @@ index:
     path: /
     defaults: { _controller: 'App:Global:index' }
 
-global_discussions:
-    path: /discussions
-    defaults: { _controller: 'App:Global:globalDiscussions' }
+global_room:
+    path: /global_room
+    defaults: { _controller: 'App:Global:globalRoom' }
 
 roots:
     path: /roots

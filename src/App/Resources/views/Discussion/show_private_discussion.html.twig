@@ -1,0 +1,108 @@
+{% extends '::layout.html.twig' %}
+
+{% block page_content %}
+    <div class="section-header row">
+        <div class="section-header-menu col-md-12 col-xs-12">
+            {% if is_granted('edit', discussion) %}
+                <div class="btn-group custom-btn-group ">
+                    <button class="dropdown-toggle btn btn-default" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
+                    <ul class="dropdown-menu pull-right">
+                        <li><a href="{{ path('private_discussion_edit', {'slug': discussion.slug}) }}">Éditer la discussion</a></li>
+                        {% if is_granted('add_member', discussion) %}
+                            <li><a href="{{ path('private_discussion_add_member', {'slug': discussion.slug}) }}">Ajouter un membre</a></li>
+                        {% endif %}
+                        {% if discussion.locked %}
+                            <li><a href="{{ path('private_discussion_unlock', {'slug': discussion.slug}) }}">Dévérouiller la discussion</a></li>
+                        {% else %}
+                            <li><a href="{{ path('private_discussion_lock', {'slug': discussion.slug}) }}">Vérouiller la discussion</a></li>
+                        {% endif %}
+                        <li><a href="{{ path('private_discussion_delete', {'slug': discussion.slug}) }}">Supprimer la discussion</a></li>
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+        <div class="section-header-title col-md-6 col-xs-6">
+            <div>discussion privée | <a href="{{ path('profile') }}" title="Messagerie"><span class="glyphicon glyphicon-envelope"></span></a></div>
+            <h1>{{ discussion.title }}</h1>
+            {% if discussion.locked %}
+                discussion fermée
+            {% endif %}
+        </div>
+    </div>
+    <div class="section-menu row">
+        <ul>
+            <li class="active"><a data-toggle="tab" href="#discussion">Discussion</a></li>
+            <li><a data-toggle="tab" href="#members">Membres</a></li>
+        </ul>
+    </div>
+    <div class="tab-content">
+        <div id="discussion" class="tab-pane fade in active">
+            <div class="subsection-content col-md-12 col-xs-12">
+                {% for post in discussion.posts %}
+                    <div class="post">
+                        <div class="post-header row">
+                            <span class="post-author col-md-2 col-md-offset-1 col-xs-2 col-xs-offset-1">{{ post.author }}</span>
+                            <span class="col-md-2 col-md-offset-6 col-xs-2 col-xs-offset-6">{{ post.date|date('d/m/Y H:i') }}</span>
+                        </div>
+                        <div class="post-content">
+                            {{ post.content | markdown }}
+                        </div>
+                    </div>
+                {% endfor %}
+
+                {% if form is defined %}
+                    {{ form_start(form, {'attr': {'class': 'post-form'}}) }}
+                        {{ form_errors(form) }}
+                        <div class="form-group row">
+                            {{ form_label(form.content, ' ', {'label_attr': {'class': 'control-label form-label'}}) }}
+                            {{ form_errors(form.content) }}
+                            {{ form_widget(form.content, {'attr': {
+                                'class': 'form-control form-abstract-textarea',
+                                'placeholder' : 'Votre commentaire'
+                                }})
+                            }}
+                        </div>
+                        <div class="form-group row">
+                            {{ form_widget(form.save, {'label': 'Envoyer', 'attr': {'class': 'btn btn-default custom-btn'}}) }}
+                        </div>
+                    {{ form_end(form) }}
+                {% endif %}
+            </div>
+        </div>
+        <div id="members" class="tab-pane fade">
+            <dl class="dl-horizontal">
+                {% for member in discussion.members %}
+                    <dt>
+                        {{ member.username }}
+                    </dt>
+                    <dd>
+                        {% if is_granted('edit', discussion) %}
+                            {% if member == discussion.admin %}
+                                <a href="{{ path('private_discussion_change_admin', {'slug': discussion.slug}) }}">Changer d'administrateur</a>
+                            {% elseif member == app.user %}
+                                <a href="{{ path('private_discussion_remove_member', {'slug': discussion.slug}) }}" class="btn btn-default">Me retirer de la discussion</a>
+                            {% else %}
+                                <a href="{{ path('private_discussion_remove_member', {'discussionSlug': discussion.slug, 'memberId': member.id}) }}">Éjecter de la discussion</a>
+                            {% endif %}
+                        {% elseif member == app.user %}
+                            <a href="{{ path('private_discussion_remove_member', {'discussionSlug': discussion.slug, 'memberId': member.id}) }}">Me retirer de la discussion</a>
+                        {% endif %}
+                        <br>
+                    </dd>
+                {% endfor %}
+            </dl>
+        </div>
+    </div>
+{% endblock page_content %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+    <script>
+        new SimpleMDE({
+            element: document.getElementById("edit_post_content"),
+            spellChecker: false,
+            status: false,
+        });
+    </script>
+{% endblock javascript %}

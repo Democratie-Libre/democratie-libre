@@ -32,19 +32,13 @@ class AbstractDiscussion
     protected $slug;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", unique=true)
+     * @Assert\NotBlank()
      * @Assert\Length(
-     *      min = "2",
-     *      max = "255"
+     *      max = 120,
      * )
      */
     protected $title;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
-     */
-    protected $abstract;
 
     /**
      * @ORM\Column(type="datetime")
@@ -110,18 +104,6 @@ class AbstractDiscussion
         return $this->title;
     }
 
-    public function setAbstract($abstract)
-    {
-        $this->abstract = $abstract;
-
-        return $this;
-    }
-
-    public function getAbstract()
-    {
-        return $this->abstract;
-    }
-
     public function getCreationDate()
     {
         return $this->creationDate;
@@ -177,6 +159,11 @@ class AbstractDiscussion
     public function getPosts()
     {
         return $this->posts;
+    }
+
+    public function getLastPost()
+    {
+        return $this->posts->last();
     }
 
     public function addUnreader(User $unreader)
