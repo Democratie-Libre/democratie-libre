@@ -14,8 +14,6 @@ use App\Form\Discussion\AddPrivateDiscussionType;
 use App\Form\Discussion\EditDiscussionType;
 use App\Form\SelectUserType;
 use App\Form\Discussion\ChangeAdminType;
-use Aptoma\Twig\Extension\MarkdownExtension;
-use Aptoma\Twig\Extension\MarkdownEngine;
 
 class PrivateDiscussionController extends Controller
 {
@@ -33,10 +31,6 @@ class PrivateDiscussionController extends Controller
         if (false === $this->get('security.context')->isGranted('view', $discussion)) {
             throw new AccessDeniedException();
         }
-
-        $engine = new MarkdownEngine\MichelfMarkdownEngine();
-        $twig   = $this->container->get('twig');
-        $twig->addExtension(new MarkdownExtension($engine));
 
         $discussion->removeUnreader($this->getUser());
         $em = $this->getDoctrine()->getManager();

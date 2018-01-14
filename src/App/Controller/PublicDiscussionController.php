@@ -12,8 +12,6 @@ use App\Form\Post\EditPostType;
 use App\Form\Discussion\EditDiscussionType;
 use App\Form\Discussion\SelectThemeType;
 use App\Form\Discussion\SelectProposalType;
-use Aptoma\Twig\Extension\MarkdownExtension;
-use Aptoma\Twig\Extension\MarkdownEngine;
 
 class PublicDiscussionController extends Controller
 {
@@ -24,10 +22,6 @@ class PublicDiscussionController extends Controller
         if (null === $discussion) {
             throw $this->createNotFoundException();
         }
-
-        $engine = new MarkdownEngine\MichelfMarkdownEngine();
-        $twig   = $this->container->get('twig');
-        $twig->addExtension(new MarkdownExtension($engine));
 
         $user = $this->getUser();
 

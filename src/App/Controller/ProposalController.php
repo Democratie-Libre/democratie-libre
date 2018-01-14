@@ -11,8 +11,6 @@ use App\Entity\OldProposal;
 use App\Form\Proposal\EditProposalType;
 use App\Form\Proposal\EditMotivationProposalType;
 use App\Form\Proposal\PublishProposalType;
-use Aptoma\Twig\Extension\MarkdownExtension;
-use Aptoma\Twig\Extension\MarkdownEngine;
 
 class ProposalController extends Controller
 {
@@ -23,10 +21,6 @@ class ProposalController extends Controller
         if (null === $proposal) {
             throw $this->createNotFoundException();
         }
-
-        $engine = new MarkdownEngine\MichelfMarkdownEngine();
-        $twig   = $this->container->get('twig');
-        $twig->addExtension(new MarkdownExtension($engine));
 
         return $this->render('App:Proposal:show_proposal.html.twig', [
             'proposal' => $proposal,
