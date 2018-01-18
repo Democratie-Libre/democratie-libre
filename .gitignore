@@ -10,6 +10,7 @@
 /bin/
 !/bin/install
 /composer.phar
+/composer.lock
 /.idea
 /app/Resources/assets
 /node_modules
@@ -19,5 +20,9 @@
 /web/uploads/themes/images/*
 /web/uploads/users/images/*
 /web/uploads/proposals/images/*
+/web/css/bootstrap.css
+/web/css/bootstrap.min.css
+/web/css/icofont.css
+/web/css/fonts/
 /notes
 /tags

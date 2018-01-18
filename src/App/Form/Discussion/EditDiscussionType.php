@@ -13,7 +13,6 @@ class EditDiscussionType extends AbstractType
     {
         $builder
             ->add('title', 'text')
-            ->add('abstract', 'textarea')
             ->add('save', 'submit')
         ;
     }

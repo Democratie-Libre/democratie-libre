@@ -1,0 +1,105 @@
+{% extends '::layout.html.twig' %}
+
+{% block page_content %}
+    <div class="section-header row">
+        <div class="section-header-menu col-md-12 col-xs-12">
+            {% if is_granted('ROLE_USER') %}
+                <div class="btn-group custom-btn-group ">
+                    <button class="dropdown-toggle btn btn-default" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
+                    <ul class="dropdown-menu pull-right">
+                        {% if is_granted('follow', discussion) %}
+                            <li><a href="{{ path('public_discussion_stop_following', {'slug': discussion.slug}) }}">Ne plus suivre cette discussion</a></li>
+                        {% else %}
+                        <li><a href="{{ path('public_discussion_follow', {'slug': discussion.slug}) }}">Suivre cette discussion</a>
+                        {% endif %}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <li><a href="{{ path('public_discussion_edit', {'slug': discussion.slug}) }}">Éditer la discussion</a></li>
+                            {% if discussion.globalDiscussion %}
+                                <li><a href="{{ path('public_discussion_move_to_theme', {'slug': discussion.slug}) }}">Déplacer vers une thématique</a></li>
+                                <li><a href="{{ path('public_discussion_move_to_proposal', {'slug': discussion.slug}) }}">Déplacer vers une proposition</a></li>
+                            {% elseif discussion.themeDiscussion %}
+                                <li><a href="{{ path('public_discussion_move_to_global', {'slug': discussion.slug}) }}">Déplacer vers les discussions globales</a></li>
+                                <li><a href="{{ path('public_discussion_move_to_proposal', {'slug': discussion.slug}) }}">Déplacer vers une proposition</a></li>
+                            {% elseif discussion.proposalDiscussion %}
+                                <li><a href="{{ path('public_discussion_move_to_global', {'slug': discussion.slug}) }}">Déplacer vers les discussions globales</a></li>
+                                <li><a href="{{ path('public_discussion_move_to_theme', {'slug': discussion.slug}) }}">Déplacer vers une thématique</a></li>
+                            {% endif %}
+                            {% if discussion.locked %}
+                                <li><a href="{{ path('public_discussion_unlock', {'slug': discussion.slug}) }}">Dévérouiller la discussion</a></li>
+                            {% else %}
+                                <li><a href="{{ path('public_discussion_lock', {'slug': discussion.slug}) }}">Vérouiller la discussion</a></li>
+                            {% endif %}
+                            <li><a href="{{ path('public_discussion_delete', {'slug': discussion.slug}) }}">Supprimer la discussion</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+        <div class="section-header-title col-md-6 col-xs-6">
+            {% if discussion.type == 'global_discussion' %}
+                <div>discussion du <a href="{{ path('global_room') }}">salon général</a></div>
+            {% elseif discussion.type == 'theme_discussion' %}
+                <div>discussion | thématique <a href="{{ path('theme_show', {'slug': discussion.theme.slug}) }}">{{ discussion.theme.title }}</a></div>
+            {% elseif discussion.type == 'proposal_discussion' %}
+                <div>discussion | proposition <a href="{{ path('proposal_show', {'slug': discussion.proposal.slug}) }}">{{ discussion.proposal.title }}</a></div>
+            {% endif %}
+            <h1>{{ discussion.title }}</h1>
+            {% if discussion.locked %}
+                discussion fermée
+            {% endif %}
+        </div>
+    </div>
+    <div class="section-content">
+        {% for post in discussion.posts %}
+            <div class="post">
+                <div class="post-header row">
+                    <span class="post-author col-md-2 col-md-offset-1 col-xs-2 col-xs-offset-1">{{ post.author }}</span>
+                    <span class="col-md-2 col-md-offset-6 col-xs-2 col-xs-offset-6">{{ post.date|date('d/m/Y H:i') }}</span>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <span class="post-administration col-md-1 col-xs-1">
+                            <a href="{{ path('post_move', {'id': post.id}) }}" class="post-admin-btn" title="Déplacer ce commentaire"><span class="glyphicon glyphicon-export"></span></a>
+                            <a href="{{ path('post_delete', {'id': post.id}) }}" class="post-admin-btn" title="Supprimer ce commentaire"><span class="glyphicon glyphicon-remove"></span></a>
+                        </span>
+                    {% endif %}
+                </div>
+                <div class="post-content">
+                    {{ post.content | markdown }}
+                </div>
+            </div>
+        {% else %}
+            <div>
+                La discussion n'a pas encore débuté !
+            </div>
+        {% endfor %}
+
+        {% if form is defined %}
+            {{ form_start(form, {'attr': {'class': 'post-form'}}) }}
+                {{ form_errors(form) }}
+                <div class="form-group row">
+                    {{ form_label(form.content, ' ', {'label_attr': {'class': 'control-label form-label'}}) }}
+                    {{ form_errors(form.content) }}
+                    {{ form_widget(form.content, {'attr': {
+                        'class': 'form-control form-abstract-textarea',
+                        'placeholder' : 'Votre commentaire'
+                        }})
+                    }}
+                </div>
+                <div class="form-group row">
+                    {{ form_widget(form.save, {'label': 'Envoyer', 'attr': {'class': 'btn btn-default custom-btn'}}) }}
+                </div>
+            {{ form_end(form) }}
+        {% endif %}
+    </div>
+{% endblock page_content %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+    <script>
+        new SimpleMDE({
+            element: document.getElementById("edit_post_content"),
+            spellChecker: false,
+            status: false,
+        });
+    </script>
+{% endblock javascript %}

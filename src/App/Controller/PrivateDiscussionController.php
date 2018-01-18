@@ -38,7 +38,7 @@ class PrivateDiscussionController extends Controller
         $em->flush();
 
         if ($discussion->isLocked()) {
-            return $this->render('App:PrivateDiscussion:show.html.twig', [
+            return $this->render('App:Discussion:show_private_discussion.html.twig', [
                 'discussion' => $discussion,
             ]);
         }
@@ -59,7 +59,7 @@ class PrivateDiscussionController extends Controller
             ]));
         }
 
-        return $this->render('App:PrivateDiscussion:show.html.twig', [
+        return $this->render('App:Discussion:show_private_discussion.html.twig', [
             'discussion' => $discussion,
             'form'       => $form->createView(),
         ]);
@@ -86,7 +86,7 @@ class PrivateDiscussionController extends Controller
             ]));
         }
 
-        return $this->render('App:PrivateDiscussion:form.html.twig', [
+        return $this->render('App:Discussion:add_private_discussion.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -119,7 +119,8 @@ class PrivateDiscussionController extends Controller
              ]));
         }
 
-        return $this->render('App:PrivateDiscussion:form.html.twig', [
+        return $this->render('App:Discussion:edit_discussion.html.twig', [
+            'discussion' => $discussion,
             'form' => $form->createView(),
         ]);
     }
@@ -161,7 +162,8 @@ class PrivateDiscussionController extends Controller
              ]));
         }
 
-        return $this->render('App:PrivateDiscussion:form.html.twig', [
+        return $this->render('App:Discussion:add_member.html.twig', [
+            'discussion' => $discussion,
             'form' => $form->createView(),
         ]);
     }
@@ -236,8 +238,9 @@ class PrivateDiscussionController extends Controller
              ]));
         }
 
-        return $this->render('App:PrivateDiscussion:form.html.twig', [
-            'form' => $form->createView(),
+        return $this->render('App:Discussion:change_admin_private_discussion.html.twig', [
+            'discussion' => $discussion,
+            'form'       => $form->createView(),
         ]);
     }
 

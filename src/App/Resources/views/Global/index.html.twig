@@ -1,36 +1,33 @@
 {% extends '::layout.html.twig' %}
 
 {% block page_content %}
-
-    <h1>Projet dL</h1>
-
-    <p>
-        Blbllaalallebe lb lte tastireatn.
-    <p>
-
+    <div id="carousel" class="carousel slide col-md-10 col-md-offset-1 col-xs-10 col-xs-offset-1" data-ride="carousel" data-interval="false">
+        <div class="row">
+            <a class="carousel-link col-md-1 col-xs-1" href="#carousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+            <div class="col-md-10 col-xs-10">
+                <div class="carousel-inner">
+                    <div class="item active">
+                        <h1>PEUT-ON ÉLABORER<br>LES LOIS<br>DE FAÇON COLLABORATIVE ?</h1>
+                        <div class="row">
+                            <p class="welcome-paragraph col-md-7 col-xs-7">La dL est inspirée de projets tels que Wikipedia ou des logiciels libres. Ils ont démontré de façon spectaculaire l'efficacité de la collaboration de masse sur Internet pour réaliser des projets complexes et de grande ampleur.</p>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <h1>PEUT-ON TRANSFÉRER<br>LE PARLEMENT<br>SUR INTERNET ?</h1>
+                        <div class="row">
+                            <p class="welcome-paragraph col-md-7 col-xs-7">La dL imagine les institutions nécessaires pour décider de la politique nationale de façon collaborative. Elle porte un projet de révision constitutionnelle, autrement dit une refonte complète de l'organisation politique. Dans ce nouveau système, plus de Parlement, de Président de la République ou de Premier ministre…</p>
+                            <p>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <h1>PEUT-ON SE PASSER<br>D'ÉLECTIONS<br>ET DE REPRÉSENTANTS ?</h1>
+                        <div class="row">
+                            <p class="welcome-paragraph col-md-7 col-xs-7">La dL est une expérimentation qui cherche à savoir si un système politique sans élections serait réaliste.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a class="carousel-link col-md-1 col-xs-1" href="#carousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+        </div>
+    </div>
 {% endblock page_content %}
-
-{% block javascript %}
-	{{ parent() }}
-	{# Script used for dynamic navigation through all the childs of each theme #}
-	<script>
-	    //dom ready handler
-	    jQuery(function () {
-	        $('ul.tree > li').attr('unselectable','on').css('user-select','none').on('selectstart',false);
-	        $('ul.tree').on('click', 'li', function (e) {
-	            if(window.getSelection){
-	               // window.getSelection().removeAllRanges();
-	            }
-	            //stop propagation else parent li elements click handlers will get triggered
-	            e.stopPropagation();
-	            console.log(e.target);
-	            //use toggleClasss
-	            $(this).children('ul').toggleClass('hidden visible');
-	            if($(this).attr('class') != 'noChild')
-	            {
-	                $(this).toggleClass('closed open');
-	            }
-	        });
-	    });
-	</script>
-{% endblock javascript %}

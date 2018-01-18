@@ -1,0 +1,127 @@
+{% extends '::layout.html.twig' %}
+
+{% block page_content %}
+    <div class="section-header row">
+        <div class="section-header-menu col-md-12 col-xs-12">
+            {% if is_granted('ROLE_USER') %}
+                <div class="btn-group custom-btn-group ">
+                    <button class="dropdown-toggle btn btn-default" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
+                    <ul class="dropdown-menu pull-right">
+                        <li><a href="{{ path('proposal_add', {'themeSlug': theme.slug}) }}">Rédiger une proposition</a></li>
+                        <li><a href="{{ path('public_discussion_add_to_theme', {'slug': theme.slug}) }}">Ouvrir une discussion</a></li>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <li><a href="{{ path('theme_edit', {'slug': theme.slug}) }}">Éditer cette thématique</a></li>
+                            <li><a href="{{ path('theme_move', {'slug': theme.slug}) }}">Déplacer cette thématique</a></li>
+                            <li><a href="{{ path('theme_add', {'slug': theme.slug}) }}">Ajouter une thématique fille</span></a></li>
+                            {% if theme.isEmpty %}
+                                <li><a href="{{ path('theme_delete', {'slug': theme.slug}) }}">Supprimer cette thématique</a></li>
+                            {% endif %}
+                        {% endif %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+        <div class="section-header-image col-md-3 col-xs-3">
+            {% if theme.webPath is empty %}
+                <img src="{{ asset('img/defaultTheme_128.png') }}">
+            {% else %}
+                <img src="{{ asset(theme.webPath) }}">
+            {% endif %}
+        </div>
+        <div class="section-header-title col-md-6 col-xs-6">
+            <div>thématique | niveau {{ theme.lvl }}</div>
+            <div class="theme-title">{{ theme.title }}</div>
+            {% if theme.lvl > 0 %}
+                <div class="theme-under-title">thématique mère : <a href="{{ path('theme_show', {'slug': theme.parent.slug}) }}">{{ theme.parent.title }}</a></div>
+            {% endif %}
+        </div>
+    </div>
+    <!--
+    <div class="section-abstract row">
+        {{ theme.abstract }}
+    </div>
+    -->
+    <div class="section-menu row">
+        <ul>
+            <li class="active"><a data-toggle="tab" href="#proposals">Propositions</a></li>
+            <li><a data-toggle="tab" href="#discussions">Salon</a></li>
+            <!--
+            <li><a data-toggle="tab" href="#">Bibliothèque</a></li>
+            <li><a data-toggle="tab" href="#">Débats</a></li>
+            -->
+            <li><a data-toggle="tab" href="#children">Thématiques filles</a></li>
+        </ul>
+    </div>
+    <div class="tab-content">
+        <div id="proposals" class="tab-pane fade in active">
+            <div class="subsection-content col-md-10 col-xs-10">
+                {% for proposal in theme.proposals %}
+                    <a href="{{ path('proposal_show', {'slug': proposal.slug}) }}" class="subsection-panel col-md-12 col-xs-12">
+                        <div class="subsection-panel-heading">
+                            <div class="subsection-panel-title">{{ proposal.title }}</div>
+                        </div>
+                        <div class="subsection-panel-body">{{ proposal.abstract }}</div>
+                    </a>
+                {% else %}
+                    Il n'y a pas encore de propositions !<br>
+                {% endfor %}
+            </div>
+        </div>
+        <div id="discussions" class="tab-pane fade">
+            <table class="table discussion-table">
+                <thead>
+                    <tr>
+                        <th>Discussion</th>
+                        <th>Dernier commentaire</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for discussion in theme.discussions %}
+                    <tr>
+                        <td><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="discussion-link">{{ discussion.title }}</a></td>
+                        {% if discussion.posts is empty %}
+                            <td>Vide</td>
+                        {% else %}
+                            <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div id="children" class="tab-pane fade">
+            <div class="subsection-content col-md-10 col-xs-10">
+                <div class="row">
+                    {% for theme in theme.children %}
+                        <div class="root-frame col-md-4 col-xs-6">
+                            <a href="{{ path('theme_show', {'slug': theme.slug}) }}" class="root-link">
+                                <div class="root-title row">
+                                    <div>{{ theme.title }}</div>
+                                </div>
+                                <div class="row">
+                                    {% if theme.webPath is empty %}
+                                        <img src="{{ asset('img/defaultTheme_128.png') }}" class="img-responsive custom-img">
+                                    {% else %}
+                                        <img src="{{ asset(theme.webPath) }}" class="img-responsive custom-img">
+                                    {% endif %}
+                                </div>
+                            </a>
+                            {% if not theme.children is empty %}
+                                <div class="btn-group root-btn-group">
+                                    <button class="dropdown-toggle root-dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
+                                    <ul class="dropdown-menu root-dropdown-menu">
+                                        {% for child in theme.children %}
+                                            <li><a href="{{ path('theme_show', {'slug': child.slug}) }}">{{ child.title }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        Pas de thématique fille !
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock page_content %}

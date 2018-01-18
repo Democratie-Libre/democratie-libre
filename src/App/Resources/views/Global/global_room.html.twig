@@ -1,0 +1,50 @@
+{% extends '::layout.html.twig' %}
+
+{% block page_content %}
+    <div class="global-room-header row">
+        <div class="section-header-image col-md-3 col-xs-3">
+            <img src="{{ asset('img/globalRoom_128.png') }}">
+        </div>
+        <div class="section-header-title col-md-6 col-xs-6">
+            <div class="global-room-title">Salon général</div> 
+        </div>
+    </div>
+    <div class="row">
+        <table class="table discussion-table">
+            <thead>
+                <tr>
+                    <th>Discussion</th>
+                    <th>Dernier commentaire</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for discussion in discussions %}
+                <tr>
+                    <td><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="discussion-link">{{ discussion.title }}</a></td>
+                    {% if discussion.posts is empty %}
+                        <td>Vide</td>
+                    {% else %}
+                        <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <!--
+        {% for discussion in discussions %}
+            <a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="discussion-panel col-md-12 col-xs-12">
+                <div class="discussion-panel-heading">
+                    <div class="discussion-panel-title">{{ discussion.title }}</div>
+                </div>
+            </a>
+        {% else %}
+            Pas de discussion !<br>
+        {% endfor %}
+        -->
+    </div>
+    <div class="row">
+        {% if is_granted('ROLE_USER') %}
+            <a href="{{ path('public_discussion_add_to_global_discussions')}}" class="btn btn-default custom-admin-btn">Ouvrir une discussion</a>
+        {% endif %}
+    </div>
+{% endblock page_content %}
