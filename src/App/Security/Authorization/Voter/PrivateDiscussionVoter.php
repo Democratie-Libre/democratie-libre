@@ -2,12 +2,13 @@
 
 namespace App\Security\Authorization\Voter;
 
-use Symfony\Component\Security\Core\Authorization\Voter\AbstractVoter;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Doctrine\Bundle\DoctrineBundle\Registry as Doctrine;
 use App\Entity\User;
+use App\Entity\PrivateDiscussion;
 
-class PrivateDiscussionVoter extends AbstractVoter
+class PrivateDiscussionVoter extends Voter
 {
     const VIEW       = 'view';
     const EDIT       = 'edit';
@@ -21,62 +22,69 @@ class PrivateDiscussionVoter extends AbstractVoter
         $this->doctrine = $doctrine;
     }
 
-    public function getSupportedAttributes()
+    protected function supports($attribute, $subject)
     {
-        return array(
+        if (!in_array($attribute, [
             self::VIEW,
             self::EDIT,
             self::ADD_MEMBER,
-            self::UNREADER,
-        );
-    }
-
-    public function getSupportedClasses()
-    {
-        return array('App\Entity\PrivateDiscussion');
-    }
-
-    public function isGranted($attribute, $discussion, $user = null)
-    {
-        if (!$user instanceof UserInterface) {
+            self::UNREADER
+        ])) {
             return false;
         }
 
-        if (!$user instanceof User) {
-            throw new \LogicException(
-                'The user is somehow not our User class!'
-            );
+        if (!$subject instanceof PrivateDiscussion) {
+            return false;
         }
 
-        $isMember      = $discussion->hasMember($user);
-        $isAdmin       = $user === $discussion->getAdmin();
-        $isUnreader    = $discussion->hasUnreader($user);
-        $usersNumber   = $this->doctrine->getRepository('App:User')->count();
-        $membersNumber = count($discussion->getMembers());
+        return true;
+    }
+
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    {
+        $user = $token->getUser();
+
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        $privateDiscussion = $subject;
 
         switch ($attribute) {
             case self::VIEW:
-                if ($isMember) {
-                    return true;
-                }
-                break;
+                return $this->canView($privateDiscussion, $user);
             case self::EDIT:
-                if ($isAdmin) {
-                    return true;
-                }
-                break;
+                return $this->canEdit($privateDiscussion, $user);
             case self::ADD_MEMBER:
-                if ($isAdmin and $usersNumber !== $membersNumber) {
-                    return true;
-                }
-                break;
+                return $this->canAddMember($privateDiscussion, $user);
             case self::UNREADER:
-                if ($isUnreader) {
-                    return true;
-                }
-                break;
+                return $this->isUnreader($privateDiscussion, $user);
         }
 
-        return false;
+        throw new \LogicException('This code should not be reached!');
+    }
+
+    private function canView($privateDiscussion, $user)
+    {
+        return $privateDiscussion->hasMember($user);
+    }
+
+    private function canEdit($privateDiscussion, $user)
+    {
+        return $user === $privateDiscussion->getAdmin();
+    }
+
+    private function canAddMember($privateDiscussion, $user)
+    {
+        $isAdmin       = $user === $privateDiscussion->getAdmin();
+        $usersNumber   = $this->doctrine->getRepository('App:User')->count();
+        $membersNumber = count($privateDiscussion->getMembers());
+
+        return $isAdmin and $usersNumber !== $membersNumber;
+    }
+
+    private function isUnreader($privateDiscussion, $user)
+    {
+        return $privateDiscussion->hasUnreader($user);
     }
 }

@@ -11,7 +11,7 @@ services:
         public: false
         tags:
             - { name: security.voter }
-        arguments: ["@service_container"]
+        arguments: ["@security.access.decision_manager"]
 
     app.old_proposal_voter:
         class: App\Security\Authorization\Voter\OldProposalVoter

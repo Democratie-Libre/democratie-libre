@@ -2,56 +2,59 @@
 
 namespace App\Security\Authorization\Voter;
 
-use Symfony\Component\Security\Core\Authorization\Voter\AbstractVoter;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use App\Entity\PublicDiscussion;
 use App\Entity\User;
 
-class PublicDiscussionVoter extends AbstractVoter
+class PublicDiscussionVoter extends Voter
 {
     const FOLLOW   = 'follow';
     const UNREADER = 'unreader';
 
-    public function getSupportedAttributes()
+    protected function supports($attribute, $subject)
     {
-        return array(
+        if (!in_array($attribute, [
             self::FOLLOW,
-            self::UNREADER,
-        );
-    }
-
-    public function getSupportedClasses()
-    {
-        return array('App\Entity\PublicDiscussion');
-    }
-
-    public function isGranted($attribute, $discussion, $user = null)
-    {
-        if (!$user instanceof UserInterface) {
+            self::UNREADER
+        ])) {
             return false;
         }
 
-        if (!$user instanceof User) {
-            throw new \LogicException(
-                'The user is somehow not our User class!'
-            );
+        if (!$subject instanceof PublicDiscussion) {
+            return false;
         }
 
-        $isFollower = $discussion->hasFollower($user);
-        $isUnreader = $discussion->hasUnreader($user);
+        return true;
+    }
+
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    {
+        $user = $token->getUser();
+
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        $publicDiscussion = $subject;
 
         switch ($attribute) {
             case self::FOLLOW:
-                if ($isFollower) {
-                    return true;
-                }
-                break;
+                return $this->isFollowing($publicDiscussion, $user);
             case self::UNREADER:
-                if ($isUnreader) {
-                    return true;
-                }
-                break;
+                return $this->isUnreader($publicDiscussion, $user);
         }
 
-        return false;
+        throw new \LogicException('This code should not be reached!');
+    }
+
+    private function isFollowing($publicDiscussion, $user)
+    {
+        return $publicDiscussion->hasFollower($user);
+    }
+
+    private function isUnreader($publicDiscussion, $user)
+    {
+        return $publicDiscussion->hasUnreader($user);
     }
 }

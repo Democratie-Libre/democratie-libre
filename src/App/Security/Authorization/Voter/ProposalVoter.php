@@ -2,12 +2,13 @@
 
 namespace App\Security\Authorization\Voter;
 
-use Symfony\Component\Security\Core\Authorization\Voter\AbstractVoter;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use App\Entity\Proposal;
 use App\Entity\User;
 
-class ProposalVoter extends AbstractVoter
+class ProposalVoter extends Voter
 {
     const EDIT       = 'edit';
     const AUTHOR     = 'author';
@@ -15,74 +16,88 @@ class ProposalVoter extends AbstractVoter
     const OPPONENT   = 'opponent';
     const NEUTRAL    = 'neutral';
 
-    private $container;
+    private $decisionManager;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(AccessDecisionManagerInterface $decisionManager)
     {
-        $this->container = $container;
+        $this->decisionManager = $decisionManager;
     }
 
-    protected function getSupportedAttributes()
+    protected function supports($attribute, $subject)
     {
-        return array(
+        if (!in_array($attribute, [
             self::EDIT,
             self::AUTHOR,
             self::SUPPORTER,
             self::OPPONENT,
-            self::NEUTRAL,
-        );
-    }
-
-    public function getSupportedClasses()
-    {
-        return array('App\Entity\Proposal');
-    }
-
-    public function isGranted($attribute, $proposal, $user = null)
-    {
-        if (!$user instanceof UserInterface) {
+            self::NEUTRAL
+        ])) {
             return false;
         }
 
-        if (!$user instanceof User) {
-            throw new \LogicException('The user is somehow not our User class!');
+        if (!$subject instanceof Proposal) {
+            return false;
         }
 
-        $isAdmin      = $this->container->get('security.authorization_checker')->isGranted('ROLE_ADMIN');
-        $isAuthor     = ($proposal->getAuthor() === $user);
-        $isAWiki      = $proposal->isAWiki();
-        $isSupporter  = $proposal->getSupporters()->contains($user);
-        $isOpponent   = $proposal->getOpponents()->contains($user);
-        $isNeutral    = (false === $isSupporter and false === $isOpponent);
+        return true;
+    }
+
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    {
+        $user = $token->getUser();
+
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        $proposal = $subject;
 
         switch ($attribute) {
             case self::EDIT:
-                if ($isAdmin or $isAuthor or $isAWiki) {
-                    return true;
-                }
-                break;
+                return $this->canEdit($proposal, $user, $token);
             case self::AUTHOR:
-                if ($isAuthor) {
-                    return true;
-                }
-                break;
+                return $this->isAuthor($proposal, $user);
             case self::SUPPORTER:
-                if ($isSupporter) {
-                    return true;
-                }
-                break;
+                return $this->isSupporter($proposal, $user);
             case self::OPPONENT:
-                if ($isOpponent) {
-                    return true;
-                }
-                break;
+                return $this->isOpponent($proposal, $user);
             case self::NEUTRAL:
-                if ($isNeutral) {
-                    return true;
-                }
-                break;
+                return $this->isNeutral($proposal, $user);
         }
 
-        return false;
+        throw new \LogicException('This code should not be reached!');
+    }
+
+    private function canEdit($proposal, $user, $token)
+    {
+        if ($this->decisionManager->decide($token, ['ROLE_ADMIN'])) {
+            return true;
+        }
+
+        if ($this->isAuthor($proposal, $user)) {
+            return true;
+        }
+
+        return $proposal->isAWiki();
+    }
+
+    private function isAuthor($proposal, $user)
+    {
+        return $user === $proposal->getAuthor();
+    }
+
+    private function isSupporter($proposal, $user)
+    {
+        return $proposal->getSupporters()->contains($user);
+    }
+
+    private function isOpponent($proposal, $user)
+    {
+        return $proposal->getOpponents()->contains($user);
+    }
+
+    private function isNeutral($proposal, $user)
+    {
+        return !$this->isSupporter($proposal, $user) and !$this->isOpponent($proposal, $user);
     }
 }
