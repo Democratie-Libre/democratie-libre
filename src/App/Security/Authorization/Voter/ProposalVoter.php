@@ -2,121 +2,102 @@
 
 namespace App\Security\Authorization\Voter;
 
-use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use App\Entity\Proposal;
+use App\Entity\User;
 
-class ProposalVoter implements VoterInterface
+class ProposalVoter extends Voter
 {
     const EDIT       = 'edit';
-    const MAINAUTHOR = 'main_author';
-    const SIDEAUTHOR = 'side_author';
+    const AUTHOR     = 'author';
     const SUPPORTER  = 'supporter';
     const OPPONENT   = 'opponent';
     const NEUTRAL    = 'neutral';
 
-    private $container;
+    private $decisionManager;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(AccessDecisionManagerInterface $decisionManager)
     {
-        $this->container = $container;
+        $this->decisionManager = $decisionManager;
     }
 
-    public function supportsAttribute($attribute)
+    protected function supports($attribute, $subject)
     {
-        return in_array($attribute, array(
+        if (!in_array($attribute, [
             self::EDIT,
-            self::MAINAUTHOR,
-            self::SIDEAUTHOR,
+            self::AUTHOR,
             self::SUPPORTER,
             self::OPPONENT,
-            self::NEUTRAL,
-        ));
+            self::NEUTRAL
+        ])) {
+            return false;
+        }
+
+        if (!$subject instanceof Proposal) {
+            return false;
+        }
+
+        return true;
     }
 
-    public function supportsClass($class)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        $supportedClass = 'App\Entity\Proposal';
-
-        return $supportedClass === $class || is_subclass_of($class, $supportedClass);
-    }
-
-    public function vote(TokenInterface $token, $proposal, array $attributes)
-    {
-        // check if class of this object is supported by this voter
-        if (!$this->supportsClass(get_class($proposal))) {
-            return VoterInterface::ACCESS_ABSTAIN;
-        }
-
-        // check if the voter is used correct, only allow one attribute
-        if (1 !== count($attributes)) {
-            throw new \InvalidArgumentException(
-                'Only one attribute is allowed for VIEW or EDIT'
-            );
-        }
-
-        // set the attribute to check against
-        $attribute = $attributes[0];
-
-        // check if the given attribute is covered by this voter
-        if (!$this->supportsAttribute($attribute)) {
-            return VoterInterface::ACCESS_ABSTAIN;
-        }
-
         $user = $token->getUser();
 
-        // make sure there is a user object (i.e. that the user is logged in)
-        if (!$user instanceof UserInterface) {
-            return VoterInterface::ACCESS_DENIED;
+        if (!$user instanceof User) {
+            return false;
         }
 
-        $isAdmin      = $this->container->get('security.authorization_checker')->isGranted('ROLE_ADMIN');
-        $isMainAuthor = ($proposal->getMainAuthor() === $user);
-        $isSideAuthor = $proposal->getSideAuthors()->contains($user);
-        $isPublic     = $proposal->isPublic();
-        $isSupporter  = $proposal->getSupportiveUsers()->contains($user);
-        $isOpponent   = $proposal->getOpposedUsers()->contains($user);
-        $isNeutral    = (false === $isSupporter and false === $isOpponent);
+        $proposal = $subject;
 
         switch ($attribute) {
             case self::EDIT:
-                if ($isAdmin or $isMainAuthor or $isSideAuthor or $isPublic) {
-                    return VoterInterface::ACCESS_GRANTED;
-                }
-                break;
-
-            case self::MAINAUTHOR:
-                if ($isMainAuthor) {
-                    return VoterInterface::ACCESS_GRANTED;
-                }
-                break;
-
-            case self::SIDEAUTHOR:
-                if ($isSideAuthor) {
-                    return VoterInterface::ACCESS_GRANTED;
-                }
-                break;
-
+                return $this->canEdit($proposal, $user, $token);
+            case self::AUTHOR:
+                return $this->isAuthor($proposal, $user);
             case self::SUPPORTER:
-                if ($isSupporter) {
-                    return VoterInterface::ACCESS_GRANTED;
-                }
-                break;
-
+                return $this->isSupporter($proposal, $user);
             case self::OPPONENT:
-                if ($isOpponent) {
-                    return VoterInterface::ACCESS_GRANTED;
-                }
-                break;
-
+                return $this->isOpponent($proposal, $user);
             case self::NEUTRAL:
-                if ($isNeutral) {
-                    return VoterInterface::ACCESS_GRANTED;
-                }
-                break;
+                return $this->isNeutral($proposal, $user);
         }
 
-        return VoterInterface::ACCESS_DENIED;
+        throw new \LogicException('This code should not be reached!');
+    }
+
+    private function canEdit($proposal, $user, $token)
+    {
+        if ($this->decisionManager->decide($token, ['ROLE_ADMIN'])) {
+            return true;
+        }
+
+        if ($this->isAuthor($proposal, $user)) {
+            return true;
+        }
+
+        return $proposal->isAWiki();
+    }
+
+    private function isAuthor($proposal, $user)
+    {
+        return $user === $proposal->getAuthor();
+    }
+
+    private function isSupporter($proposal, $user)
+    {
+        return $proposal->getSupporters()->contains($user);
+    }
+
+    private function isOpponent($proposal, $user)
+    {
+        return $proposal->getOpponents()->contains($user);
+    }
+
+    private function isNeutral($proposal, $user)
+    {
+        return !$this->isSupporter($proposal, $user) and !$this->isOpponent($proposal, $user);
     }
 }

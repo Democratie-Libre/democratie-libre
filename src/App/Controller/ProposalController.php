@@ -7,14 +7,14 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use App\Entity\Proposal;
-use App\Entity\ProposalVersion;
-use App\Form\EditProposalType;
-use App\Form\EditProposalMainAuthorType;
-use App\Form\EditProposalAdminType;
+use App\Entity\OldProposal;
+use App\Form\Proposal\EditProposalType;
+use App\Form\Proposal\EditMotivationProposalType;
+use App\Form\Proposal\PublishProposalType;
 
 class ProposalController extends Controller
 {
-    public function showAction(Request $request, $slug)
+    public function showAction($slug)
     {
         $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
 
@@ -22,33 +22,35 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
-        return $this->render('App:Proposal:show.html.twig', [
+        return $this->render('App:Proposal:show_proposal.html.twig', [
             'proposal' => $proposal,
         ]);
     }
 
     /**
-     * @Security("has_role('ROLE_ADMIN')")
+     * @Security("has_role('ROLE_USER')")
      */
-    public function deleteAction(Request $request, $slug)
+    public function addAction(Request $request)
     {
-        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+        $proposal = new Proposal();
+        $form     = $this->createForm(new EditProposalType(), $proposal);
+        $form->handleRequest($request);
 
-        if (null === $proposal) {
-            throw $this->createNotFoundException();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $proposal->setAuthor($this->getUser());
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($proposal);
+            $em->flush();
+
+            return $this->redirect($this->generateUrl('proposal_show', [
+                'slug' => $proposal->getSlug(),
+            ]));
         }
 
-        $title     = $proposal->getTitle();
-        $themeSlug = $proposal->getTheme()->getSlug();
-        $em        = $this->getDoctrine()->getManager();
-        $em->remove($proposal);
-        $em->flush();
-
-        $this->get('session')->getFlashBag()->add('info', 'La proposition '.$title.' a bien été supprimée');
-
-        return $this->redirect($this->generateUrl('theme_show', [
-            'slug' => $themeSlug,
-        ]));
+        return $this->render('App:Proposal:add_proposal.html.twig', [
+            'proposal' => $proposal,
+            'form'     => $form->createView(),
+        ]);
     }
 
     /**
@@ -62,32 +64,16 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
-        if (false === $this->get('security.context')->isGranted('edit', $proposal)) {
-            throw new AccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted('edit', $proposal);
 
-        // save the current version of the proposal
-        $user    = $this->getUser();
-        $version = new ProposalVersion();
-        $version->edit($proposal, $user);
-
-        $isAdmin      = $this->get('security.context')->isGranted('ROLE_ADMIN');
-        $isMainAuthor = $this->get('security.context')->isGranted('main_author', $proposal);
-
-        if ($isAdmin) {
-            $form = $this->createForm(new EditProposalAdminType(), $proposal);
-        } elseif ($isMainAuthor) {
-            $form = $this->createForm(new EditProposalMainAuthorType(), $proposal);
-        } else {
-            $form = $this->createForm(new EditProposalType(), $proposal);
-        }
-
+        $oldProposal = new OldProposal($proposal);
+        $form        = $this->createForm(new EditProposalType(), $proposal);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $proposal
-                ->addVersion($version)
-                ->setVersionNumber($proposal->getVersionNumber() + 1)
+                ->addToHistory($oldProposal)
+                ->incrementVersionNumber()
             ;
             $em = $this->getDoctrine()->getManager();
             $em->persist($proposal);
@@ -98,9 +84,109 @@ class ProposalController extends Controller
              ]));
         }
 
-        return $this->render('App:Proposal:edit.html.twig', [
-            'form' => $form->createView(),
+        return $this->render('App:Proposal:edit_proposal.html.twig', [
+            'proposal' => $proposal,
+            'form'     => $form->createView(),
         ]);
+    }
+
+    /**
+     * @Security("has_role('ROLE_USER')")
+     */
+    public function editMotivationAction(Request $request, $slug)
+    {
+        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+
+        if (null ===  $proposal) {
+            throw $this->createNotFoundException();
+        }
+
+        $this->denyAccessUnlessGranted('edit', $proposal);
+
+        $oldProposal = new OldProposal($proposal);
+        $form        = $this->createForm(new EditMotivationProposalType(), $proposal);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $proposal
+                ->addToHistory($oldProposal)
+                ->incrementVersionNumber()
+            ;
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($proposal);
+            $em->flush();
+
+            return $this->redirect($this->generateUrl('proposal_show', [
+                'slug' => $proposal->getSlug(),
+             ]));
+        }
+
+        return $this->render('App:Proposal:edit_motivation_proposal.html.twig', [
+            'proposal' => $proposal,
+            'form'     => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Security("has_role('ROLE_USER')")
+     */
+    public function publishAction(Request $request, $slug)
+    {
+        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+
+        if (null ===  $proposal) {
+            throw $this->createNotFoundException();
+        }
+
+        $this->denyAccessUnlessGranted('author', $proposal);
+
+        $form = $this->createForm(new PublishProposalType(), $proposal);
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $proposal->setIsPublished(true);
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($proposal);
+            $em->flush();
+
+            return $this->redirect($this->generateUrl('proposal_show', [
+                'slug' => $proposal->getSlug(),
+             ]));
+        }
+
+        return $this->render('App:Proposal:publish_proposal.html.twig', [
+            'form'     => $form->createView(),
+            'proposal' => $proposal,
+        ]);
+    }
+
+    /**
+     * @Security("has_role('ROLE_ADMIN')")
+     */
+    public function deleteAction($slug)
+    {
+        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+
+        if (null === $proposal) {
+            throw $this->createNotFoundException();
+        }
+
+        $title = $proposal->getTitle();
+        $em    = $this->getDoctrine()->getManager();
+        $em->remove($proposal);
+        $em->flush();
+
+        $this->get('session')->getFlashBag()->add('info', 'The proposal '.$title.' has been suppressed');
+
+        if ($proposal->isPublished()) {
+            $themeSlug = $proposal->getTheme()->getSlug();
+
+            return $this->redirect($this->generateUrl('theme_show', [
+                'slug' => $themeSlug,
+            ]));
+        }
+
+        return $this->redirect($this->generateUrl('profile'));
     }
 
     /**
@@ -114,13 +200,9 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $isNeutral = $this->get('security.context')->isGranted('neutral', $proposal);
+        $this->denyAccessUnlessGranted('neutral', $proposal);
 
-        if (false === $isNeutral) {
-            throw new AccessDeniedException();
-        }
-
-        $proposal->addSupportiveUser($this->getUser());
+        $proposal->addSupporter($this->getUser());
         $em = $this->getDoctrine()->getManager();
         $em->persist($proposal);
         $em->flush();
@@ -142,13 +224,9 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $isSupporter = $this->get('security.context')->isGranted('supporter', $proposal);
+        $this->denyAccessUnlessGranted('supporter', $proposal);
 
-        if (false === $isSupporter) {
-            throw new AccessDeniedException();
-        }
-
-        $proposal->removeSupportiveUser($this->getUser());
+        $proposal->removeSupporter($this->getUser());
         $em = $this->getDoctrine()->getManager();
         $em->persist($proposal);
         $em->flush();
@@ -167,16 +245,12 @@ class ProposalController extends Controller
         $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
 
         if (null === $proposal) {
-            throw $this->createNotFoundException('Impossible de trouver cette proposition.');
+            throw $this->createNotFoundException();
         }
 
-        $isNeutral = $this->get('security.context')->isGranted('neutral', $proposal);
+        $this->denyAccessUnlessGranted('neutral', $proposal);
 
-        if (false === $isNeutral) {
-            throw new AccessDeniedException();
-        }
-
-        $proposal->addOpposedUser($this->getUser());
+        $proposal->addOpponent($this->getUser());
         $em = $this->getDoctrine()->getManager();
         $em->persist($proposal);
         $em->flush();
@@ -198,52 +272,20 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $isOpponent = $this->get('security.context')->isGranted('opponent', $proposal);
+        $this->denyAccessUnlessGranted('opponent', $proposal);
 
-        if ($isOpponent) {
-            $proposal->removeOpposedUser($this->getUser());
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($proposal);
-            $em->flush();
-            $this->get('session')->getFlashBag()->add('info', 'Vous ne contestez plus cette proposition');
-
-            return $this->redirect($this->generateUrl('proposal_show', [
-                'slug' => $proposal->getSlug(),
-            ]));
-        }
-
-        return $this->redirect($this->generateUrl('proposal_show', [
-            'slug' => $proposal->getSlug(),
-        ]));
-    }
-
-    /**
-     * @Security("has_role('ROLE_USER')")
-     */
-    public function removeSideAuthorAction($slug)
-    {
-        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
-
-        if (null === $proposal) {
-            throw $this->createNotFoundException();
-        }
-
-        if (false === $this->get('security.context')->isGranted('side_author', $proposal)) {
-            throw new AccessDeniedException();
-        }
-
-        $proposal->removeSideAuthor($this->getUser());
+        $proposal->removeOpponent($this->getUser());
         $em = $this->getDoctrine()->getManager();
         $em->persist($proposal);
         $em->flush();
-        $this->get('session')->getFlashBag()->add('info', 'Vous ne faites plus partie des auteurs secondaires de cette proposition');
+        $this->get('session')->getFlashBag()->add('info', 'Vous ne contestez plus cette proposition');
 
         return $this->redirect($this->generateUrl('proposal_show', [
             'slug' => $proposal->getSlug(),
         ]));
     }
 
-    public function showDiscussionsAction(Request $request, $slug)
+    public function showDiscussionsAction($slug)
     {
         $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
 

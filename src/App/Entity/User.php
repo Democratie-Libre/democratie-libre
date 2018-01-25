@@ -13,8 +13,7 @@ use Knp\Rad\User\HasSalt;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- * @UniqueEntity("username")
- * @UniqueEntity("email")
+ * @UniqueEntity(fields={"username","email"})
  * @ORM\HasLifecycleCallbacks
  */
 class User implements UserInterface, \Serializable, HasPassword, HasSalt
@@ -66,46 +65,6 @@ class User implements UserInterface, \Serializable, HasPassword, HasSalt
     private $banned;
 
     /**
-     * @ORM\OneToMany(targetEntity="Proposal", mappedBy="mainAuthor")
-     * @Assert\Valid()
-     */
-    private $mainProposals;
-
-    /**
-     * @ORM\OneToMany(targetEntity="ProposalDraft", mappedBy="mainAuthor")
-     * @Assert\Valid()
-     */
-    private $mainProposalDrafts;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="Proposal", mappedBy="sideAuthors", cascade={"persist"})
-     * @Assert\Valid()
-     */
-    private $sideProposals;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="ProposalDraft", mappedBy="sideAuthors", cascade={"persist"})
-     * @Assert\Valid()
-     */
-    private $sideProposalDrafts;
-
-    /**
-     * The user claims his support to these proposals.
-     *
-     * @ORM\ManyToMany(targetEntity="Proposal", mappedBy="supportiveUsers", cascade={"persist"})
-     * @Assert\Valid()
-     */
-    private $supportedProposals;
-
-    /**
-     * The user claims his opposition to these proposals.
-     *
-     * @ORM\ManyToMany(targetEntity="Proposal", mappedBy="opposedUsers", cascade={"persist"})
-     * @Assert\Valid()
-     */
-    private $opposedProposals;
-
-    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * Stores the name of the image file associated to the user
      */
@@ -128,6 +87,28 @@ class User implements UserInterface, \Serializable, HasPassword, HasSalt
      * )
      */
     private $file;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Proposal", mappedBy="author")
+     * @Assert\Valid()
+     */
+    private $proposals;
+
+    /**
+     * The user claims his support to these proposals.
+     *
+     * @ORM\ManyToMany(targetEntity="Proposal", mappedBy="supporters", cascade={"persist"})
+     * @Assert\Valid()
+     */
+    private $supportedProposals;
+
+    /**
+     * The user claims his opposition to these proposals.
+     *
+     * @ORM\ManyToMany(targetEntity="Proposal", mappedBy="opponents", cascade={"persist"})
+     * @Assert\Valid()
+     */
+    private $opposedProposals;
 
     /**
      * @ORM\OneToMany(targetEntity="PrivateDiscussion", mappedBy="admin")
@@ -155,18 +136,17 @@ class User implements UserInterface, \Serializable, HasPassword, HasSalt
 
     public function __construct()
     {
-        $this->roles = ['ROLE_USER'];
-        $this->setBanned(false);
-        $this->setRegistrationDate(new \DateTime());
-        $this->setEmail(null);
-        $this->mainProposals = new ArrayCollection();
-        $this->sideProposals = new ArrayCollection();
-        $this->supportedProposals = new ArrayCollection();
-        $this->opposedProposals = new ArrayCollection();
-        $this->adminDiscussions = new ArrayCollection();
-        $this->privateDiscussions = new ArrayCollection();
+        $this->registrationDate    = new \Datetime;
+        $this->roles               = ['ROLE_USER'];
+        $this->banned              = false;
+        $this->email               = null;
+        $this->proposals           = new ArrayCollection();
+        $this->supportedProposals  = new ArrayCollection();
+        $this->opposedProposals    = new ArrayCollection();
+        $this->adminDiscussions    = new ArrayCollection();
+        $this->privateDiscussions  = new ArrayCollection();
         $this->followedDiscussions = new ArrayCollection();
-        $this->unreadDiscussions = new ArrayCollection();
+        $this->unreadDiscussions   = new ArrayCollection();
     }
 
     public function __toString()
@@ -201,13 +181,6 @@ class User implements UserInterface, \Serializable, HasPassword, HasSalt
     public function getEmail()
     {
         return $this->email;
-    }
-
-    public function setRegistrationDate($registrationDate)
-    {
-        $this->registrationDate = $registrationDate;
-
-        return $this;
     }
 
     public function getRegistrationDate()
@@ -246,100 +219,28 @@ class User implements UserInterface, \Serializable, HasPassword, HasSalt
         return $this->banned;
     }
 
-    public function addMainProposal(Proposal $mainProposal)
+    public function addProposal(Proposal $proposal)
     {
-        $this->mainProposals->add($mainProposal);
+        $this->proposals->add($proposal);
 
         return $this;
     }
 
-    public function hasMainProposal(Proposal $mainProposal)
+    public function hasProposal(Proposal $proposal)
     {
-        return $this->mainProposals->contains($mainProposal);
+        return $this->proposals->contains($proposal);
     }
 
-    public function removeMainProposal(Proposal $mainProposal)
+    public function removeProposal(Proposal $proposal)
     {
-        $this->mainProposals->removeElement($mainProposal);
+        $this->proposals->removeElement($proposal);
 
         return $this;
     }
 
-    public function getMainProposals()
+    public function getProposals()
     {
-        return $this->mainProposals;
-    }
-
-    public function addMainProposalDraft(ProposalDraft $mainProposalDraft)
-    {
-        $this->mainProposalDrafts->add($mainProposalDraft);
-
-        return $this;
-    }
-
-    public function hasMainProposalDraft(ProposalDraft $mainProposalDraft)
-    {
-        return $this->mainProposalDrafts->contains($mainProposalDraft);
-    }
-
-    public function removeMainProposalDraft(ProposalDraft $mainProposalDraft)
-    {
-        $this->mainProposalDrafts->removeElement($mainProposalDraft);
-
-        return $this;
-    }
-
-    public function getMainProposalDrafts()
-    {
-        return $this->mainProposalDrafts;
-    }
-
-    public function addSideProposal(Proposal $sideProposal)
-    {
-        $this->sideProposals->add($sideProposal);
-
-        return $this;
-    }
-
-    public function hasSideProposal(Proposal $sideProposal)
-    {
-        return $this->sideProposals->contains($sideProposal);
-    }
-
-    public function removeSideProposal(Proposal $sideProposal)
-    {
-        $this->sideProposals->removeElement($sideProposal);
-
-        return $this;
-    }
-
-    public function getSideProposals()
-    {
-        return $this->sideProposals;
-    }
-
-    public function addSideProposalDraft(ProposalDraft $sideProposalDraft)
-    {
-        $this->sideProposalDrafts->add($sideProposalDraft);
-
-        return $this;
-    }
-
-    public function hasSideProposalDraft(ProposalDraft $sideProposalDraft)
-    {
-        return $this->sideProposalDrafts->contains($sideProposalDraft);
-    }
-
-    public function removeSideProposalDraft(ProposalDraft $sideProposalDraft)
-    {
-        $this->sideProposalDrafts->removeElement($sideProposalDraft);
-
-        return $this;
-    }
-
-    public function getSideProposalDrafts()
-    {
-        return $this->sideProposalDrafts;
+        return $this->proposals;
     }
 
     public function addSupportedProposal(Proposal $supportedProposal)

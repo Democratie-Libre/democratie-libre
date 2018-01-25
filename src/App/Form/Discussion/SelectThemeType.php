@@ -26,9 +26,4 @@ class SelectThemeType extends AbstractType
             'data_class' => 'App\Entity\PublicDiscussion',
         ]);
     }
-
-    public function getName()
-    {
-        return 'public_discussion_select_theme';
-    }
 }

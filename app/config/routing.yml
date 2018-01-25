@@ -16,17 +16,9 @@ app_proposal:
     resource: "@App/Resources/config/routing/proposal.yml"
     prefix: "/proposal"
 
-app_proposalversion:
-    resource: "@App/Resources/config/routing/proposal_version.yml"
-    prefix: "/proposalversion"
-
-app_proposaldraft:
-    resource: "@App/Resources/config/routing/proposal_draft.yml"
-    prefix: "/proposaldraft"
-
-app_message:
-    resource: "@App/Resources/config/routing/message.yml"
-    prefix: "/message"
+app_old_proposal:
+    resource: "@App/Resources/config/routing/old_proposal.yml"
+    prefix: "/old_proposal"
 
 app_public_discussion:
     resource: "@App/Resources/config/routing/public_discussion.yml"

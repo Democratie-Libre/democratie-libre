@@ -27,7 +27,7 @@ class PrivateDiscussion extends AbstractDiscussion
     public function __construct()
     {
         parent::__construct();
-        $this->members  = new ArrayCollection();
+        $this->members = new ArrayCollection();
     }
 
     public function setAdmin(User $user)

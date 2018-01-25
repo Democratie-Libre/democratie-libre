@@ -2,109 +2,90 @@
 <html prefix="og: http://ogp.me/ns#">
     <head>
         {% block stylesheets %}
-            <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-            <link rel="stylesheet" href="{{ asset('css/custom.css') }}">        
+            <link rel="stylesheet" href="{{ asset('css/icofont.css') }}">
+            <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+            <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet">
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+            <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
         {% endblock %}
 
-        <title>{% block header_title %}Projet DL{% endblock %}</title>
+        <title>{% block header_title %}dL{% endblock %}</title>
+
         {% if app.request.attributes.get('_route') == 'index' %}
-        <meta name="description" content="DESCRIPTION GOOGLE" />
-        <meta property="og:title" content="TITRE" />
-        <meta property="og:description" content="DESCRIPTION FB" />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="URL" />
-        <meta property="og:image" content="IMAGE FB" />
+            <meta name="description" content="DESCRIPTION GOOGLE" />
+            <meta property="og:title" content="TITRE" />
+            <meta property="og:description" content="DESCRIPTION FB" />
+            <meta property="og:type" content="website" />
+            <meta property="og:url" content="URL" />
+            <meta property="og:image" content="IMAGE FB" />
         {% endif %}
     </head>
 
-<body>
+    <body>
+        {% block body %}
+            <div class="container-fluid">
+                <nav class="row top-menu">
+                    {% block top_menu %}
+                        <a href="{{ path('index') }}" class="col-md-1 col-md-offset-1 col-xs-2 logo"><img src="{{ asset('img/dL_gold_40.png') }}"></a>
+                        <div class="navblock-top-menu col-md-9 col-xs-10">
+                            <div class="row">
+                                <a href="{{ path('roots') }}" class="navlink-top-menu col-md-1 col-xs-1" title="Arbre"><i class="icofont icofont-tree"></i></a>
+                                <div class="dropdown dropdown-top-menu col-md-1 col-xs-1">
+                                    <a href="#" class="dropdown-toggle navlink-top-menu col-md-12 col-xs-12" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></a>
+                                    <ul class="dropdown-menu dropdown-menu-custom">
+                                        <li><a href="#">Projet</a></li>
+                                        <li><a href="{{ path('global_room') }}">Salon général</a></li>
+                                        <li><a href="#">Bibliothèque</a></li>
+                                        <li><a href="#">FAQ</a></li>
+                                        <li><a href="#">Contact</a></li>
+                                    </ul>
+                                </div>
 
-    {% block body %}
-
-        {% block menu_top %}
-
-        <nav class="navbar navbar-default" role="navigation">
-          <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-              <a class="navbar-brand" href="{{ path('index') }}">Projet DL</a>
-            </div>
-
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-              <ul class="nav navbar-nav">
-                <li><a href="{{ path('roots') }}">Arbre</a></li>
-                <li><a href="{{ path('global_discussions') }}">Discussions</a></li>
-              </ul>
-              <ul class="nav navbar-nav navbar-right">
-    
-                {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %} 
-                    <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ app.user.username }}</a>
-                      <ul class="dropdown-menu">
-                        <li><a href="{{ path('profile') }}">Mon compte</a></li>
-                        <li><a href="{{ path('private_discussion_add') }}">Ouvrir une discussion privée</a></li>
-                        <li><a href="{{ path('proposaldraft_add') }}">Rédiger une proposition</a></li>
-                        <li><a href="{{ path('logout') }}">Déconnexion</a></li>
-                      </ul>
-                    </li>
-
-                {% else %}
-                    <li><a href="{{ path('register') }}">S’enregistrer</a></li>
-                    <li><a href="{{ path('login') }}">Se connecter</a></li>
-
-                {% endif %}
-
-              </ul>
-            </div><!-- /.navbar-collapse -->
-          </div><!-- /.container-fluid -->
-        </nav>
-
-        {% endblock menu_top %} 
-
-
-<div class="container-fluid">
-
-    <div class="row"> <!-- CONTENU GENERAL -->
-        
-        <div class="col-sx-12 col-sm-12 col-md-10 col-md-offset-1">
-      
-        {% block alerts %}      
-            <div id="errors">
-                {% for label, flashes in app.session.flashbag.all %}
-                    {% for flash in flashes %}
-                        <div class="alert alert-{{ label }}">
-                            {{ flash|raw }}
+                                {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                                    <div class="dropdown dropdown-top-menu col-md-3 col-md-offset-6 col-xs-4 col-xs-offset-5">
+                                        <div class="row">
+                                            <a href="#" class="dropdown-toggle navlink-top-menu col-md-4 col-md-offset-6 col-xs-5 col-xs-offset-6" data-toggle="dropdown">{{ app.user.username }}</a>
+                                            <ul class="dropdown-menu pull-right">
+                                                <li><a href="{{ path('profile') }}">Mon compte</a></li>
+                                                <li><a href="{{ path('private_discussion_add') }}">Ouvrir une discussion privée</a></li>
+                                                <li><a href="{{ path('proposal_add') }}">Rédiger une proposition</a></li>
+                                                <li><a href="{{ path('logout') }}">Déconnexion</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <a class="col-md-1 col-md-offset-7 col-xs-1 col-xs-offset-6 navlink-top-menu" href="{{ path('register') }}" title="Inscription"><span class="glyphicon glyphicon-tasks"></span></a>
+                                    <a class="col-md-1 col-xs-1 navlink-top-menu" href="{{ path('login') }}" title="Connexion"><span class="glyphicon glyphicon-off"></span></a>
+                                {% endif %}
+                            </div>
                         </div>
-                    {% endfor %}
-                {% endfor %}
+                    {% endblock top_menu %}
+                </nav>
+                <div class="row section">
+                    <div class="col-md-8 col-md-offset-2 col-xs-10 col-xs-offset-2">
+                        {% block alerts %}
+                            <div id="errors">
+                                {% for label, flashes in app.session.flashbag.all %}
+                                    {% for flash in flashes %}
+                                        <div class="alert alert-{{ label }}">
+                                            {{ flash|raw }}
+                                        </div>
+                                    {% endfor %}
+                                {% endfor %}
+                            </div>
+                        {% endblock alerts %}
+                        {% block content %}
+                            {% block page_content %}
+                            {% endblock page_content %}
+                        {% endblock content %}
+                    </div>
+                </div>
             </div>
-        {% endblock alerts %}
+        {% endblock body %}
 
-            {% block content %}
-                {% block page_content %}
-                {% endblock page_content %}
-            {% endblock content %}
-
-        </div>
-
-    </div> <!-- ./ row -->
-</div> <!-- ./ container-fluid -->
-
-{% endblock %} {# fin du block body #}
-
-{% block javascript %}
-
-        <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-
-{% endblock javascript %}
-
-</body>
+        {% block javascript %}
+            <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+            <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        {% endblock javascript %}
+    </body>
 </html>

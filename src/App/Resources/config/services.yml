@@ -6,28 +6,15 @@ services:
         class: App\Service\UserManager
         arguments: ["@security.encoder_factory", "@doctrine.orm.entity_manager", "@session", "@security.context"]
 
-    app.twig.tree_extension:
-        class: App\Twig\TreeExtension
-        tags:
-            - { name: twig.extension }
-        arguments: ["@router"]
-
     app.proposal_voter:
         class: App\Security\Authorization\Voter\ProposalVoter
         public: false
         tags:
             - { name: security.voter }
-        arguments: ["@service_container"]
+        arguments: ["@security.access.decision_manager"]
 
-    proposalDraftVoter:
-        class: App\Security\Authorization\Voter\ProposalDraftVoter
-        public: false
-        tags:
-            - { name: security.voter }
-        arguments: ["@service_container"]
-
-    proposalVersionVoter:
-        class: App\Security\Authorization\Voter\ProposalVersionVoter
+    app.old_proposal_voter:
+        class: App\Security\Authorization\Voter\OldProposalVoter
         public: false
         tags:
             - { name: security.voter }
@@ -44,3 +31,13 @@ services:
         public: false
         tags:
            - { name: security.voter }
+
+    app.markdown:
+        class: App\Utils\Markdown
+
+    app.twig.markdown_extension:
+        class: App\Twig\MarkdownExtension
+        arguments: ["@app.markdown"]
+        public: false
+        tags:
+            - { name: twig.extension }

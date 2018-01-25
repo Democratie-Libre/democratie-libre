@@ -11,14 +11,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity
- * @UniqueEntity(fields="slug")
- * @UniqueEntity(fields="title", message="Ce titre est déjà attribué")
+ * @UniqueEntity(fields={"slug","title"})
  * @ORM\HasLifecycleCallbacks
  */
 class Proposal
 {
     /**
-     * @ORM\Column(type="integer", unique=true)
+     * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
@@ -31,27 +30,22 @@ class Proposal
     private $slug;
 
     /**
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="string", unique=true)
+     * @Assert\NotBlank()
      * @Assert\Length(
-     *      min = "2",
-     *      max = "255",
-     *      minMessage = "Votre titre doit au moins contenir {{ limit }} caractères",
-     *      maxMessage = "Votre titre ne doit pas contenir plus de {{ limit }} caractères"
+     *      max = 100,
      * )
      */
     private $title;
 
     /**
-     * @ORM\Column(type="string", length=255, unique=true)
-     * @Assert\NotBlank(message="Vous devez faire un résumé de votre proposition")
+     * @ORM\Column(type="text")
+     * @Assert\NotBlank()
+     * @Assert\Length(
+     *      max = 400,
+     * )
      */
     private $abstract;
-
-    /**
-     * @ORM\Column(type="text")
-     * @Assert\NotBlank(message="N'oubliez pas de renseigner le contenu de votre proposition")
-     */
-    private $content;
 
     /**
      * @ORM\Column(type="datetime")
@@ -63,7 +57,33 @@ class Proposal
      * @ORM\Column(type="datetime")
      * @Assert\DateTime()
      */
-    private $editDate;
+    private $lastEditDate;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $motivation;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $versionNumber;
+
+    /**
+     * If the proposal is published it is classified in a theme and visible by all the users.
+     * The author is the only one that can publish it.
+     *
+     * @ORM\Column(type="boolean")
+     */
+    private $isPublished;
+
+    /**
+     * If the proposal is a wiki, every user can edit it.
+     * The author is the only one that can make it a wiki.
+     *
+     * @ORM\Column(type="boolean")
+     */
+    private $isAWiki;
 
     /**
      * @ORM\ManyToOne(targetEntity="Theme", inversedBy="proposals", cascade={"persist"})
@@ -72,81 +92,36 @@ class Proposal
     private $theme;
 
     /**
-     * The main author can hire/fire side authors and edit the proposal.
+     * The author is initially the creator of the proposal.
      *
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="mainProposals", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="proposals", cascade={"persist"})
      * @Assert\Valid()
      */
-    private $mainAuthor;
-
-    /**
-     * The side authors can edit the proposal.
-     *
-     * @ORM\ManyToMany(targetEntity="User", inversedBy="sideProposals", cascade={"persist"})
-     * @ORM\JoinTable(name="proposals_sideAuthors")
-     * @Assert\Valid()
-     */
-    private $sideAuthors;
-
-    /**
-     * If the proposal is public any user can edit the proposal.
-     *
-     * @ORM\Column(type="boolean")
-     */
-    private $isPublic;
+    private $author;
 
     /**
      * Users that claim their support to the proposal.
      *
      * @ORM\ManyToMany(targetEntity="User", inversedBy="supportedProposals", cascade={"persist"})
-     * @ORM\JoinTable(name="proposals_supportiveUsers")
+     * @ORM\JoinTable(name="proposals_supporters")
      * @Assert\Valid()
      */
-    private $supportiveUsers;
+    private $supporters;
 
     /**
      * Users that claim their opposition to the proposal.
      *
      * @ORM\ManyToMany(targetEntity="User", inversedBy="opposedProposals", cascade={"persist"})
-     * @ORM\JoinTable(name="proposals_opposedUsers")
+     * @ORM\JoinTable(name="proposals_opposents")
      * @Assert\Valid()
      */
-    private $opposedUsers;
+    private $opponents;
 
     /**
-     * @ORM\OneToMany(targetEntity="ProposalVersion", mappedBy="proposal", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="OldProposal", mappedBy="recordedProposal", cascade={"persist", "remove"})
      * @Assert\Valid()
      */
-    private $versions;
-
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $versionNumber;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * Stores the name of the image file associated to the theme
-     */
-    private $path;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * Stores temporarily the name of the old image file to delete it after the upload
-     */
-    private $temp;
-
-    /**
-     * @Assert\Image(
-     *     minWidth = 128,
-     *     maxWidth = 128,
-     *     minHeight = 128,
-     *     maxHeight = 128,
-     *     mimeTypes = {"image/png"},
-     *     maxSize = "1024k"
-     * )
-     */
-    private $file;
+    private $history;
 
     /**
      * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="proposal")
@@ -156,24 +131,19 @@ class Proposal
 
     public function __construct()
     {
+        $this->creationDate  = new \Datetime();
         $this->versionNumber = 1;
-        $this->sideAuthors = new ArrayCollection();
-        $this->supportiveUsers = new ArrayCollection();
-        $this->opposedUsers = new ArrayCollection();
-        $this->versions = new ArrayCollection();
-        $this->discussions = new ArrayCollection();
+        $this->isPublished   = false;
+        $this->isAWiki       = false;
+        $this->supporters    = new ArrayCollection();
+        $this->opponents     = new ArrayCollection();
+        $this->oldProposals  = new ArrayCollection();
+        $this->discussions   = new ArrayCollection();
     }
 
     public function getId()
     {
         return $this->id;
-    }
-
-    public function setSlug($slug)
-    {
-        $this->slug = $slug;
-
-        return $this;
     }
 
     public function getSlug()
@@ -205,28 +175,6 @@ class Proposal
         return $this->abstract;
     }
 
-    public function setContent($content)
-    {
-        $this->content = $content;
-
-        return $this;
-    }
-
-    public function getContent()
-    {
-        return $this->content;
-    }
-
-    /**
-     * @ORM\PrePersist()
-     */
-    public function setCreationDate()
-    {
-        $this->creationDate = new \Datetime();
-
-        return $this;
-    }
-
     public function getCreationDate()
     {
         return $this->creationDate;
@@ -236,16 +184,76 @@ class Proposal
      * @ORM\PrePersist()
      * @ORM\PreUpdate()
      */
-    public function setEditDate()
+    public function setLastEditDate()
     {
-        $this->editDate = new \Datetime();
+        $this->lastEditDate = new \Datetime();
 
         return $this;
     }
 
-    public function getEditDate()
+    public function getLastEditDate()
     {
-        return $this->editDate;
+        return $this->lastEditDate;
+    }
+
+    public function setMotivation($motivation)
+    {
+        $this->motivation = $motivation;
+
+        return $this;
+    }
+
+    public function getMotivation()
+    {
+        return $this->motivation;
+    }
+
+    public function setVersionNumber($number)
+    {
+        $this->versionNumber = $number;
+
+        return $this;
+    }
+
+    public function incrementVersionNumber()
+    {
+        $this->versionNumber = $this->versionNumber + 1;
+
+        return $this;
+    }
+
+    public function getVersionNumber()
+    {
+        return $this->versionNumber;
+    }
+
+    public function setIsPublished($isPublished)
+    {
+        $this->isPublished = $isPublished;
+
+        return $this;
+    }
+
+    public function isPublished()
+    {
+        return $this->isPublished;
+    }
+
+    public function setIsAWiki($isAWiki = true)
+    {
+        $this->isAWiki = $isAWiki;
+
+        if ($isAWiki) {
+            $this->author->removeProposal($this);
+            $this->author = null;
+        }
+
+        return $this;
+    }
+
+    public function isAWiki()
+    {
+        return $this->isAWiki;
     }
 
     public function setTheme(Theme $theme)
@@ -265,161 +273,77 @@ class Proposal
         return $this->theme;
     }
 
-    public function setMainAuthor(User $user = null)
+    public function setAuthor(User $user = null)
     {
-        if ($this->mainAuthor) {
-            $this->mainAuthor->removeMainProposal($this);
+        if ($this->author) {
+            $this->author->removeProposal($this);
         }
 
-        $this->mainAuthor = $user;
+        $this->author = $user;
         if ($user) {
-            $user->addMainProposal($this);
+            $user->addProposal($this);
         }
 
         return $this;
     }
 
-    public function removeMainAuthor()
+    public function getAuthor()
     {
-        if ($this->mainAuthor) {
-            $this->mainAuthor->removeMainProposal($this);
-        }
+        return $this->author;
+    }
 
-        $this->mainAuthor = null;
+    public function addSupporter(User $supporter)
+    {
+        $this->supporters->add($supporter);
+        $supporter->addSupportedProposal($this);
 
         return $this;
     }
 
-    public function getMainAuthor()
+    public function removeSupporter(User $supporter)
     {
-        return $this->mainAuthor;
-    }
-
-    public function addSideAuthor(User $sideAuthor)
-    {
-        $this->sideAuthors->add($sideAuthor);
-        $sideAuthor->addSideProposal($this);
+        $this->supporters->removeElement($supporter);
+        $supporter->removeSupportedProposal($this);
 
         return $this;
     }
 
-    public function removeSideAuthor(User $sideAuthor)
+    public function getSupporters()
     {
-        $this->sideAuthors->removeElement($sideAuthor);
-        $sideAuthor->removeSideProposal($this);
+        return $this->supporters;
+    }
+
+    public function addOpponent(User $opponent)
+    {
+        $this->opponents->add($opponent);
+        $opponent->addOpposedProposal($this);
 
         return $this;
     }
 
-    public function getSideAuthors()
+    public function removeOpponent(User $opponent)
     {
-        return $this->sideAuthors;
-    }
-
-    /**
-     * @ORM\PrePersist()
-     * @ORM\PreUpdate()
-     */
-    public function setIsPublic()
-    {
-        if (($this->mainAuthor == null) and ($this->sideAuthors->isEmpty())) {
-            $this->isPublic = true;
-        } else {
-            $this->isPublic = false;
-        }
+        $this->opponents->removeElement($opponent);
+        $opponent->removeOpposedProposal($this);
 
         return $this;
     }
 
-    public function isPublic()
+    public function getOpponents()
     {
-        return $this->isPublic;
+        return $this->opponents;
     }
 
-    public function addSupportiveUser(User $supportiveUser)
+    public function addToHistory(OldProposal $oldProposal)
     {
-        $this->supportiveUsers->add($supportiveUser);
-        $supportiveUser->addSupportedProposal($this);
+        $this->history->add($oldProposal);
 
         return $this;
     }
 
-    public function removeSupportiveUser(User $supportiveUser)
+    public function getHistory()
     {
-        $this->supportiveUsers->removeElement($supportiveUser);
-        $supportiveUser->removeSupportedProposal($this);
-
-        return $this;
-    }
-
-    public function getSupportiveUsers()
-    {
-        return $this->supportiveUsers;
-    }
-
-    public function addOpposedUser(User $opposedUser)
-    {
-        $this->opposedUsers->add($opposedUser);
-        $opposedUser->addOpposedProposal($this);
-
-        return $this;
-    }
-
-    public function removeOpposedUser(User $opposedUser)
-    {
-        $this->opposedUsers->removeElement($opposedUser);
-        $opposedUser->removeOpposedProposal($this);
-
-        return $this;
-    }
-
-    public function getOpposedUsers()
-    {
-        return $this->opposedUsers;
-    }
-
-    public function addVersion(ProposalVersion $version)
-    {
-        $this->versions->add($version);
-
-        return $this;
-    }
-
-    public function removeVersion(ProposalVersion $version)
-    {
-        $this->versions->removeElement($version);
-
-        return $this;
-    }
-
-    public function getVersions()
-    {
-        return $this->versions;
-    }
-
-    public function setVersionNumber($number)
-    {
-        $this->versionNumber = $number;
-
-        return $this;
-    }
-
-    public function getVersionNumber()
-    {
-        return $this->versionNumber;
-    }
-
-    public function editFromDraft(ProposalDraft $proposalDraft)
-    {
-        $this
-            ->setTitle($proposalDraft->getTitle())
-            ->setAbstract($proposalDraft->getAbstract())
-            ->setContent($proposalDraft->getContent())
-            ->setMainAuthor($proposalDraft->getMainAuthor())
-        ;
-        foreach ($proposalDraft->getSideAuthors() as $sideAuthor) {
-            $this->addSideAuthor($sideAuthor);
-        }
+        return $this->history;
     }
 
     public function addDiscussion(PublicDiscussion $discussion)
@@ -439,133 +363,5 @@ class Proposal
     public function getDiscussions()
     {
         return $this->discussions;
-    }
-
-    /*****************************************************
-     *****************************************************
-     *
-     * Methods to manage the image file associated to a proposal
-     * http://symfony.com/doc/2.3/cookbook/doctrine/file_uploads.html
-     *
-     *****************************************************
-     *****************************************************/
-
-    /**
-     * A convenience method that returns the absolute path to the file.
-     */
-    public function getAbsolutePath()
-    {
-        return null === $this->path
-            ? null
-            : $this->getUploadRootDir().'/'.$this->path;
-    }
-
-    /**
-     * A convenience method that returns the web path
-     * which can be used in a template to link to the uploaded file.
-     */
-    public function getWebPath()
-    {
-        return null === $this->path
-            ? null
-            : $this->getUploadDir().'/'.$this->path;
-    }
-
-    protected function getUploadRootDir()
-    {
-        // the absolute directory path where uploaded
-        // documents should be saved
-        return __DIR__.'/../../../web/'.$this->getUploadDir();
-    }
-
-    protected function getUploadDir()
-    {
-        // get rid of the __DIR__ so it doesn't screw up
-        // when displaying uploaded doc/image in the view.
-        return 'uploads/proposals/images';
-    }
-
-    public function setFile(UploadedFile $file = null)
-    {
-        $this->file = $file;
-        // check if we have an old image path
-        if (isset($this->path)) {
-            // store the old name to delete after the update
-            $this->temp = $this->path;
-            $this->path = null;
-        } else {
-            $this->path = 'initial';
-        }
-    }
-
-    public function getFile()
-    {
-        return $this->file;
-    }
-
-    /**
-     * @ORM\PrePersist()
-     * @ORM\PreUpdate()
-     * Manage the path attribute
-     */
-    public function preUpload()
-    {
-        if (null !== $this->getFile()) {
-
-            // compute a random name and try to guess the extension (more secure)
-            $extension = $this->getFile()->guessExtension();
-            if (!$extension) {
-                // extension cannot be guessed
-                $extension = 'bin';
-            }
-
-            $filename = $this->getTitle().rand(1, 99999).'.'.$extension;
-
-            // set the path property to the filename where you've saved the file
-            $this->path = $filename;
-        }
-    }
-
-    /**
-     * @ORM\PostPersist()
-     * @ORM\PostUpdate()
-     * Uploads the image file after persisting the theme
-     */
-    public function upload()
-    {
-        // the file property can be empty if the field is not required
-        if (null === $this->getFile()) {
-            return;
-        }
-
-        // if there is an error when moving the file, an exception will
-        // be automatically thrown by move(). This will properly prevent
-        // the entity from being persisted to the database on error
-        $this->getFile()->move(
-            $this->getUploadRootDir(),
-            $this->path
-        );
-
-        // check if we have an old image
-        if (isset($this->temp)) {
-            // delete the old image
-            unlink($this->getUploadRootDir().'/'.$this->temp);
-            // clear the temp image path
-            $this->temp = null;
-        }
-
-        // clean up the file property as you won't need it anymore
-        $this->file = null;
-    }
-
-    /**
-     * @ORM\PostRemove()
-     * Remove the image file after suppression of a theme
-     */
-    public function removeUpload()
-    {
-        if ($file = $this->getAbsolutePath()) {
-            unlink($file);
-        }
     }
 }

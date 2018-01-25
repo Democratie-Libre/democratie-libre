@@ -12,7 +12,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ThemeRepository")
  * @Gedmo\Tree(type="nested")
- * @UniqueEntity(fields="id")
  * @UniqueEntity(fields="slug")
  * @UniqueEntity(fields="title")
  * @ORM\HasLifecycleCallbacks
@@ -33,22 +32,21 @@ class Theme
     private $slug;
 
     /**
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="string", unique=true)
+     * @Assert\NotBlank()
      * @Assert\Length(
-     *      min = "2",
-     *      max = "255"
+     *      max = 40,
      * )
      */
     private $title;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="text")
      * @Assert\Length(
-     *      min = "2",
-     *      max = "255"
+     *      max = 200,
      * )
      */
-    private $description;
+    private $abstract;
 
     /**
      * @ORM\Column(type="datetime")
@@ -126,7 +124,7 @@ class Theme
      *     minHeight = 128,
      *     maxHeight = 128,
      *     mimeTypes = {"image/png"},
-     *     maxSize = "1024k"
+     *     maxSize = "100k"
      * )
      */
     private $file;
@@ -139,9 +137,10 @@ class Theme
 
     public function __construct()
     {
-        $this->children = new ArrayCollection();
-        $this->proposals = new ArrayCollection();
-        $this->discussions = new ArrayCollection();
+        $this->creationDate = new \Datetime();
+        $this->children     = new ArrayCollection();
+        $this->proposals    = new ArrayCollection();
+        $this->discussions  = new ArrayCollection();
     }
 
     public function getId()
@@ -173,26 +172,16 @@ class Theme
         return $this->title;
     }
 
-    public function setDescription($description)
+    public function setAbstract($abstract)
     {
-        $this->description = $description;
+        $this->abstract = $abstract;
 
         return $this;
     }
 
-    public function getDescription()
+    public function getAbstract()
     {
-        return $this->description;
-    }
-
-    /**
-     * @ORM\PrePersist()
-     */
-    public function setCreationDate()
-    {
-        $this->creationDate = new \Datetime();
-
-        return $this;
+        return $this->abstract;
     }
 
     public function getCreationDate()

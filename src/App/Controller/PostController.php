@@ -32,17 +32,18 @@ class PostController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $discussion = $form->get('discussion')->getData();
+            $newDiscussion = $form->get('discussion')->getData();
             $em = $this->getDoctrine()->getManager();
             $em->persist($post);
             $em->flush();
 
             return $this->redirect($this->generateUrl('public_discussion_show', [
-                'slug' => $discussion->getSlug(),
+                'slug' => $newDiscussion->getSlug(),
             ]));
         }
 
-        return $this->render('App:Post:form.html.twig', [
+        return $this->render('App:Post:move_post.html.twig', [
+            'post' => $post,
             'form' => $form->createView(),
         ]);
     }

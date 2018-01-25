@@ -32,19 +32,13 @@ class AbstractDiscussion
     protected $slug;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", unique=true)
+     * @Assert\NotBlank()
      * @Assert\Length(
-     *      min = "2",
-     *      max = "255"
+     *      max = 120,
      * )
      */
     protected $title;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
-     */
-    protected $abstract;
 
     /**
      * @ORM\Column(type="datetime")
@@ -80,9 +74,10 @@ class AbstractDiscussion
 
     public function __construct()
     {
-        $this->locked = false;
-        $this->posts  = new ArrayCollection();
-        $this->unreaders = new ArrayCollection();
+        $this->creationDate = new \Datetime();
+        $this->locked       = false;
+        $this->posts        = new ArrayCollection();
+        $this->unreaders    = new ArrayCollection();
     }
 
     public function setSlug($slug)
@@ -107,28 +102,6 @@ class AbstractDiscussion
     public function getTitle()
     {
         return $this->title;
-    }
-
-    public function setAbstract($abstract)
-    {
-        $this->abstract = $abstract;
-
-        return $this;
-    }
-
-    public function getAbstract()
-    {
-        return $this->abstract;
-    }
-
-    /**
-     * @ORM\PrePersist()
-     */
-    public function setCreationDate()
-    {
-        $this->creationDate = new \Datetime();
-
-        return $this;
     }
 
     public function getCreationDate()
@@ -186,6 +159,11 @@ class AbstractDiscussion
     public function getPosts()
     {
         return $this->posts;
+    }
+
+    public function getLastPost()
+    {
+        return $this->posts->isEmpty ? null : $this->posts->last();
     }
 
     public function addUnreader(User $unreader)

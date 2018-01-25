@@ -2,12 +2,13 @@
 
 namespace App\Security\Authorization\Voter;
 
-use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Doctrine\Bundle\DoctrineBundle\Registry as Doctrine;
+use App\Entity\User;
+use App\Entity\PrivateDiscussion;
 
-class PrivateDiscussionVoter implements VoterInterface
+class PrivateDiscussionVoter extends Voter
 {
     const VIEW       = 'view';
     const EDIT       = 'edit';
@@ -21,81 +22,69 @@ class PrivateDiscussionVoter implements VoterInterface
         $this->doctrine = $doctrine;
     }
 
-    public function supportsAttribute($attribute)
+    protected function supports($attribute, $subject)
     {
-        return in_array($attribute, array(
+        if (!in_array($attribute, [
             self::VIEW,
             self::EDIT,
             self::ADD_MEMBER,
-            self::UNREADER,
-        ));
+            self::UNREADER
+        ])) {
+            return false;
+        }
+
+        if (!$subject instanceof PrivateDiscussion) {
+            return false;
+        }
+
+        return true;
     }
 
-    public function supportsClass($class)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        $supportedClass = 'App\Entity\PrivateDiscussion';
-
-        return $supportedClass === $class || is_subclass_of($class, $supportedClass);
-    }
-
-    public function vote(TokenInterface $token, $discussion, array $attributes)
-    {
-        // check if class of this object is supported by this voter
-        if (!$this->supportsClass(get_class($discussion))) {
-            return VoterInterface::ACCESS_ABSTAIN;
-        }
-
-        // check if the voter is used correctly, only allow one attribute
-        if (1 !== count($attributes)) {
-            throw new \InvalidArgumentException(
-                'Only one attribute is allowed'
-            );
-        }
-
-        // set the attribute to check against
-        $attribute = $attributes[0];
-
-        // check if the given attribute is covered by this voter
-        if (!$this->supportsAttribute($attribute)) {
-            return VoterInterface::ACCESS_ABSTAIN;
-        }
-
         $user = $token->getUser();
 
-        // make sure there is a user object (i.e. that the user is logged in)
-        if (!$user instanceof UserInterface) {
-            return VoterInterface::ACCESS_DENIED;
+        if (!$user instanceof User) {
+            return false;
         }
 
-        $isMember      = $discussion->hasMember($user);
-        $isAdmin       = $user === $discussion->getAdmin();
-        $isUnreader    = $discussion->hasUnreader($user);
-        $usersNumber   = $this->doctrine->getRepository('App:User')->count();
-        $membersNumber = count($discussion->getMembers());
+        $privateDiscussion = $subject;
 
         switch ($attribute) {
             case self::VIEW:
-                if ($isMember) {
-                    return VoterInterface::ACCESS_GRANTED;
-                }
-                break;
+                return $this->canView($privateDiscussion, $user);
             case self::EDIT:
-                if ($isAdmin) {
-                    return VoterInterface::ACCESS_GRANTED;
-                }
-                break;
+                return $this->canEdit($privateDiscussion, $user);
             case self::ADD_MEMBER:
-                if ($isAdmin and $usersNumber !== $membersNumber) {
-                    return VoterInterface::ACCESS_GRANTED;
-                }
-                break;
+                return $this->canAddMember($privateDiscussion, $user);
             case self::UNREADER:
-                if ($isUnreader) {
-                    return VoterInterface::ACCESS_GRANTED;
-                }
-                break;
+                return $this->isUnreader($privateDiscussion, $user);
         }
 
-        return VoterInterface::ACCESS_DENIED;
+        throw new \LogicException('This code should not be reached!');
+    }
+
+    private function canView($privateDiscussion, $user)
+    {
+        return $privateDiscussion->hasMember($user);
+    }
+
+    private function canEdit($privateDiscussion, $user)
+    {
+        return $user === $privateDiscussion->getAdmin();
+    }
+
+    private function canAddMember($privateDiscussion, $user)
+    {
+        $isAdmin       = $user === $privateDiscussion->getAdmin();
+        $usersNumber   = $this->doctrine->getRepository('App:User')->count();
+        $membersNumber = count($privateDiscussion->getMembers());
+
+        return $isAdmin and $usersNumber !== $membersNumber;
+    }
+
+    private function isUnreader($privateDiscussion, $user)
+    {
+        return $privateDiscussion->hasUnreader($user);
     }
 }

@@ -13,7 +13,6 @@ class EditDiscussionType extends AbstractType
     {
         $builder
             ->add('title', 'text')
-            ->add('abstract', 'textarea')
             ->add('save', 'submit')
         ;
     }
@@ -23,10 +22,5 @@ class EditDiscussionType extends AbstractType
         $resolver->setDefaults([
             'data_class' => 'App\Entity\AbstractDiscussion',
         ]);
-    }
-
-    public function getName()
-    {
-        return 'edit_discussion';
     }
 }
