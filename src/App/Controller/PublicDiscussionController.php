@@ -26,7 +26,7 @@ class PublicDiscussionController extends Controller
         $user = $this->getUser();
 
         if (!$user instanceof UserInterface) {
-            return $this->render('App:PublicDiscussion:show.html.twig', [
+            return $this->render('App:Discussion:show_public_discussion.html.twig', [
                 'discussion' => $discussion,
             ]);
         }
@@ -39,7 +39,7 @@ class PublicDiscussionController extends Controller
         }
 
         if ($discussion->isLocked()) {
-            return $this->render('App:PublicDiscussion:show.html.twig', [
+            return $this->render('App:Discussion:show_public_discussion.html.twig', [
                 'discussion' => $discussion,
             ]);
         }
@@ -60,7 +60,7 @@ class PublicDiscussionController extends Controller
             ]));
         }
 
-        return $this->render('App:PublicDiscussion:show.html.twig', [
+        return $this->render('App:Discussion:show_public_discussion.html.twig', [
             'discussion' => $discussion,
             'form'       => $form->createView(),
         ]);
@@ -87,8 +87,9 @@ class PublicDiscussionController extends Controller
             ]));
         }
 
-        return $this->render('App:PublicDiscussion:form.html.twig', [
-            'form' => $form->createView(),
+        return $this->render('App:Discussion:add_global_discussion.html.twig', [
+            'discussion' => $discussion,
+            'form'       => $form->createView(),
         ]);
     }
 
@@ -120,8 +121,9 @@ class PublicDiscussionController extends Controller
             ]));
         }
 
-        return $this->render('App:PublicDiscussion:form.html.twig', [
-            'form' => $form->createView(),
+        return $this->render('App:Discussion:add_theme_discussion.html.twig', [
+            'theme' => $theme,
+            'form'  => $form->createView(),
         ]);
     }
 
@@ -153,8 +155,9 @@ class PublicDiscussionController extends Controller
             ]));
         }
 
-        return $this->render('App:PublicDiscussion:form.html.twig', [
-            'form' => $form->createView(),
+        return $this->render('App:Discussion:add_proposal_discussion.html.twig', [
+            'proposal' => $proposal,
+            'form'     => $form->createView(),
         ]);
     }
 
@@ -182,7 +185,8 @@ class PublicDiscussionController extends Controller
              ]));
         }
 
-        return $this->render('App:PublicDiscussion:form.html.twig', [
+        return $this->render('App:Discussion:edit_discussion.html.twig', [
+            'discussion' => $discussion,
             'form' => $form->createView(),
         ]);
     }
@@ -204,7 +208,7 @@ class PublicDiscussionController extends Controller
             $em->remove($discussion);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('global_discussions'));
+            return $this->redirect($this->generateUrl('global_room'));
         }
 
         if ($discussion->isThemeDiscussion()) {
@@ -278,7 +282,7 @@ class PublicDiscussionController extends Controller
              ]));
         }
 
-        return $this->render('App:PublicDiscussion:form.html.twig', [
+        return $this->render('App:Discussion:form.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -310,7 +314,7 @@ class PublicDiscussionController extends Controller
              ]));
         }
 
-        return $this->render('App:PublicDiscussion:form.html.twig', [
+        return $this->render('App:Discussion:form.html.twig', [
             'form' => $form->createView(),
         ]);
     }

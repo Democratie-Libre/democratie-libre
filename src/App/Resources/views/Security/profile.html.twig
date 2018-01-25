@@ -1,79 +1,145 @@
 {% extends "::layout.html.twig" %}
 
-{% block content %}
-    {% block page_content %}
-        <h1>{{ user.username }}</h1>
-
-        {% if user.webPath is empty %}
-            <img src="{{ asset('img/defaultProfile128.png') }}" class="marginAuto">
-        {% else %}
-            <img src="{{ asset(user.webPath) }}" class="marginAuto">
-        {% endif %}
-
-        <a href="{{ path('avatar_edit') }}" class="btn btn-default">Modifier mon avatar</a>
-
-        <ul>
-            <li>Pseudo: {{ user.username }}</li>
-            <li>Email: {{ user.email }}</li>
-        </ul>
-
-        <a href="{{ path('email_edit') }}" class="btn btn-default">Modifier mon email</a><br>
-        <a href="{{ path('password_edit') }}" class="btn btn-default">Modifier mon mot de passe</a><br><br>
-
-        <div class="container">
-            <ul class="nav nav-tabs">
-                <li class="active"><a data-toggle="tab" href="#private_discussions">Messagerie</a></li>
-                <li ><a data-toggle="tab" href="#followed_discussions">Discussions suivies</a></li>
-                <li ><a data-toggle="tab" href="#programme">Programme</a></li>
+{% block page_content %}
+    <div class="section-header-menu">
+        <div class="btn-group custom-btn-group ">
+            <button class="dropdown-toggle btn btn-default" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
+            <ul class="dropdown-menu pull-right">
+                <li><a href="{{ path('email_edit') }}">Modifier mon email</a></li>
+                <li><a href="{{ path('password_edit') }}">Modifier mon mot de passe</a></li>
+                <li><a href="{{ path('avatar_edit') }}">Modifier mon avatar</a></li>
+                <li><a href="{{ path('private_discussion_add') }}">Ouvrir une discussion privée</a></li>
+                <li><a href="{{ path('proposal_add') }}">Rédiger une proposition</a></li>
             </ul>
-            <div class="tab-content">
-                <div id="private_discussions" class="tab-pane fade in active">
-                    <h2>Messagerie</h2>
-                    {% for discussion in app.user.privateDiscussions %}
-                        {% if is_granted('unreader', discussion) %}
-                            Non lu<a href="{{ path('private_discussion_show', {'slug': discussion.slug}) }}">{{ discussion.title }}</a><br>
-                        {% else %}
-                            Lu<a href="{{ path('private_discussion_show', {'slug': discussion.slug}) }}">{{ discussion.title }}</a><br>
-                        {% endif %}
+        </div>
+    </div>
+    <div class="profile-header row">
+        <div class="col-md-3 col-xs-3">
+            {% if user.webPath is empty %}
+                <img src="{{ asset('img/defaultProfile_128.png') }}" class="marginAuto">
+            {% else %}
+                <img src="{{ asset(user.webPath) }}" class="marginAuto">
+            {% endif %}
+        </div>
+        <div class="col-md-9 col-xs-3">
+            <span class="profile-title">{{ user.username }}</span><br>
+            <span>{{ user.email }}</span><br>
+        </div>
+    </div>
+    <div class="section-menu row">
+        <ul>
+            <li class="active"><a data-toggle="tab" href="#private_discussions">Messagerie</a></li>
+            <li ><a data-toggle="tab" href="#followed_discussions">Discussions suivies</a></li>
+            <li ><a data-toggle="tab" href="#proposals">Propositions</a></li>
+        </ul>
+    </div>
+    <div class="tab-content">
+        <div id="private_discussions" class="tab-pane fade in active">
+            <table class="table discussion-table">
+                <thead>
+                    <tr>
+                        <th>Discussion</th>
+                        <th>Dernier commentaire</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for discussion in app.user.privateDiscussions %}
+                    {% if is_granted('unreader', discussion) %}
+                        <tr class="discussion-unread">
+                            <td><a href="{{ path('private_discussion_show', {'slug': discussion.slug}) }}" class="discussion-link">{{ discussion.title }}</a></td>
+                            {% if discussion.posts is empty %}
+                                <td>Vide</td>
+                            {% else %}
+                                <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
+                            {% endif %}
+                        </tr>
                     {% else %}
-                        Pas de discussion en cours
-                    {% endfor %}
-                    <li><a href="{{ path('private_discussion_add') }}" class="btn btn-default">Ouvrir une discussion privée</a></li>
-                </div>
-                <div id="followed_discussions" class="tab-pane fade">
-                    <h2>Discussions suivies</h2>
-                    {% for discussion in app.user.followedDiscussions %}
-                        {% if is_granted('unreader', discussion) %}
-                            Non lu<a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}">{{ discussion.title }}</a><br>
-                        {% else %}
-                            Lu<a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}">{{ discussion.title }}</a><br>
-                        {% endif %}
+                        <tr>
+                            <td><a href="{{ path('private_discussion_show', {'slug': discussion.slug}) }}" class="discussion-link">{{ discussion.title }}</a></td>
+                            {% if discussion.posts is empty %}
+                                <td>Vide</td>
+                            {% else %}
+                                <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
+                            {% endif %}
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div id="followed_discussions" class="tab-pane fade">
+            <table class="table discussion-table">
+                <thead>
+                    <tr>
+                        <th>Discussion</th>
+                        <th>Dernier commentaire</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for discussion in app.user.followedDiscussions %}
+                    {% if is_granted('unreader', discussion) %}
+                        <tr class="discussion-unread">
+                            <td><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="discussion-link">{{ discussion.title }}</a></td>
+                            {% if discussion.posts is empty %}
+                                <td>Vide</td>
+                            {% else %}
+                                <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
+                            {% endif %}
+                        </tr>
                     {% else %}
-                        Pas de discussion suivie. 
-                    {% endfor %}
-                </div>
-                <div id="programme" class="tab-pane fade">
-                    <h2>Propositions personnelles</h2>
-                    {% for proposal in app.user.proposals %}
-                        <a href="{{ path('proposal_show', {'slug': proposal.slug}) }}">{{ proposal.title }}</a><br>
-                    {% else %}
-                        <p>Pas de proposition personnelle</p>
-                    {% endfor %}
-                    <li><a href="{{ path('proposal_add') }}" class="btn btn-default">Rédiger une proposition</a></li>
-                    <h2>Propositions supportées</h2>
-                    {% for proposal in app.user.supportedProposals %}
-                        <a href="{{ path('proposal_show', {'slug': proposal.slug}) }}">{{ proposal.title }}</a><br>
-                    {% else %}
-                        <p>Pas de proposition supportée</p>
-                    {% endfor %}
-                    <h2>Propositions contestées</h2>
-                    {% for proposal in app.user.opposedProposals %}
-                        <a href="{{ path('proposal_show', {'slug': proposal.slug}) }}">{{ proposal.title }}</a><br>
-                    {% else %}
-                        <p>Pas de proposition contestée</p>
-                    {% endfor %}
-                </div>
+                        <tr>
+                            <td><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="discussion-link">{{ discussion.title }}</a></td>
+                            {% if discussion.posts is empty %}
+                                <td>Vide</td>
+                            {% else %}
+                                <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
+                            {% endif %}
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div id="proposals" class="tab-pane fade subsection-content col-md-10 col-xs-10">
+            <div class="subsection-block row">
+                <h2>Mes propositions</h2>
+                {% for proposal in app.user.proposals %}
+                    <a href="{{ path('proposal_show', {'slug': proposal.slug}) }}" class="subsection-panel col-md-12 col-xs-12">
+                        <div class="subsection-panel-heading">
+                            <div class="subsection-panel-title">{{ proposal.title }}</div>
+                        </div>
+                        <div class="subsection-panel-body">{{ proposal.abstract }}</div>
+                    </a>
+                {% else %}
+                    <p>Pas de proposition personnelle</p>
+                {% endfor %}
+            </div>
+            <div class="subsection-block row">
+                <h2>Propositions supportées</h2>
+                {% for proposal in app.user.supportedProposals %}
+                    <a href="{{ path('proposal_show', {'slug': proposal.slug}) }}" class="subsection-panel col-md-12 col-xs-12">
+                        <div class="subsection-panel-heading">
+                            <div class="subsection-panel-title">{{ proposal.title }}</div>
+                        </div>
+                        <div class="subsection-panel-body">{{ proposal.abstract }}</div>
+                    </a>
+                {% else %}
+                    <p>Pas de proposition supportée</p>
+                {% endfor %}
+            </div>
+            <div class="subsection-block row">
+                <h2>Propositions contestées</h2>
+                {% for proposal in app.user.opposedProposals %}
+                    <a href="{{ path('proposal_show', {'slug': proposal.slug}) }}" class="subsection-panel col-md-12 col-xs-12">
+                        <div class="subsection-panel-heading">
+                            <div class="subsection-panel-title">{{ proposal.title }}</div>
+                        </div>
+                        <div class="subsection-panel-body">{{ proposal.abstract }}</div>
+                    </a>
+                {% else %}
+                    <p>Pas de proposition contestée</p>
+                {% endfor %}
             </div>
         </div>
-    {% endblock page_content %}
-{% endblock content %}
+    </div>
+{% endblock page_content %}

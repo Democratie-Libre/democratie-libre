@@ -15,7 +15,7 @@ class OldProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
-        return $this->render('App:OldProposal:show.html.twig', [
+        return $this->render('App:OldProposal:show_old_proposal.html.twig', [
             'oldProposal' => $oldProposal,
         ]);
     }

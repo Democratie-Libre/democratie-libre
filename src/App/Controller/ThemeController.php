@@ -5,10 +5,10 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use App\Entity\Theme;
-use App\Form\ThemeType;
-use App\Form\EditThemeType;
 use Symfony\Component\Security\Core\User\UserInterface;
+use App\Entity\Theme;
+use App\Form\Theme\EditThemeType;
+use App\Form\Theme\MoveThemeType;
 
 class ThemeController extends Controller
 {
@@ -21,7 +21,7 @@ class ThemeController extends Controller
             throw $this->createNotFoundException();
         }
 
-        return $this->render('App:Theme:show.html.twig', [
+        return $this->render('App:Theme:show_theme.html.twig', [
             'theme' => $theme,
         ]);
     }
@@ -34,10 +34,10 @@ class ThemeController extends Controller
     public function addRootAction(Request $request)
     {
         $theme = new Theme();
-        $form  = $this->createForm(new ThemeType(), $theme);
+        $form  = $this->createForm(new EditThemeType(), $theme);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $theme->setLvl(0);
 
             $em = $this->getDoctrine()->getManager();
@@ -49,7 +49,7 @@ class ThemeController extends Controller
             ]));
         }
 
-        return $this->render('App:Theme:add.html.twig', [
+        return $this->render('App:Theme:add_root.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -60,11 +60,11 @@ class ThemeController extends Controller
     public function addAction(Request $request, $slug)
     {
         $theme = new Theme();
-        $form  = $this->createForm(new ThemeType(), $theme);
+        $form  = $this->createForm(new EditThemeType(), $theme);
         $form->handleRequest($request);
+        $parent = $this->getDoctrine()->getRepository('App:Theme')->findOneBySlug($slug);
 
-        if ($form->isValid()) {
-            $parent = $this->getDoctrine()->getRepository('App:Theme')->findOneBySlug($slug);
+        if ($form->isSubmitted() && $form->isValid()) {
 
             if (null === $parent) {
                 throw $this->createNotFoundException();
@@ -80,8 +80,73 @@ class ThemeController extends Controller
             ]));
         }
 
-        return $this->render('App:Theme:add.html.twig', [
-            'form' => $form->createView(),
+        return $this->render('App:Theme:add_theme.html.twig', [
+            'form'   => $form->createView(),
+            'parent' => $parent,
+        ]);
+    }
+
+    /**
+     * @Security("has_role('ROLE_ADMIN')")
+     */
+    public function editAction(Request $request, $slug)
+    {
+        $repository = $this->getDoctrine()->getRepository('App:Theme');
+        $theme      = $repository->findOneBySlug($slug);
+
+        if (null === $theme) {
+            throw $this->createNotFoundException();
+        }
+
+        $form = $this->createForm(new EditThemeType(), $theme);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($theme);
+            $em->flush();
+
+            return $this->redirect($this->generateUrl('theme_show', [
+                'slug' => $theme->getSlug(),
+            ]));
+        }
+
+        return $this->render('App:Theme:edit_theme.html.twig', [
+            'form'   => $form->createView(),
+            'theme'  => $theme,
+        ]);
+    }
+
+    /**
+     * @Security("has_role('ROLE_ADMIN')")
+     */
+    public function moveAction(Request $request, $slug)
+    {
+        $repository = $this->getDoctrine()->getRepository('App:Theme');
+        $theme      = $repository->findOneBySlug($slug);
+
+        if (null === $theme) {
+            throw $this->createNotFoundException();
+        }
+
+        // in this array are the id of the theme considered, and the ids of all its descendants
+        $descendantsId = $repository->getChildrenId($theme, false, null, 'ASC', true);
+        $form = $this->createForm(new MoveThemeType($descendantsId), $theme);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($theme);
+            $em->flush();
+
+            return $this->redirect($this->generateUrl('theme_show', [
+                'slug' => $theme->getSlug(),
+            ]));
+        }
+
+        return $this->render('App:Theme:move_theme.html.twig', [
+            'form'   => $form->createView(),
+            'theme'  => $theme,
         ]);
     }
 
@@ -98,7 +163,7 @@ class ThemeController extends Controller
         }
 
         if (false === $theme->isEmpty()) {
-            $this->get('session')->getFlashBag()->add('info', 'A theme cannot be deleted if it contains any proposal');
+            $this->addFlash('info', 'Une thématique ne peut pas être supprimée si elle contient des propositions !');
 
             return $this->redirect($this->generateUrl('theme_show', [
                 'slug' => $theme->getSlug(),
@@ -109,7 +174,7 @@ class ThemeController extends Controller
         $repository->removeFromTree($theme);
         $this->getDoctrine()->getManager()->clear(); // clear cached nodes
         // it will remove this node from tree and reparent all children
-        $this->get('session')->getFlashBag()->add('info', 'The theme entitled '.$theme->getTitle().' has been deleted');
+        $this->addFlash('info', 'La thématique '.$theme->getTitle().' a été supprimée !');
 
         if ($parent instanceof Theme) {
             return $this->redirect($this->generateUrl('theme_show', [
@@ -117,54 +182,6 @@ class ThemeController extends Controller
             ]));
         }
 
-        return $this->redirect($this->generateUrl('index'));
-    }
-
-    /**
-     * @Security("has_role('ROLE_ADMIN')")
-     */
-    public function editAction(Request $request, $slug)
-    {
-        $repository = $this->getDoctrine()->getRepository('App:Theme');
-        $theme      = $repository->findOneBySlug($slug);
-
-        if (null === $theme) {
-            throw $this->createNotFoundException();
-        }
-
-        // in this array are the id of the theme considered, and the ids of all its descendants
-        $descendantsId = $repository->getChildrenId($theme, false, null, 'ASC', true);
-        $form          = $this->createForm(new EditThemeType($descendantsId), $theme);
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            $theme->setParent($form->get('parent')->getData());
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($theme);
-            $em->flush();
-
-            return $this->redirect($this->generateUrl('theme_show', [
-                    'slug' => $theme->getSlug(),
-            ]));
-        }
-
-        return $this->render('App:Theme:edit.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }
-
-    public function showDiscussionsAction($slug)
-    {
-        $theme = $this->getDoctrine()->getRepository('App:Theme')->findOneBySlug($slug);
-
-        if (null === $theme) {
-            throw $this->createNotFoundException();
-        }
-
-        $discussions = $this->getDoctrine()->getRepository('App:Discussion')->findByTheme($theme);
-
-        return $this->render('App:Theme:discussions.html.twig', [
-            'discussions' => $discussions,
-        ]);
+        return $this->redirect($this->generateUrl('roots'));
     }
 }

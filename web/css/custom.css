@@ -1,23 +1,512 @@
-/** Treeview **/
-li, li.noChild
-{
-  list-style-type: none;
-  list-style-image: none;
+/*******************/
+/** Custom design **/
+/*******************/
+
+* {
+    margin: 0;
+    padding: 0;
 }
 
-li.closed
-{
-  list-style-type: none;
-  list-style-image: url('../img/closed.png');
+body {
+    font-family: 'Roboto Condensed', Arial, sans-serif;
+    color: #333333;
+    font-size: 14px;
 }
 
-li.open
-{
-  list-style-type: none;
-  list-style-image: url('../img/open.png');
+.container-fluid {
+    padding-bottom: 100px;
 }
 
-ul.hidden
-{
-  display: none;
+.padding-zero {
+    padding: 0;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.margin-auto {
+    margin: auto;
+}
+
+/*************/
+/** Buttons **/
+/*************/
+
+.custom-btn {
+    display: block;
+    background-color: white;
+    color: #333333;
+}
+
+.custom-btn:hover {
+    color: white;
+    background-color: #F0BD00;
+}
+
+.custom-admin-btn {
+    display: block;
+    color: #C7000D;
+    margin-bottom: 6px;
+}
+
+.custom-admin-btn:hover {
+    background-color: #C7000D;
+    color: white;
+    margin-bottom: 6px;
+}
+
+.custom-btn-group > button {
+    background-color: white;
+}
+
+.custom-btn-group.open > button {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.custom-dropdown-toggle {
+    width: 100%;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+/************/
+/** Images **/
+/************/
+
+.custom-img {
+    margin: auto;
+}
+
+/***********/
+/** Forms **/
+/***********/
+
+.form-header {
+    margin-bottom: 30px;
+    padding: 0;
+}
+
+.form-header > h1 {
+    margin-bottom: 30px;
+}
+
+.form-label {
+    font-size: 18px;
+}
+
+.form-abstract-textarea {
+    min-height: 100px;
+}
+
+/***************************/
+/** Textareas (SimpleMde) **/
+/***************************/
+
+.CodeMirror, .CodeMirror-scroll {
+    min-height: 100px;
+}
+
+/***************/
+/** Top menu **/
+/***************/
+
+.top-menu {
+    padding-top: 10px;
+    position: fixed;
+    right: 0;
+    left: 0;
+    z-index: 1030;
+    background-color: white;
+}
+
+.logo {
+    text-align: center;
+}
+
+.navblock-top-menu {
+    border-bottom: 1px solid #F0BD00;
+}
+
+.navlink-top-menu {
+    text-align: center;
+    height: 37px;
+    padding-top: 5px;
+    color: #333333;
+}
+
+.navlink-top-menu:hover {
+    color: #F0BD00;
+    text-decoration: none;
+    border-bottom: 3px solid #F0BD00;
+}
+
+.dropdown-top-menu {
+    padding-left:0;
+    padding-right:0;
+}
+
+/*************/
+/** Section **/
+/*************/
+
+.section {
+    margin-top: 80px;
+}
+
+.section-header {
+    margin-bottom: 20px;
+}
+
+.section-header-image {
+    text-align: center;
+}
+
+.section-header-title > h1 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 40px;
+    font-weight: bold;
+    line-height: 1;
+    color: #333333;
+}
+
+.section-abstract {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/******************/
+/** Section menu **/
+/******************/
+
+.section-menu {
+    margin-bottom: 30px;
+}
+
+.section-menu > ul {
+    border-bottom: 1px solid #F0BD00;
+    padding-left: 30px;
+}
+
+.section-menu > ul > li {
+    display: inline-block;
+    margin-bottom: -2px;
+}
+
+.section-menu > ul > li.active {
+    border: 1px solid #F0BD00;
+    border-radius: 4px 4px 0 0;
+    border-bottom: 2px solid white;
+}
+
+.section-menu > ul > li > a {
+    display: block;
+    color: #333333;
+    padding: 10px;
+}
+
+.section-menu > ul > li > a:hover {
+    text-decoration: none;
+}
+
+.section-menu > ul > li.active > a {
+    text-decoration: none;
+}
+
+.section-header-menu > a {
+    float: right;
+}
+
+.section-header-menu > .custom-btn-group {
+    float: right;
+}
+
+/****************/
+/** Subsection **/
+/****************/
+
+.subsection-panel {
+    color: #333333;
+    padding: 10 0 0 0;
+    border-left: 2px solid #333333;
+    margin-bottom: 10px;
+}
+
+.subsection-panel:hover {
+    color: #333333;
+    padding: 10 0 0 0;
+    border-left: 2px solid #F0BD00;
+    margin-bottom: 10px;
+    text-decoration: none;
+}
+
+.subsection-panel:hover > .subsection-panel-heading {
+    color: #F0BD00;
+}
+
+.subsection-panel-heading {
+    font-size: 22px;
+    padding: 5px;
+}
+
+.subsection-panel-body {
+    padding: 5px;
+}
+
+.subsection-block-header {
+    margin-top: 40px;
+}
+
+/******************/
+/** Welcome page **/
+/******************/
+
+.carousel-inner {
+    height: 700px;
+}
+
+.carousel-link {
+    height: 300px;
+    padding-top: 140px;
+    color: #333333;
+}
+
+.carousel-link:hover {
+    color: #333333;
+}
+
+.welcome-paragraph {
+    font-size: 18px;
+}
+
+/***********/
+/** Roots **/
+/***********/
+
+.root-link {
+    display: block;
+    padding: 10px;
+    height: 250px;
+    text-align: center;
+    color: #333333;
+}
+
+.root-link:hover {
+    text-decoration: none;
+    color: #F0BD00;
+    border-bottom: 3px solid #F0BD00;
+}
+
+.root-title {
+    height: 80px;
+    font-size: 180%;
+}
+
+.root-frame {
+    padding-left: 50px;
+    padding-right: 50px;
+    margin-bottom: 20px;
+    height: 300px;
+}
+
+.root-btn-group {
+    width: 100%;
+}
+
+.root-btn-group > button {
+    background-color: white;
+}
+
+.root-dropdown-toggle {
+    width: 100%;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.root-dropdown-menu {
+    width: 100%;
+}
+
+/*****************/
+/** Global room **/
+/*****************/
+
+.global-room-header {
+    margin-bottom: 30px;
+}
+
+.global-room-title {
+    margin-top: 40px;
+    margin-bottom: 10px;
+    font-size: 40px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+/***********/
+/** Theme **/
+/***********/
+
+.theme-title {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 40px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.theme-btn {
+    margin-bottom: 3px;
+}
+
+/**************/
+/** Proposal **/
+/**************/
+
+.proposal-header {
+    text-align: center;
+}
+
+.proposal-title {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 40px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.support-btn {
+    color: #067000;
+    border-radius: 6px;
+}
+
+.support-btn:hover {
+    color: white;
+    background-color: #067000;
+    border-radius: 6px;
+}
+
+.oppose-btn {
+    color: #C7000D;
+    border-radius: 6px;
+}
+
+.oppose-btn:hover {
+    color: white;
+    background-color: #C7000D;
+    border-radius: 6px;
+}
+
+/*****************/
+/** OldProposal **/
+/*****************/
+
+.old-proposal-header {
+    text-align: center;
+}
+
+/************************/
+/** Edit proposal form **/
+/************************/
+
+.form-errors > ul > li {
+    display: inline-block;
+    font-size: 14px;
+    color: red;
+}
+
+/****************/
+/** Discussion **/
+/****************/
+
+.discussion-table {
+    font-size: 18px;
+}
+
+.discussion-link {
+    color: #333333;
+}
+
+.discussion-link:hover {
+    color: #F0BD00;
+    text-decoration: none;
+}
+
+.discussion-unread {
+    background-color: #EEEEEE;
+}
+
+.discussion-unread > td {
+    font-weight: bold;
+}
+
+/**********/
+/** Post **/
+/**********/
+
+.post {
+    margin-bottom: 20px;
+    border-radius: 6px;
+    padding: 10px;
+    background-color: #EEEEEE;
+}
+
+.post-author {
+    font-weight: bold;
+}
+
+.post-administration {
+    text-align: right;
+}
+
+.post-admin-btn {
+    color: #333333;
+}
+
+.post-admin-btn:hover {
+    color: #C7000D;
+}
+
+.post-content {
+    margin-top: 10px;
+    padding-left: 20px;
+}
+
+.post-form {
+    margin-left: 30px;
+    margin-top: 50px;
+    width: 80%;
+}
+
+/*************/
+/** Profile **/
+/*************/
+
+.profile-header {
+    margin-bottom: 10px;
+}
+
+.profile-title {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 40px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.profile-subblock {
+    margin-bottom: 30px;
+}
+
+/*********************/
+/** Tests Bootstrap **/
+/*********************/
+
+.borders {
+    border: 2px solid red;
+    min-height: 1px;
 }

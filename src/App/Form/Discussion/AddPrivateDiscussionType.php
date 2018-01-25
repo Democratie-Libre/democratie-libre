@@ -22,7 +22,6 @@ class AddPrivateDiscussionType extends AbstractType
 
         $builder
             ->add('title', 'text')
-            ->add('abstract', 'textarea')
             ->add('members', 'entity', [
                 'class' => 'App\Entity\User',
                 'property' => 'username',
@@ -48,10 +47,5 @@ class AddPrivateDiscussionType extends AbstractType
         $resolver->setDefaults([
             'data_class' => 'App\Entity\PrivateDiscussion',
         ]);
-    }
-
-    public function getName()
-    {
-        return 'add_private_discussion';
     }
 }

@@ -5,19 +5,22 @@ namespace App\Form\Proposal;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\Proposal;
+use App\Entity\Theme;
 
 class PublishProposalType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('theme', 'entity', [
-                'class'    => 'App:Theme',
+            ->add('theme', EntityType::class, [
+                'class'    => Theme::class,
                 'property' => 'title',
                 'required' => true,
             ])
-            ->add('publish', 'submit')
+            ->add('save', SubmitType::class)
         ;
     }
 
@@ -26,10 +29,5 @@ class PublishProposalType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Proposal::class,
         ]);
-    }
-
-    public function getName()
-    {
-        return 'publish_proposal';
     }
 }

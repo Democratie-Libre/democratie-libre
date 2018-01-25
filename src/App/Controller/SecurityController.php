@@ -5,11 +5,14 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\SecurityContext;
-use App\Entity\User;
-use App\Form\RegisterType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use App\Form\ProfileType;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use App\Entity\User;
+use App\Form\Security\RegisterType;
+use App\Form\Security\EditEmailType;
+use App\Form\Security\EditPasswordType;
+use App\Form\Security\EditAvatarType;
 
 class SecurityController extends Controller
 {
@@ -53,8 +56,7 @@ class SecurityController extends Controller
 
         $form = $this->createForm(new RegisterType());
         $form
-            ->add('file')
-            ->add('Enregistrer', 'submit', [
+            ->add('save', SubmitType::class, [
                 'label' => 'Inscription',
                 'attr'  => ['class' => 'btn btn-primary btn-lg'],
             ])
@@ -77,7 +79,7 @@ class SecurityController extends Controller
         }
 
         return $this->render('App:Security:register.html.twig', [
-            'registerForm' => $form->createView(),
+            'form' => $form->createView(),
         ]);
     }
 
@@ -100,23 +102,19 @@ class SecurityController extends Controller
     {
         $em   = $this->getDoctrine()->getManager();
         $user = $this->getUser();
-        $form = $this->createForm(new ProfileType(), $user);
 
-        $form->add('email', 'email');
-        $form->add('submit', 'submit', [
-            'label' => 'Enregistrer',
-        ]);
+        $form = $this->createForm(new EditEmailType(), $user);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
             $em->persist($user);
             $em->flush();
-            $this->addFlash('success', 'Votre email est enregistré.');
+            $this->addFlash('success', 'Votre email a été modifié !');
 
             return $this->redirect($this->generateUrl('profile'));
         }
 
-        return $this->render('App:Security:email_edit.html.twig', [
+        return $this->render('App:Security:edit_email.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -128,15 +126,8 @@ class SecurityController extends Controller
     {
         $em   = $this->getDoctrine()->getManager();
         $user = $this->getUser();
-        $form = $this->createForm(new ProfileType(), $user);
-        $form
-            ->add('plainPassword', 'repeated', [
-                'invalid_message' => 'Les deux mots de passe ne correspondent pas.',
-                'attr'            => ['novalidate' => 'novalidate'],
-                'type'            => 'password',
-            ])
-        ;
 
+        $form = $this->createForm(new EditPasswordType(), $user);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
@@ -145,12 +136,12 @@ class SecurityController extends Controller
             $em->persist($user);
             $em->flush();
 
-            $this->addFlash('success', 'Votre mot de passe a été mis à jour.');
+            $this->addFlash('success', 'Votre mot de passe a été mis à jour !');
 
             return $this->redirect($this->generateUrl('profile'));
         }
 
-        return $this->render('App:Security:password_edit.html.twig', [
+        return $this->render('App:Security:edit_password.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -162,10 +153,8 @@ class SecurityController extends Controller
     {
         $em   = $this->getDoctrine()->getManager();
         $user = $this->getUser();
-        $form = $this->createFormBuilder($user)
-            ->add('file')
-            ->getForm()
-        ;
+
+        $form = $this->createForm(new EditAvatarType(), $user);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
@@ -175,7 +164,7 @@ class SecurityController extends Controller
             return $this->redirect($this->generateUrl('profile'));
         }
 
-        return $this->render('App:Security:avatar_edit.html.twig', [
+        return $this->render('App:Security:edit_avatar.html.twig', [
             'form' => $form->createView(),
         ]);
     }

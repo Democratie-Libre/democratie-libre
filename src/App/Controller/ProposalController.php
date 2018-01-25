@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use App\Entity\Proposal;
 use App\Entity\OldProposal;
 use App\Form\Proposal\EditProposalType;
+use App\Form\Proposal\EditMotivationProposalType;
 use App\Form\Proposal\PublishProposalType;
 
 class ProposalController extends Controller
@@ -21,7 +22,7 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
-        return $this->render('App:Proposal:show.html.twig', [
+        return $this->render('App:Proposal:show_proposal.html.twig', [
             'proposal' => $proposal,
         ]);
     }
@@ -35,7 +36,7 @@ class ProposalController extends Controller
         $form     = $this->createForm(new EditProposalType(), $proposal);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $proposal->setAuthor($this->getUser());
             $em = $this->getDoctrine()->getManager();
             $em->persist($proposal);
@@ -46,8 +47,9 @@ class ProposalController extends Controller
             ]));
         }
 
-        return $this->render('App:Proposal:edit.html.twig', [
-            'form' => $form->createView(),
+        return $this->render('App:Proposal:add_proposal.html.twig', [
+            'proposal' => $proposal,
+            'form'     => $form->createView(),
         ]);
     }
 
@@ -62,18 +64,16 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
-        if (false === $this->get('security.context')->isGranted('edit', $proposal)) {
-            throw new AccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted('edit', $proposal);
 
         $oldProposal = new OldProposal($proposal);
         $form        = $this->createForm(new EditProposalType(), $proposal);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $proposal
                 ->addToHistory($oldProposal)
-                ->setVersionNumber($proposal->getVersionNumber() + 1)
+                ->incrementVersionNumber()
             ;
             $em = $this->getDoctrine()->getManager();
             $em->persist($proposal);
@@ -84,8 +84,46 @@ class ProposalController extends Controller
              ]));
         }
 
-        return $this->render('App:Proposal:edit.html.twig', [
-            'form' => $form->createView(),
+        return $this->render('App:Proposal:edit_proposal.html.twig', [
+            'proposal' => $proposal,
+            'form'     => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Security("has_role('ROLE_USER')")
+     */
+    public function editMotivationAction(Request $request, $slug)
+    {
+        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+
+        if (null ===  $proposal) {
+            throw $this->createNotFoundException();
+        }
+
+        $this->denyAccessUnlessGranted('edit', $proposal);
+
+        $oldProposal = new OldProposal($proposal);
+        $form        = $this->createForm(new EditMotivationProposalType(), $proposal);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $proposal
+                ->addToHistory($oldProposal)
+                ->incrementVersionNumber()
+            ;
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($proposal);
+            $em->flush();
+
+            return $this->redirect($this->generateUrl('proposal_show', [
+                'slug' => $proposal->getSlug(),
+             ]));
+        }
+
+        return $this->render('App:Proposal:edit_motivation_proposal.html.twig', [
+            'proposal' => $proposal,
+            'form'     => $form->createView(),
         ]);
     }
 
@@ -100,9 +138,7 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
-        if (false === $this->get('security.context')->isGranted('author', $proposal)) {
-            throw new AccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted('author', $proposal);
 
         $form = $this->createForm(new PublishProposalType(), $proposal);
         $form->handleRequest($request);
@@ -118,8 +154,9 @@ class ProposalController extends Controller
              ]));
         }
 
-        return $this->render('App:Proposal:publish.html.twig', [
-            'form' => $form->createView(),
+        return $this->render('App:Proposal:publish_proposal.html.twig', [
+            'form'     => $form->createView(),
+            'proposal' => $proposal,
         ]);
     }
 
@@ -163,11 +200,7 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $isNeutral = $this->get('security.context')->isGranted('neutral', $proposal);
-
-        if (false === $isNeutral) {
-            throw new AccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted('neutral', $proposal);
 
         $proposal->addSupporter($this->getUser());
         $em = $this->getDoctrine()->getManager();
@@ -191,11 +224,7 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $isSupporter = $this->get('security.context')->isGranted('supporter', $proposal);
-
-        if (false === $isSupporter) {
-            throw new AccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted('supporter', $proposal);
 
         $proposal->removeSupporter($this->getUser());
         $em = $this->getDoctrine()->getManager();
@@ -219,11 +248,7 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $isNeutral = $this->get('security.context')->isGranted('neutral', $proposal);
-
-        if (false === $isNeutral) {
-            throw new AccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted('neutral', $proposal);
 
         $proposal->addOpponent($this->getUser());
         $em = $this->getDoctrine()->getManager();
@@ -247,19 +272,13 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $isOpponent = $this->get('security.context')->isGranted('opponent', $proposal);
+        $this->denyAccessUnlessGranted('opponent', $proposal);
 
-        if ($isOpponent) {
-            $proposal->removeOpponent($this->getUser());
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($proposal);
-            $em->flush();
-            $this->get('session')->getFlashBag()->add('info', 'Vous ne contestez plus cette proposition');
-
-            return $this->redirect($this->generateUrl('proposal_show', [
-                'slug' => $proposal->getSlug(),
-            ]));
-        }
+        $proposal->removeOpponent($this->getUser());
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($proposal);
+        $em->flush();
+        $this->get('session')->getFlashBag()->add('info', 'Vous ne contestez plus cette proposition');
 
         return $this->redirect($this->generateUrl('proposal_show', [
             'slug' => $proposal->getSlug(),

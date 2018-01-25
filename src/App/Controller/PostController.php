@@ -42,7 +42,8 @@ class PostController extends Controller
             ]));
         }
 
-        return $this->render('App:Post:form.html.twig', [
+        return $this->render('App:Post:move_post.html.twig', [
+            'post' => $post,
             'form' => $form->createView(),
         ]);
     }

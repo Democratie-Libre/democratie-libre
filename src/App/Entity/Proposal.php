@@ -30,12 +30,20 @@ class Proposal
     private $slug;
 
     /**
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="string", unique=true)
+     * @Assert\NotBlank()
+     * @Assert\Length(
+     *      max = 100,
+     * )
      */
     private $title;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="text")
+     * @Assert\NotBlank()
+     * @Assert\Length(
+     *      max = 400,
+     * )
      */
     private $abstract;
 
@@ -52,14 +60,9 @@ class Proposal
     private $lastEditDate;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
-    private $argumentation;
-
-    /**
-     * @ORM\Column(type="text")
-     */
-    private $executionProcedure;
+    private $motivation;
 
     /**
      * @ORM\Column(type="integer")
@@ -81,30 +84,6 @@ class Proposal
      * @ORM\Column(type="boolean")
      */
     private $isAWiki;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * Stores the name of the image file associated to the theme
-     */
-    private $path;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * Stores temporarily the name of the old image file to delete it after the upload
-     */
-    private $temp;
-
-    /**
-     * @Assert\Image(
-     *     minWidth = 128,
-     *     maxWidth = 128,
-     *     minHeight = 128,
-     *     maxHeight = 128,
-     *     mimeTypes = {"image/png"},
-     *     maxSize = "1024k"
-     * )
-     */
-    private $file;
 
     /**
      * @ORM\ManyToOne(targetEntity="Theme", inversedBy="proposals", cascade={"persist"})
@@ -217,33 +196,28 @@ class Proposal
         return $this->lastEditDate;
     }
 
-    public function setArgumentation($argumentation)
+    public function setMotivation($motivation)
     {
-        $this->argumentation = $argumentation;
+        $this->motivation = $motivation;
 
         return $this;
     }
 
-    public function getArgumentation()
+    public function getMotivation()
     {
-        return $this->argumentation;
-    }
-
-    public function setExecutionProcedure($executionProcedure)
-    {
-        $this->executionProcedure = $executionProcedure;
-
-        return $this;
-    }
-
-    public function getExecutionProcedure()
-    {
-        return $this->executionProcedure;
+        return $this->motivation;
     }
 
     public function setVersionNumber($number)
     {
         $this->versionNumber = $number;
+
+        return $this;
+    }
+
+    public function incrementVersionNumber()
+    {
+        $this->versionNumber = $this->versionNumber + 1;
 
         return $this;
     }
@@ -389,133 +363,5 @@ class Proposal
     public function getDiscussions()
     {
         return $this->discussions;
-    }
-
-    /*****************************************************
-     *****************************************************
-     *
-     * Methods to manage the image file associated to a proposal
-     * http://symfony.com/doc/2.3/cookbook/doctrine/file_uploads.html
-     *
-     *****************************************************
-     *****************************************************/
-
-    /**
-     * A convenience method that returns the absolute path to the file.
-     */
-    public function getAbsolutePath()
-    {
-        return null === $this->path
-            ? null
-            : $this->getUploadRootDir().'/'.$this->path;
-    }
-
-    /**
-     * A convenience method that returns the web path
-     * which can be used in a template to link to the uploaded file.
-     */
-    public function getWebPath()
-    {
-        return null === $this->path
-            ? null
-            : $this->getUploadDir().'/'.$this->path;
-    }
-
-    protected function getUploadRootDir()
-    {
-        // the absolute directory path where uploaded
-        // documents should be saved
-        return __DIR__.'/../../../web/'.$this->getUploadDir();
-    }
-
-    protected function getUploadDir()
-    {
-        // get rid of the __DIR__ so it doesn't screw up
-        // when displaying uploaded doc/image in the view.
-        return 'uploads/proposals/images';
-    }
-
-    public function setFile(UploadedFile $file = null)
-    {
-        $this->file = $file;
-        // check if we have an old image path
-        if (isset($this->path)) {
-            // store the old name to delete after the update
-            $this->temp = $this->path;
-            $this->path = null;
-        } else {
-            $this->path = 'initial';
-        }
-    }
-
-    public function getFile()
-    {
-        return $this->file;
-    }
-
-    /**
-     * @ORM\PrePersist()
-     * @ORM\PreUpdate()
-     * Manage the path attribute
-     */
-    public function preUpload()
-    {
-        if (null !== $this->getFile()) {
-
-            // compute a random name and try to guess the extension (more secure)
-            $extension = $this->getFile()->guessExtension();
-            if (!$extension) {
-                // extension cannot be guessed
-                $extension = 'bin';
-            }
-
-            $filename = $this->getTitle().rand(1, 99999).'.'.$extension;
-
-            // set the path property to the filename where you've saved the file
-            $this->path = $filename;
-        }
-    }
-
-    /**
-     * @ORM\PostPersist()
-     * @ORM\PostUpdate()
-     * Uploads the image file after persisting the theme
-     */
-    public function upload()
-    {
-        // the file property can be empty if the field is not required
-        if (null === $this->getFile()) {
-            return;
-        }
-
-        // if there is an error when moving the file, an exception will
-        // be automatically thrown by move(). This will properly prevent
-        // the entity from being persisted to the database on error
-        $this->getFile()->move(
-            $this->getUploadRootDir(),
-            $this->path
-        );
-
-        // check if we have an old image
-        if (isset($this->temp)) {
-            // delete the old image
-            unlink($this->getUploadRootDir().'/'.$this->temp);
-            // clear the temp image path
-            $this->temp = null;
-        }
-
-        // clean up the file property as you won't need it anymore
-        $this->file = null;
-    }
-
-    /**
-     * @ORM\PostRemove()
-     * Remove the image file after suppression of a theme
-     */
-    public function removeUpload()
-    {
-        if ($file = $this->getAbsolutePath()) {
-            unlink($file);
-        }
     }
 }

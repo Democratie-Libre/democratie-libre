@@ -1,0 +1,119 @@
+{% extends '::layout.html.twig' %}
+
+{% block page_content %}
+    <div class="section-header row">
+        <div class="section-header-menu col-md-12 col-xs-12">
+            {% if is_granted('ROLE_USER') %}
+                <div class="btn-group custom-btn-group ">
+                    <button class="dropdown-toggle btn btn-default" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
+                    <ul class="dropdown-menu pull-right">
+                        <li><a href="{{ path('public_discussion_add_to_proposal', {'slug': proposal.slug}) }}">Ouvrir une discussion</a></li>
+                        {% if is_granted('edit', proposal) %}
+                            <li><a href="{{ path('proposal_edit', {'slug': proposal.slug}) }}">Éditer l'en-tête</a></li>
+                            <li><a href="{{ path('proposal_edit_motivation', {'slug': proposal.slug}) }}">Éditer les motifs</a></li>
+                        {% endif %}
+                        {% if is_granted('author', proposal) and not proposal.isPublished %}
+                            <li><a href="{{ path('proposal_publish', {'slug': proposal.slug}) }}">Publier cette proposition</a></li>
+                        {% endif %}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <li><a href="{{ path('proposal_delete', {'slug': proposal.slug}) }}">Supprimer cette proposition</a></li>
+                        {% endif %}
+                        {% if proposal.isPublished %}
+                            {% if is_granted('neutral', proposal) %}
+                                <li><a href="{{ path('proposal_support', {'slug': proposal.slug}) }}">Soutenir cette proposition</a></li>
+                                <li><a href="{{ path('proposal_oppose', {'slug': proposal.slug}) }}">S'opposer à cette proposition</a></li>
+                            {% elseif is_granted('supporter', proposal) %}
+                                <li><a href="{{ path('proposal_removesupport', {'slug': proposal.slug}) }}">Ne plus soutenir cette proposition</a></li>
+
+                            {% elseif is_granted('opponent', proposal) %}
+                                <li><a href="{{ path('proposal_removeoppose', {'slug': proposal.slug}) }}">Ne plus s'opposer à cette proposition</a></li>
+                            {% endif %}
+                        {% endif %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+        <div class="proposal-header">
+            <div>
+                proposition
+                {% if proposal.isPublished %}
+                    | thématique <a href="{{ path('theme_show', {'slug': proposal.theme.slug}) }}">{{ proposal.theme.title }}</a><br>
+                {% else %}
+                    non-publiée<br>
+                {% endif %}
+            </div>
+            <div class="proposal-title">
+                {{ proposal.title }}
+            </div>
+            <div>
+                {% if proposal.isAWiki %}
+                    Tout utilisateur peut éditer cette proposition
+                {% else %}
+                    auteur : {{ proposal.author }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="section-abstract row">
+        <div class="col-md-10 col-md-offset-1">
+            {{ proposal.abstract }}
+        </div>
+    </div>
+    <div class="section-menu row">
+        <ul>
+            <li class="active"><a data-toggle="tab" href="#motivation">Motifs</a></li>
+            <li><a data-toggle="tab" href="#discussions">Salon</a></li>
+            <li><a data-toggle="tab" href="#history">Historique</a></li>
+        </ul>
+    </div>
+    <div class="tab-content">
+        <div id="motivation" class="tab-pane fade in active">
+            {{ proposal.motivation | markdown }}
+        </div>
+        <div id="discussions" class="tab-pane fade">
+            <table class="table discussion-table">
+                <thead>
+                    <tr>
+                        <th>Discussion</th>
+                        <th>Dernier commentaire</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for discussion in proposal.discussions %}
+                    <tr>
+                        <td><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="discussion-link">{{ discussion.title }}</a></td>
+                        {% if discussion.posts is empty %}
+                            <td>Vide</td>
+                        {% else %}
+                            <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div id="history" class="tab-pane fade">
+            <div class="subsection-content col-md-10 col-xs-10">
+                {% for oldProposal in proposal.history %}
+                    <a href="{{ path('old_proposal_show', {'slug': oldProposal.slug}) }}" class="subsection-panel col-md-12 col-xs-12">
+                        <div class="subsection-panel-heading">
+                            <div class="subsection-panel-title">
+                                version {{ oldProposal.oldVersionNumber }}
+                            </div>
+                        </div>
+                        <div class="subsection-panel-body">
+                            par {{ oldProposal.oldAuthor.username }} le  {{ oldProposal.snapDate|date('d/m/Y') }}
+                        </div>
+                    </a>
+                {% else %}
+                    Pas d'historique !
+                {% endfor %}
+            </div>
+            <div class="col-md-2 col-xs-2">
+                Date de création : {{ proposal.creationDate|date('d/m/Y') }}<br><br>
+                Date de dernière modification : {{ proposal.lastEditDate|date('d/m/Y') }}<br><br>
+                Version actuelle : {{ proposal.versionNumber }}
+            </div>
+        </div>
+    </div>
+{% endblock page_content %}
