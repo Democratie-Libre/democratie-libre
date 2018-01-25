@@ -38,9 +38,4 @@ class SelectUserType extends AbstractType
             ->add('save', 'submit')
         ;
     }
-
-    public function getName()
-    {
-        return 'select_user';
-    }
 }

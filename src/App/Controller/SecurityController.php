@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\User;
 use App\Form\Security\RegisterType;
 use App\Form\Security\EditEmailType;
@@ -55,7 +56,7 @@ class SecurityController extends Controller
 
         $form = $this->createForm(new RegisterType());
         $form
-            ->add('save', 'submit', [
+            ->add('save', SubmitType::class, [
                 'label' => 'Inscription',
                 'attr'  => ['class' => 'btn btn-primary btn-lg'],
             ])

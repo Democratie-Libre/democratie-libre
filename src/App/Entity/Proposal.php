@@ -215,6 +215,13 @@ class Proposal
         return $this;
     }
 
+    public function incrementVersionNumber()
+    {
+        $this->versionNumber = $this->versionNumber + 1;
+
+        return $this;
+    }
+
     public function getVersionNumber()
     {
         return $this->versionNumber;

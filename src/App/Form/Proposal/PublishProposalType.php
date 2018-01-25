@@ -30,9 +30,4 @@ class PublishProposalType extends AbstractType
             'data_class' => Proposal::class,
         ]);
     }
-
-    public function getName()
-    {
-        return 'publish_proposal';
-    }
 }

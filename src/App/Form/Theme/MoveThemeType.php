@@ -50,9 +50,4 @@ class MoveThemeType extends AbstractType
             'data_class' => Theme::class,
         ]);
     }
-
-    public function getName()
-    {
-        return 'move_theme';
-    }
 }

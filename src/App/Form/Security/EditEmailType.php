@@ -25,9 +25,4 @@ class EditEmailType extends AbstractType
             'data_class' => User::class,
         ]);
     }
-
-    public function getName()
-    {
-        return 'edit_email';
-    }
 }

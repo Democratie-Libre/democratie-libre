@@ -26,9 +26,4 @@ class RegisterType extends AbstractType
             'data_class' => 'App\Entity\User',
         ]);
     }
-
-    public function getName()
-    {
-        return 'app_register';
-    }
 }

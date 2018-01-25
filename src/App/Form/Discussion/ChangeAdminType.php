@@ -31,9 +31,4 @@ class ChangeAdminType extends AbstractType
             'data_class' => PrivateDiscussion::class,
         ]);
     }
-
-    public function getName()
-    {
-        return 'private_discussion_change_admin';
-    }
 }

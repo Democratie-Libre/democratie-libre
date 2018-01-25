@@ -10,7 +10,6 @@
 /bin/
 !/bin/install
 /composer.phar
-/composer.lock
 /.idea
 /app/Resources/assets
 /node_modules

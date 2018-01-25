@@ -48,9 +48,4 @@ class AddPrivateDiscussionType extends AbstractType
             'data_class' => 'App\Entity\PrivateDiscussion',
         ]);
     }
-
-    public function getName()
-    {
-        return 'add_private_discussion';
-    }
 }

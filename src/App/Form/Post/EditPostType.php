@@ -27,9 +27,4 @@ class EditPostType extends AbstractType
             'data_class' => Post::class,
         ]);
     }
-
-    public function getName()
-    {
-        return 'edit_post';
-    }
 }

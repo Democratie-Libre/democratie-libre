@@ -23,9 +23,4 @@ class EditDiscussionType extends AbstractType
             'data_class' => 'App\Entity\AbstractDiscussion',
         ]);
     }
-
-    public function getName()
-    {
-        return 'edit_discussion';
-    }
 }

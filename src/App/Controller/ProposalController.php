@@ -73,7 +73,7 @@ class ProposalController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $proposal
                 ->addToHistory($oldProposal)
-                ->setVersionNumber($proposal->getVersionNumber() + 1)
+                ->incrementVersionNumber()
             ;
             $em = $this->getDoctrine()->getManager();
             $em->persist($proposal);
@@ -110,7 +110,7 @@ class ProposalController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $proposal
                 ->addToHistory($oldProposal)
-                ->setVersionNumber($proposal->getVersionNumber() + 1)
+                ->incrementVersionNumber()
             ;
             $em = $this->getDoctrine()->getManager();
             $em->persist($proposal);

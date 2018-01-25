@@ -27,9 +27,4 @@ class EditAvatarType extends AbstractType
             'data_class' => User::class,
         ]);
     }
-
-    public function getName()
-    {
-        return 'edit_avatar';
-    }
 }

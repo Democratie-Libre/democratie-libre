@@ -31,9 +31,4 @@ class EditThemeType extends AbstractType
             'data_class' => Theme::class,
         ]);
     }
-
-    public function getName()
-    {
-        return 'edit_theme';
-    }
 }

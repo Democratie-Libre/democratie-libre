@@ -28,9 +28,4 @@ class AddThemeProposalType extends AbstractType
             'data_class' => 'App\Entity\Proposal',
         ]);
     }
-
-    public function getName()
-    {
-        return 'add_theme_proposal';
-    }
 }

@@ -30,9 +30,4 @@ class MovePostType extends AbstractType
             'data_class' => Post::class,
         ]);
     }
-
-    public function getName()
-    {
-        return 'move_post';
-    }
 }

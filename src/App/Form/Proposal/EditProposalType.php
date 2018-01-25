@@ -27,9 +27,4 @@ class EditProposalType extends AbstractType
             'data_class' => Proposal::class,
         ]);
     }
-
-    public function getName()
-    {
-        return 'edit_proposal';
-    }
 }

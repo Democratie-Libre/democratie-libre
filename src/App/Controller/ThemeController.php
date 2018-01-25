@@ -163,7 +163,7 @@ class ThemeController extends Controller
         }
 
         if (false === $theme->isEmpty()) {
-            $this->get('session')->getFlashBag()->add('info', 'A theme cannot be deleted if it contains any proposal');
+            $this->addFlash('info', 'Une thématique ne peut pas être supprimée si elle contient des propositions !');
 
             return $this->redirect($this->generateUrl('theme_show', [
                 'slug' => $theme->getSlug(),
@@ -174,7 +174,7 @@ class ThemeController extends Controller
         $repository->removeFromTree($theme);
         $this->getDoctrine()->getManager()->clear(); // clear cached nodes
         // it will remove this node from tree and reparent all children
-        $this->get('session')->getFlashBag()->add('info', 'The theme entitled '.$theme->getTitle().' has been deleted');
+        $this->addFlash('info', 'La thématique '.$theme->getTitle().' a été supprimée !');
 
         if ($parent instanceof Theme) {
             return $this->redirect($this->generateUrl('theme_show', [

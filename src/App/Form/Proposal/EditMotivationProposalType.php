@@ -27,9 +27,4 @@ class EditMotivationProposalType extends AbstractType
             'data_class' => Proposal::class,
         ]);
     }
-
-    public function getName()
-    {
-        return 'edit_motivation_proposal';
-    }
 }
