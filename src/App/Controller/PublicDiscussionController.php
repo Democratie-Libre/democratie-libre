@@ -31,7 +31,7 @@ class PublicDiscussionController extends Controller
             ]);
         }
 
-        if ($this->get('security.context')->isGranted('follow', $discussion)) {
+        if ($this->get('security.authorization_checker')->isGranted('follow', $discussion)) {
             $discussion->removeUnreader($user);
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
@@ -45,7 +45,7 @@ class PublicDiscussionController extends Controller
         }
 
         $post = new Post();
-        $form = $this->createForm(new EditPostType(), $post);
+        $form = $this->createForm(EditPostType::class, $post);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
@@ -72,7 +72,7 @@ class PublicDiscussionController extends Controller
     public function addToGlobalDiscussionsAction(Request $request)
     {
         $discussion = new PublicDiscussion();
-        $form       = $this->createForm(new EditDiscussionType(), $discussion);
+        $form       = $this->createForm(EditDiscussionType::class, $discussion);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
@@ -105,7 +105,7 @@ class PublicDiscussionController extends Controller
         }
 
         $discussion = new PublicDiscussion();
-        $form       = $this->createForm(new EditDiscussionType(), $discussion);
+        $form       = $this->createForm(EditDiscussionType::class, $discussion);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
@@ -139,7 +139,7 @@ class PublicDiscussionController extends Controller
         }
 
         $discussion = new PublicDiscussion();
-        $form       = $this->createForm(new EditDiscussionType(), $discussion);
+        $form       = $this->createForm(EditDiscussionType::class, $discussion);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
@@ -172,7 +172,7 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $form = $this->createForm(new EditDiscussionType(), $discussion);
+        $form = $this->createForm(EditDiscussionType::class, $discussion);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
@@ -269,7 +269,7 @@ class PublicDiscussionController extends Controller
         $discussion->setType(PublicDiscussion::THEME_DISCUSSION)
             ->setProposal(null)
             ->setTheme(null);
-        $form = $this->createForm(new SelectThemeType(), $discussion);
+        $form = $this->createForm(SelectThemeType::class, $discussion);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
@@ -301,7 +301,7 @@ class PublicDiscussionController extends Controller
         $discussion->setType(PublicDiscussion::PROPOSAL_DISCUSSION)
             ->setProposal(null)
             ->setTheme(null);
-        $form = $this->createForm(new SelectProposalType(), $discussion);
+        $form = $this->createForm(SelectProposalType::class, $discussion);
         $form->handleRequest($request);
 
         if ($form->isValid()) {

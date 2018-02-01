@@ -163,7 +163,7 @@ class AbstractDiscussion
 
     public function getLastPost()
     {
-        return $this->posts->isEmpty ? null : $this->posts->last();
+        return $this->posts->isEmpty() ? null : $this->posts->last();
     }
 
     public function addUnreader(User $unreader)

@@ -33,7 +33,7 @@ class ProposalController extends Controller
     public function addAction(Request $request)
     {
         $proposal = new Proposal();
-        $form     = $this->createForm(new EditProposalType(), $proposal);
+        $form     = $this->createForm(EditProposalType::class, $proposal);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -67,7 +67,7 @@ class ProposalController extends Controller
         $this->denyAccessUnlessGranted('edit', $proposal);
 
         $oldProposal = new OldProposal($proposal);
-        $form        = $this->createForm(new EditProposalType(), $proposal);
+        $form        = $this->createForm(EditProposalType::class, $proposal);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -104,7 +104,7 @@ class ProposalController extends Controller
         $this->denyAccessUnlessGranted('edit', $proposal);
 
         $oldProposal = new OldProposal($proposal);
-        $form        = $this->createForm(new EditMotivationProposalType(), $proposal);
+        $form        = $this->createForm(EditMotivationProposalType::class, $proposal);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -140,7 +140,7 @@ class ProposalController extends Controller
 
         $this->denyAccessUnlessGranted('author', $proposal);
 
-        $form = $this->createForm(new PublishProposalType(), $proposal);
+        $form = $this->createForm(PublishProposalType::class, $proposal);
         $form->handleRequest($request);
 
         if ($form->isValid()) {

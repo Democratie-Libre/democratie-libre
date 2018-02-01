@@ -3,7 +3,7 @@ login:
     defaults: { _controller: 'App:Security:login' }
 
 login_check:
-    path:  /login_check
+    path:  /login
 
 logout:
     path:   /logout

@@ -12,33 +12,26 @@ use App\Entity\Theme;
 
 class MoveThemeType extends AbstractType
 {
-    private $descendantsId;
-
-    public function __construct($descendantsId)
-    {
-        $this->descendantsId = $descendantsId;
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $descendantsId = $this->descendantsId;
+        $descendantsIds = $options['descendantsIds'];
 
         $builder
             ->add('parent', EntityType::class, [
-                'class'         => Theme::class,
-                'property'      => 'title',
+                'class'             => Theme::class,
+                'choice_label'      => 'title',
                 // selects all the themes exept the one considered and all its descendants
-                'query_builder' => function (EntityRepository $er) use ($descendantsId) {
+                'query_builder'     => function (EntityRepository $er) use ($descendantsIds) {
                     $qb = $er->createQueryBuilder('u');
                     $qb
-                        ->where('u.id NOT IN(:descendantsId)')
-                        ->setParameter('descendantsId', $descendantsId)
+                        ->where('u.id NOT IN(:descendantsIds)')
+                        ->setParameter('descendantsIds', $descendantsIds)
                     ;
 
                     return $qb;
                 },
                 // if the user wants the theme to be a root, he should select a null value for the parent
-                'required'      => false,
+                'required'          => false,
             ])
             ->add('save', SubmitType::class)
         ;
@@ -47,7 +40,8 @@ class MoveThemeType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Theme::class,
+            'data_class'     => Theme::class,
+            'descendantsIds' => null
         ]);
     }
 }

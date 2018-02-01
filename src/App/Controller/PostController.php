@@ -28,7 +28,7 @@ class PostController extends Controller
             throw new AccessDeniedException();
         }
 
-        $form = $this->createForm(new MovePostType(), $post);
+        $form = $this->createForm(MovePostType::class, $post);
         $form->handleRequest($request);
 
         if ($form->isValid()) {

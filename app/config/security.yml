@@ -3,7 +3,6 @@ security:
         App\Entity\User:
             algorithm:        sha512
 
-
     role_hierarchy:
         ROLE_ADMIN:       ROLE_USER
 
@@ -23,13 +22,13 @@ security:
             anonymous: ~
             form_login:
                 login_path: login
-                check_path: login_check
-                csrf_provider: security.csrf.token_manager
+                check_path: login
+                csrf_token_generator: security.csrf.token_manager
             logout:
                 path:   /logout
                 target: /
             remember_me:
-                key:      "%secret%"
+                secret:      "%secret%"
                 lifetime: 31536000 # 365 jours en secondes
                 path:     /
                 domain:   ~ # Prend la valeur par défaut du domaine courant depuis $_SERVER
