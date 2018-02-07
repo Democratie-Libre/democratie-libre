@@ -45,7 +45,7 @@ class PrivateDiscussionController extends Controller
         $form = $this->createForm(EditPostType::class, $post);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $post->setAuthor($this->getUser())->setDiscussion($discussion);
             $discussion->resetUnreaders();
             $em = $this->getDoctrine()->getManager();
@@ -75,7 +75,7 @@ class PrivateDiscussionController extends Controller
         ]);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $discussion->setAdmin($user)->resetUnreaders();
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
@@ -107,7 +107,7 @@ class PrivateDiscussionController extends Controller
         $form = $this->createForm(EditDiscussionType::class, $discussion);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
             $em->flush();
@@ -150,7 +150,7 @@ class PrivateDiscussionController extends Controller
         ]);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $member = $form->get('user')->getData();
             $discussion->addMember($member);
             $em = $this->getDoctrine()->getManager();
@@ -226,7 +226,7 @@ class PrivateDiscussionController extends Controller
         $form = $this->createForm(ChangeAdminType::class, $discussion);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
             $em->flush();

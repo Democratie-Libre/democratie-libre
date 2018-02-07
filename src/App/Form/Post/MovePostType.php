@@ -16,9 +16,9 @@ class MovePostType extends AbstractType
     {
         $builder
             ->add('discussion', EntityType::class, [
-                'class'    => PublicDiscussion::class,
-                'property' => 'title',
-                'required' => true,
+                'class'        => PublicDiscussion::class,
+                'choice_label' => 'title',
+                'required'     => true,
             ])
             ->add('save', SubmitType::class)
         ;

@@ -48,7 +48,7 @@ class PublicDiscussionController extends Controller
         $form = $this->createForm(EditPostType::class, $post);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $post->setAuthor($user)->setDiscussion($discussion);
             $discussion->resetUnreaders();
             $em = $this->getDoctrine()->getManager();
@@ -75,7 +75,7 @@ class PublicDiscussionController extends Controller
         $form       = $this->createForm(EditDiscussionType::class, $discussion);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $discussion->setType(PublicDiscussion::GLOBAL_DISCUSSION)
                 ->addFollower($this->getUser());
             $em = $this->getDoctrine()->getManager();
@@ -108,7 +108,7 @@ class PublicDiscussionController extends Controller
         $form       = $this->createForm(EditDiscussionType::class, $discussion);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $discussion->setType(PublicDiscussion::THEME_DISCUSSION)
                 ->setTheme($theme)
                 ->addFollower($this->getUser());
@@ -142,7 +142,7 @@ class PublicDiscussionController extends Controller
         $form       = $this->createForm(EditDiscussionType::class, $discussion);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $discussion->setType(PublicDiscussion::PROPOSAL_DISCUSSION)
                 ->setProposal($proposal)
                 ->addFollower($this->getUser());
@@ -175,7 +175,7 @@ class PublicDiscussionController extends Controller
         $form = $this->createForm(EditDiscussionType::class, $discussion);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
             $em->flush();
@@ -272,7 +272,7 @@ class PublicDiscussionController extends Controller
         $form = $this->createForm(SelectThemeType::class, $discussion);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
             $em->flush();
@@ -304,7 +304,7 @@ class PublicDiscussionController extends Controller
         $form = $this->createForm(SelectProposalType::class, $discussion);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
             $em->flush();

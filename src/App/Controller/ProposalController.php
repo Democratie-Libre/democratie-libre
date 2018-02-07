@@ -143,7 +143,7 @@ class ProposalController extends Controller
         $form = $this->createForm(PublishProposalType::class, $proposal);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $proposal->setIsPublished(true);
             $em = $this->getDoctrine()->getManager();
             $em->persist($proposal);

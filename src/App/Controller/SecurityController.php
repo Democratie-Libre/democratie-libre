@@ -49,7 +49,7 @@ class SecurityController extends Controller
 
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $user = $form->getData();
             $em->persist($user);
             $em->flush();
@@ -91,7 +91,7 @@ class SecurityController extends Controller
         $form = $this->createForm(EditEmailType::class, $user);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($user);
             $em->flush();
             $this->addFlash('success', 'Votre email a été modifié !');
@@ -115,7 +115,7 @@ class SecurityController extends Controller
         $form = $this->createForm(EditPasswordType::class, $user);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $user->setPlainPassword($form->get('plainPassword')->get('first')->getData());
             $user->setPassword(null);
             $em->persist($user);
@@ -142,7 +142,7 @@ class SecurityController extends Controller
         $form = $this->createForm(EditAvatarType::class, $user);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($user);
             $em->flush();
 
