@@ -1,2 +1,61 @@
+# General
+' ':
+  ' '
+'Send':
+  'Envoyer'
+'Save':
+  'Enregistrer'
+'Title':
+  'Titre'
+'Your title must not exceed 40 characters':
+  'Votre titre ne doit pas dépacer 40 caractères'
+'Your abstract must not exceed 400 characters':
+  'Votre résumé ne doit pas dépacer 400 caractères'
+'Abstract':
+  'Résumé'
+'Image':
+  'Image'
+'Add':
+  'Ajouter'
+'Move':
+  'Déplacer'
+
 # Security
-"Bad credentials": Nom d’utilisateur ou mot de passe incorrect
+'Bad credentials':
+  'Nom d’utilisateur ou mot de passe incorrect'
+'Email':
+  'Email'
+'New password':
+  'Nouveau mot de passe'
+'Enter the password again':
+  'Veuillez confirmer le mot de passe'
+'Username':
+  "Nom d'utilisateur"
+'Password':
+  'Mot de passe'
+'Sign in':
+  'Inscription'
+
+# Discussions
+'Your comment':
+  'Votre commentaire'
+'Members':
+  'Membres'
+'Open the discussion':
+  'Ouvrir la discussion'
+'New administrator':
+  'Nouvel administrateur'
+'New member':
+  'Nouveau membre'
+'Host discussion':
+  "Discussion d'accueil"
+
+# Proposals
+'Here express the motives of your project':
+  'Exprimez ici les motifs de votre projet'
+'Host theme':
+  "Thématique d'accueil"
+
+# Themes
+'Parent theme':
+  'Thématique parente'

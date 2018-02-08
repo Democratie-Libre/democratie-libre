@@ -17,18 +17,18 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    {{ form_label(form.title, 'Titre', {'label_attr': {'class': 'control-label col-md-2'}}) }}
+                    {{ form_label(form.title, 'Title', {'label_attr': {'class': 'control-label col-md-2'}}) }}
                     <div class="col-md-10">
                         {{ form_widget(form.title, {'attr': {
                             'class'       : 'form-control',
-                            'placeholder' : 'Votre titre ne doit pas dépasser 40 caractères'
+                            'placeholder' : 'Your title must not exceed 40 characters'
                             }})
                         }}
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-md-2 col-md-offset-2">
-                        {{ form_widget(form.save, {'label': 'Enregistrer', 'attr': {'class': 'btn btn-default custom-btn'}}) }}
+                        {{ form_widget(form.save, {'label': 'Save', 'attr': {'class': 'btn btn-default custom-btn'}}) }}
                     </div>
                 </div>
             {{ form_end(form) }}

@@ -80,12 +80,12 @@
                     {{ form_errors(form.content) }}
                     {{ form_widget(form.content, {'attr': {
                         'class': 'form-control form-abstract-textarea',
-                        'placeholder' : 'Votre commentaire'
+                        'placeholder' : 'Your comment'
                         }})
                     }}
                 </div>
                 <div class="form-group row">
-                    {{ form_widget(form.save, {'label': 'Envoyer', 'attr': {'class': 'btn btn-default custom-btn'}}) }}
+                    {{ form_widget(form.save, {'label': 'Send', 'attr': {'class': 'btn btn-default custom-btn'}}) }}
                 </div>
             {{ form_end(form) }}
         {% endif %}
