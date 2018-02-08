@@ -27,11 +27,6 @@ security:
             logout:
                 path:   /logout
                 target: /
-            remember_me:
-                secret:      "%secret%"
-                lifetime: 31536000 # 365 jours en secondes
-                path:     /
-                domain:   ~ # Prend la valeur par défaut du domaine courant depuis $_SERVER
 
     access_control:
         - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
