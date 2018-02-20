@@ -2,24 +2,22 @@
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Knp\Rad\User\HasPassword;
-use Knp\Rad\User\HasSalt;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @UniqueEntity(fields={"username","email"})
  * @ORM\HasLifecycleCallbacks
  */
-class User implements UserInterface, \Serializable, HasPassword, HasSalt
+class User implements UserInterface, \Serializable, HasPassword
 {
     use HasPassword\HasPassword;
-    use HasSalt\HasSalt;
 
     /**
      * @ORM\Column(type="integer")
@@ -34,17 +32,12 @@ class User implements UserInterface, \Serializable, HasPassword, HasSalt
     private $username;
 
     /**
-     * @ORM\Column
+     * @ORM\Column(type="string", length=64)
      */
     private $password;
 
     /**
-     * @ORM\Column
-     */
-    private $salt;
-
-    /**
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=60, unique=true)
      * @Assert\Email(message="This email adress is not valid.")
      */
     private $email;
@@ -178,6 +171,11 @@ class User implements UserInterface, \Serializable, HasPassword, HasSalt
         return $this;
     }
 
+    public function getSalt()
+    {
+        return null;
+    }
+
     public function getEmail()
     {
         return $this->email;
@@ -205,6 +203,11 @@ class User implements UserInterface, \Serializable, HasPassword, HasSalt
     public function getRoles()
     {
         return $this->roles;
+    }
+
+    public function getPassword()
+    {
+        return $this->password;
     }
 
     public function setBanned($banned)
@@ -291,12 +294,8 @@ class User implements UserInterface, \Serializable, HasPassword, HasSalt
         return $this->opposedProposals;
     }
 
-    /**
-     * Removes sensitive data from the user.
-     */
     public function eraseCredentials()
     {
-        $this->plainPassword = null;
     }
 
     /**
@@ -307,6 +306,7 @@ class User implements UserInterface, \Serializable, HasPassword, HasSalt
         return serialize([
             $this->id,
             $this->username,
+            $this->password,
         ]);
     }
 
@@ -315,7 +315,11 @@ class User implements UserInterface, \Serializable, HasPassword, HasSalt
      */
     public function unserialize($serialized)
     {
-        list($this->id, $this->username) = unserialize($serialized);
+        list(
+            $this->id,
+            $this->username,
+            $this->password,
+        ) = unserialize($serialized);
     }
 
     public function addAdminDiscussion(PrivateDiscussion $discussion)

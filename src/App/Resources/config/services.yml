@@ -2,42 +2,38 @@ imports:
     - { resource: services/repository.yml }
 
 services:
-    userManager:
-        class: App\Service\UserManager
-        arguments: ["@security.encoder_factory", "@doctrine.orm.entity_manager", "@session", "@security.context"]
-
     app.proposal_voter:
         class: App\Security\Authorization\Voter\ProposalVoter
         public: false
         tags:
-            - { name: security.voter }
-        arguments: ["@security.access.decision_manager"]
+            - { name: 'security.voter' }
+        arguments: ['@security.access.decision_manager']
 
     app.old_proposal_voter:
         class: App\Security\Authorization\Voter\OldProposalVoter
         public: false
         tags:
-            - { name: security.voter }
+            - { name: 'security.voter' }
 
     app.private_discussion_voter:
         class: App\Security\Authorization\Voter\PrivateDiscussionVoter
         public: false
         tags:
-           - { name: security.voter }
-        arguments: ["@doctrine"]
+           - { name: 'security.voter' }
+        arguments: ['@doctrine']
 
     app.public_discussion_voter:
         class: App\Security\Authorization\Voter\PublicDiscussionVoter
         public: false
         tags:
-           - { name: security.voter }
+           - { name: 'security.voter' }
 
     app.markdown:
         class: App\Utils\Markdown
 
     app.twig.markdown_extension:
         class: App\Twig\MarkdownExtension
-        arguments: ["@app.markdown"]
+        arguments: ['@app.markdown']
         public: false
         tags:
-            - { name: twig.extension }
+            - { name: 'twig.extension' }

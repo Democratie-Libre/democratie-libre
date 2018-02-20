@@ -4,38 +4,42 @@ namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use App\Entity\User;
+use App\Entity\PrivateDiscussion;
 
 class SelectUserType extends AbstractType
 {
-    private $usersIds;
-
-    public function __construct($usersIds)
-    {
-        $this->usersIds = $usersIds;
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $usersIds = $this->usersIds;
+        $membersIds = $options['membersIds'];
 
         $builder
-            ->add('user', 'entity', [
-                'class'         => 'App:User',
-                'property'      => 'username',
-                'query_builder' => function (EntityRepository $er) use ($usersIds) {
+            ->add('user', EntityType::class, [
+                'class'         => User::class,
+                'choice_label'  => 'username',
+                'query_builder' => function (EntityRepository $er) use ($membersIds) {
                     $qb = $er->createQueryBuilder('u');
                     $qb
-                        ->where('u.id NOT IN(:usersIds)')
-                        ->setParameter('usersIds', $usersIds)
+                        ->where('u.id NOT IN(:membersIds)')
+                        ->setParameter('membersIds', $membersIds)
                     ;
 
                     return $qb;
                 },
                 'required'      => true,
             ])
-            ->add('save', 'submit')
+            ->add('save', SubmitType::class)
         ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'membersIds'  => null,
+        ]);
     }
 }

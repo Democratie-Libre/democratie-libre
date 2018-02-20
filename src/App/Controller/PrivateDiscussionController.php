@@ -28,9 +28,7 @@ class PrivateDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        if (false === $this->get('security.context')->isGranted('view', $discussion)) {
-            throw new AccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted('view', $discussion);
 
         $discussion->removeUnreader($this->getUser());
         $em = $this->getDoctrine()->getManager();
@@ -44,10 +42,10 @@ class PrivateDiscussionController extends Controller
         }
 
         $post = new Post();
-        $form = $this->createForm(new EditPostType(), $post);
+        $form = $this->createForm(EditPostType::class, $post);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $post->setAuthor($this->getUser())->setDiscussion($discussion);
             $discussion->resetUnreaders();
             $em = $this->getDoctrine()->getManager();
@@ -72,10 +70,12 @@ class PrivateDiscussionController extends Controller
     {
         $discussion = new PrivateDiscussion();
         $user       = $this->getUser();
-        $form       = $this->createForm(new AddPrivateDiscussionType($user->getId()), $discussion);
+        $form       = $this->createForm(AddPrivateDiscussionType::class, $discussion, [
+            'userId' => $user->getId(),
+        ]);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $discussion->setAdmin($user)->resetUnreaders();
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
@@ -102,14 +102,12 @@ class PrivateDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        if (false === $this->get('security.context')->isGranted('edit', $discussion)) {
-            throw new AccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted('edit', $discussion);
 
-        $form = $this->createForm(new EditDiscussionType(), $discussion);
+        $form = $this->createForm(EditDiscussionType::class, $discussion);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
             $em->flush();
@@ -136,9 +134,7 @@ class PrivateDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        if (false === $this->get('security.context')->isGranted('add_member', $discussion)) {
-            throw new AccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted('add_member', $discussion);
 
         $members    = $discussion->getMembers();
         $membersIds = [];
@@ -147,10 +143,14 @@ class PrivateDiscussionController extends Controller
             $membersIds[] = $member->getId();
         }
 
-        $form = $this->createForm(new SelectUserType($membersIds));
+        $user = $this->getUser();
+
+        $form = $this->createForm(SelectUserType::class, null, [
+            'membersIds' => $membersIds,
+        ]);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $member = $form->get('user')->getData();
             $discussion->addMember($member);
             $em = $this->getDoctrine()->getManager();
@@ -164,7 +164,7 @@ class PrivateDiscussionController extends Controller
 
         return $this->render('App:Discussion:add_member.html.twig', [
             'discussion' => $discussion,
-            'form' => $form->createView(),
+            'form'       => $form->createView(),
         ]);
     }
 
@@ -221,14 +221,12 @@ class PrivateDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        if (false === $this->get('security.context')->isGranted('edit', $discussion)) {
-            throw new AccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted('edit', $discussion);
 
-        $form = $this->createForm(new ChangeAdminType(), $discussion);
+        $form = $this->createForm(ChangeAdminType::class, $discussion);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
             $em->flush();
@@ -255,9 +253,7 @@ class PrivateDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        if (false === $this->get('security.context')->isGranted('edit', $discussion)) {
-            throw new AccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted('edit', $discussion);
 
         $em = $this->getDoctrine()->getManager();
         $em->remove($discussion);
@@ -277,9 +273,7 @@ class PrivateDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        if (false === $this->get('security.context')->isGranted('edit', $discussion)) {
-            throw new AccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted('edit', $discussion);
 
         $discussion->setLocked(true);
         $em = $this->getDoctrine()->getManager();
@@ -302,9 +296,7 @@ class PrivateDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        if (false === $this->get('security.context')->isGranted('edit', $discussion)) {
-            throw new AccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted('edit', $discussion);
 
         $discussion->setLocked(false);
         $em = $this->getDoctrine()->getManager();

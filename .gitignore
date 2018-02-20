@@ -1,27 +1,32 @@
-/web/bundles/
-/app/bootstrap.php.cache
-/app/cache/*
+# Cache, session files and logs (Symfony3)
+/var/
+!var/cache/.gitkeep
+!var/logs/.gitkeep
+
+# Parameters
 /app/config/parameters.yml
-/app/logs/*
-!app/cache/.gitkeep
-!app/logs/.gitkeep
-/build/
+
+# Managed by Composer
+/app/bootstrap.php.cache
+/var/bootstrap.php.cache
+/bin/*
+!bin/console
+!bin/symfony_requirements
 /vendor/
-/bin/
-!/bin/install
-/composer.phar
-/.idea
-/app/Resources/assets
-/node_modules
-/behat.yml
-/bin
-/npm-debug.log
-/web/uploads/themes/images/*
-/web/uploads/users/images/*
-/web/uploads/proposals/images/*
+
+# Assets and users uploads
+/web/bundles/
+/web/uploads/
 /web/css/bootstrap.css
-/web/css/bootstrap.min.css
-/web/css/icofont.css
-/web/css/fonts/
-/notes
-/tags
+/web/css/*
+!web/css/custom.css
+/app/Resources/assets
+
+# PHPUnit
+/phpunit.xml
+
+# Build data
+/build/
+
+# Composer PHAR
+/composer.phar

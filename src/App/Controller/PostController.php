@@ -28,10 +28,10 @@ class PostController extends Controller
             throw new AccessDeniedException();
         }
 
-        $form = $this->createForm(new MovePostType(), $post);
+        $form = $this->createForm(MovePostType::class, $post);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $newDiscussion = $form->get('discussion')->getData();
             $em = $this->getDoctrine()->getManager();
             $em->persist($post);

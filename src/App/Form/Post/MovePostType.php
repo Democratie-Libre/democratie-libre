@@ -4,7 +4,7 @@ namespace App\Form\Post;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\PublicDiscussion;
@@ -16,15 +16,15 @@ class MovePostType extends AbstractType
     {
         $builder
             ->add('discussion', EntityType::class, [
-                'class'    => PublicDiscussion::class,
-                'property' => 'title',
-                'required' => true,
+                'class'        => PublicDiscussion::class,
+                'choice_label' => 'title',
+                'required'     => true,
             ])
             ->add('save', SubmitType::class)
         ;
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => Post::class,

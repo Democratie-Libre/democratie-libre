@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\SecurityContext;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -16,31 +16,16 @@ use App\Form\Security\EditAvatarType;
 
 class SecurityController extends Controller
 {
+    /**
+     * @Route("/login", name="login")
+     */
     public function loginAction(Request $request)
     {
-        // An authenticated user shouldn’t see this page
-        if ($this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
-            return $this->redirect($this->generateUrl('index'));
-        }
-
-        $session = $request->getSession();
-
-        // get the login error if there is one
-        if ($request->attributes->has(SecurityContext::AUTHENTICATION_ERROR)) {
-            $loginError = $request->attributes->get(
-                SecurityContext::AUTHENTICATION_ERROR
-            );
-        } else {
-            $loginError = $session->get(SecurityContext::AUTHENTICATION_ERROR);
-            $session->remove(SecurityContext::AUTHENTICATION_ERROR);
-        }
-
-        if ($loginError) {
-            $this->addFlash('danger', $this->get('translator')->trans($loginError->getMessage()));
-        }
+        $helper = $this->get('security.authentication_utils');
 
         return $this->render('App:Security:login.html.twig', [
-            'last_username' => $session->get(SecurityContext::LAST_USERNAME),
+            'last_username' => $helper->getLastUsername(),
+            'error'         => $helper->getLastAuthenticationError(),
         ]);
     }
 
@@ -54,7 +39,7 @@ class SecurityController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $form = $this->createForm(new RegisterType());
+        $form = $this->createForm(RegisterType::class);
         $form
             ->add('save', SubmitType::class, [
                 'label' => 'Inscription',
@@ -64,7 +49,7 @@ class SecurityController extends Controller
 
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $user = $form->getData();
             $em->persist($user);
             $em->flush();
@@ -103,10 +88,10 @@ class SecurityController extends Controller
         $em   = $this->getDoctrine()->getManager();
         $user = $this->getUser();
 
-        $form = $this->createForm(new EditEmailType(), $user);
+        $form = $this->createForm(EditEmailType::class, $user);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($user);
             $em->flush();
             $this->addFlash('success', 'Votre email a été modifié !');
@@ -127,10 +112,10 @@ class SecurityController extends Controller
         $em   = $this->getDoctrine()->getManager();
         $user = $this->getUser();
 
-        $form = $this->createForm(new EditPasswordType(), $user);
+        $form = $this->createForm(EditPasswordType::class, $user);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $user->setPlainPassword($form->get('plainPassword')->get('first')->getData());
             $user->setPassword(null);
             $em->persist($user);
@@ -154,10 +139,10 @@ class SecurityController extends Controller
         $em   = $this->getDoctrine()->getManager();
         $user = $this->getUser();
 
-        $form = $this->createForm(new EditAvatarType(), $user);
+        $form = $this->createForm(EditAvatarType::class, $user);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($user);
             $em->flush();
 

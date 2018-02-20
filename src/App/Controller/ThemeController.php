@@ -34,7 +34,7 @@ class ThemeController extends Controller
     public function addRootAction(Request $request)
     {
         $theme = new Theme();
-        $form  = $this->createForm(new EditThemeType(), $theme);
+        $form  = $this->createForm(EditThemeType::class, $theme);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -60,7 +60,7 @@ class ThemeController extends Controller
     public function addAction(Request $request, $slug)
     {
         $theme = new Theme();
-        $form  = $this->createForm(new EditThemeType(), $theme);
+        $form  = $this->createForm(EditThemeType::class, $theme);
         $form->handleRequest($request);
         $parent = $this->getDoctrine()->getRepository('App:Theme')->findOneBySlug($slug);
 
@@ -98,7 +98,7 @@ class ThemeController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $form = $this->createForm(new EditThemeType(), $theme);
+        $form = $this->createForm(EditThemeType::class, $theme);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -130,8 +130,10 @@ class ThemeController extends Controller
         }
 
         // in this array are the id of the theme considered, and the ids of all its descendants
-        $descendantsId = $repository->getChildrenId($theme, false, null, 'ASC', true);
-        $form = $this->createForm(new MoveThemeType($descendantsId), $theme);
+        $descendantsIds = $repository->getChildrenId($theme, false, null, 'ASC', true);
+        $form = $this->createForm(MoveThemeType::class, $theme, [
+            'descendantsIds' => $descendantsIds,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
