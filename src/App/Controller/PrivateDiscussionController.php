@@ -13,7 +13,6 @@ use App\Form\Post\EditPostType;
 use App\Form\Discussion\AddPrivateDiscussionType;
 use App\Form\Discussion\EditDiscussionType;
 use App\Form\SelectUserType;
-use App\Form\Discussion\ChangeAdminType;
 
 class PrivateDiscussionController extends Controller
 {
@@ -146,7 +145,7 @@ class PrivateDiscussionController extends Controller
         $user = $this->getUser();
 
         $form = $this->createForm(SelectUserType::class, null, [
-            'membersIds' => $membersIds,
+            'unlisted_users' => $membersIds,
         ]);
         $form->handleRequest($request);
 
@@ -223,10 +222,16 @@ class PrivateDiscussionController extends Controller
 
         $this->denyAccessUnlessGranted('edit', $discussion);
 
-        $form = $this->createForm(ChangeAdminType::class, $discussion);
+        $user = $this->getUser();
+
+        $form = $this->createForm(SelectUserType::class, null, [
+            'unlisted_users' => [$user->getId()],
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $newAdmin = $form->get('user')->getData();
+            $discussion->setAdmin($newAdmin);
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
             $em->flush();

@@ -17,11 +17,9 @@
                             {% if discussion.globalDiscussion %}
                                 <li><a href="{{ path('public_discussion_move_to_theme', {'slug': discussion.slug}) }}">Déplacer vers une thématique</a></li>
                                 <li><a href="{{ path('public_discussion_move_to_proposal', {'slug': discussion.slug}) }}">Déplacer vers une proposition</a></li>
-                            {% elseif discussion.themeDiscussion %}
+                            {% else %}
                                 <li><a href="{{ path('public_discussion_move_to_global', {'slug': discussion.slug}) }}">Déplacer vers les discussions globales</a></li>
                                 <li><a href="{{ path('public_discussion_move_to_proposal', {'slug': discussion.slug}) }}">Déplacer vers une proposition</a></li>
-                            {% elseif discussion.proposalDiscussion %}
-                                <li><a href="{{ path('public_discussion_move_to_global', {'slug': discussion.slug}) }}">Déplacer vers les discussions globales</a></li>
                                 <li><a href="{{ path('public_discussion_move_to_theme', {'slug': discussion.slug}) }}">Déplacer vers une thématique</a></li>
                             {% endif %}
                             {% if discussion.locked %}
