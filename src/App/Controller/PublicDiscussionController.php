@@ -10,8 +10,8 @@ use App\Entity\PublicDiscussion;
 use App\Entity\Post;
 use App\Form\Post\EditPostType;
 use App\Form\Discussion\EditDiscussionType;
-use App\Form\Discussion\SelectThemeType;
-use App\Form\Discussion\SelectProposalType;
+use App\Form\SelectThemeType;
+use App\Form\SelectProposalType;
 
 class PublicDiscussionController extends Controller
 {
@@ -266,13 +266,14 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $discussion->setType(PublicDiscussion::THEME_DISCUSSION)
-            ->setProposal(null)
-            ->setTheme(null);
-        $form = $this->createForm(SelectThemeType::class, $discussion);
+        $form = $this->createForm(SelectThemeType::class, null);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $hostTheme = $form->get('theme')->getData();
+            $discussion->setType(PublicDiscussion::THEME_DISCUSSION)
+                ->setProposal(null)
+                ->setTheme($hostTheme);
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
             $em->flush();
@@ -282,8 +283,9 @@ class PublicDiscussionController extends Controller
              ]));
         }
 
-        return $this->render('App:Discussion:form.html.twig', [
-            'form' => $form->createView(),
+        return $this->render('App:Discussion:move_public_discussion_to_theme.html.twig', [
+            'form'       => $form->createView(),
+            'discussion' => $discussion,
         ]);
     }
 
@@ -298,13 +300,14 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $discussion->setType(PublicDiscussion::PROPOSAL_DISCUSSION)
-            ->setProposal(null)
-            ->setTheme(null);
-        $form = $this->createForm(SelectProposalType::class, $discussion);
+        $form = $this->createForm(SelectProposalType::class, null);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $hostProposal = $form->get('proposal')->getData();
+            $discussion->setType(PublicDiscussion::PROPOSAL_DISCUSSION)
+                ->setTheme(null)
+                ->setProposal($hostProposal);
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
             $em->flush();
@@ -314,8 +317,9 @@ class PublicDiscussionController extends Controller
              ]));
         }
 
-        return $this->render('App:Discussion:form.html.twig', [
-            'form' => $form->createView(),
+        return $this->render('App:Discussion:move_public_discussion_to_proposal.html.twig', [
+            'form'       => $form->createView(),
+            'discussion' => $discussion,
         ]);
     }
 

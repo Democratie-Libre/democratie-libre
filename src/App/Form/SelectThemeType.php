@@ -16,9 +16,9 @@ class SelectThemeType extends AbstractType
     {
         $builder
             ->add('theme', EntityType::class, [
-                'class' => Theme::class,
-                'property' => 'title',
-                'required' => true,
+                'class'        => Theme::class,
+                'choice_label' => 'title',
+                'required'     => true,
             ])
             ->add('save', SubmitType::class)
         ;

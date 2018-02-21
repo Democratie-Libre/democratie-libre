@@ -55,6 +55,8 @@
   'Exprimez ici les motifs de votre projet'
 'Host theme':
   "Thématique d'accueil"
+'Host proposal':
+  "Proposition d'accueil"
 
 # Themes
 'Parent theme':
