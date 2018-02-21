@@ -9,23 +9,22 @@ use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\User;
-use App\Entity\PrivateDiscussion;
 
 class SelectUserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $membersIds = $options['membersIds'];
+        $unlisted_users = $options['unlisted_users'];
 
         $builder
             ->add('user', EntityType::class, [
                 'class'         => User::class,
                 'choice_label'  => 'username',
-                'query_builder' => function (EntityRepository $er) use ($membersIds) {
+                'query_builder' => function (EntityRepository $er) use ($unlisted_users) {
                     $qb = $er->createQueryBuilder('u');
                     $qb
-                        ->where('u.id NOT IN(:membersIds)')
-                        ->setParameter('membersIds', $membersIds)
+                        ->where('u.id NOT IN(:unlisted_users)')
+                        ->setParameter('unlisted_users', $unlisted_users)
                     ;
 
                     return $qb;
@@ -39,7 +38,7 @@ class SelectUserType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'membersIds'  => null,
+            'unlisted_users'  => null,
         ]);
     }
 }
