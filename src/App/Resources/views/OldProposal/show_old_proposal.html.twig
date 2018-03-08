@@ -1,6 +1,6 @@
 {% extends '::layout.html.twig' %}
 
-{% block page_content %}
+{% block content %}
     <div class="proposal-header">
         <div>
             Version archivée | proposition <a href="{{ path('proposal_show', {'slug': oldProposal.recordedProposal.slug}) }}">{{ oldProposal.recordedProposal.title }}</a>
@@ -26,4 +26,4 @@
     <div>
         {{ oldProposal.oldMotivation | markdown }}
     </div>
-{% endblock page_content %}
+{% endblock content %}

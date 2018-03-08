@@ -12,7 +12,8 @@ use Knp\Rad\User\HasPassword;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- * @UniqueEntity(fields={"username","email"})
+ * @UniqueEntity(fields="username")
+ * @UniqueEntity(fields="email")
  * @ORM\HasLifecycleCallbacks
  */
 class User implements UserInterface, \Serializable, HasPassword

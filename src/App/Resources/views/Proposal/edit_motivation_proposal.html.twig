@@ -1,6 +1,6 @@
 {% extends '::layout.html.twig' %}
 
-{% block page_content %}
+{% block content %}
     <div class="row">
         <div class="row">
             <h1>Édition des motifs du projet<br><span class="italic">{{ proposal.title }}</span></h1>
@@ -23,7 +23,7 @@
             </div>
         {{ form_end(form) }}
     </div>
-{% endblock page_content %}
+{% endblock content %}
 
 {% block javascript %}
     {{ parent() }}

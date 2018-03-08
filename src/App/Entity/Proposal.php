@@ -6,12 +6,12 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity
- * @UniqueEntity(fields={"slug","title"})
+ * @UniqueEntity(fields="slug")
+ * @UniqueEntity(fields="title")
  * @ORM\HasLifecycleCallbacks
  */
 class Proposal
@@ -63,6 +63,12 @@ class Proposal
      * @ORM\Column(type="text", nullable=true)
      */
     private $motivation;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Article", mappedBy="proposal")
+     * @Assert\Valid()
+     */
+    private $articles;
 
     /**
      * @ORM\Column(type="integer")
@@ -132,12 +138,13 @@ class Proposal
     public function __construct()
     {
         $this->creationDate  = new \Datetime();
+        $this->articles      = new ArrayCollection();
         $this->versionNumber = 1;
         $this->isPublished   = false;
         $this->isAWiki       = false;
         $this->supporters    = new ArrayCollection();
         $this->opponents     = new ArrayCollection();
-        $this->oldProposals  = new ArrayCollection();
+        $this->history       = new ArrayCollection();
         $this->discussions   = new ArrayCollection();
     }
 
@@ -206,6 +213,30 @@ class Proposal
     public function getMotivation()
     {
         return $this->motivation;
+    }
+
+    public function addArticle(Article $article)
+    {
+        $this->articles->add($article);
+
+        return $this;
+    }
+
+    public function removeArticle(Article $article)
+    {
+        $this->articles->removeElement($article);
+
+        return $this;
+    }
+
+    public function getArticles()
+    {
+        return $this->articles;
+    }
+
+    public function getNumberOfArticles()
+    {
+        return $this->articles->count();
     }
 
     public function setVersionNumber($number)
@@ -337,6 +368,17 @@ class Proposal
     public function addToHistory(OldProposal $oldProposal)
     {
         $this->history->add($oldProposal);
+
+        return $this;
+    }
+
+    public function snapshotHistory()
+    {
+        $oldProposal = new OldProposal($this);
+        $this
+            ->addToHistory($oldProposal)
+            ->incrementVersionNumber()
+        ;
 
         return $this;
     }

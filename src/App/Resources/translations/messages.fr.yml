@@ -61,3 +61,13 @@
 # Themes
 'Parent theme':
   'Thématique parente'
+
+# Articles
+'Here express the motives of your article':
+  'Exprimez ici les motifs de votre article'
+'Here express the content of your article':
+  'Exprimez ici le contenu de votre article'
+'Motivation':
+  'Exposé des motifs'
+'Content':
+  'Contenu'

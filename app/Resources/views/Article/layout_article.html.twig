@@ -1,0 +1,32 @@
+{% extends '::layout.html.twig' %}
+
+{% block content %}
+    <div class="section-header row">
+        <div class="section-header-menu col-md-12 col-xs-12">
+            {% if is_granted('ROLE_USER') %}
+                <div class="btn-group custom-btn-group ">
+                    <button class="dropdown-toggle btn btn-default" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
+                    <ul class="dropdown-menu pull-right">
+                        {% if is_granted('edit', article) %}
+                            <li><a href="{{ path('article_edit', {'slug': article.slug}) }}">Éditer l'article</a></li>
+                        {% endif %}
+                        {% if is_granted('delete', article) %}
+                            <li><a href="{{ path('article_delete', {'slug': article.slug}) }}">Supprimer cet article</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+        <div class="article-header">
+            <div>
+                proposition <a href="{{ path('proposal_show', {'slug': article.proposal.slug}) }}">{{ article.proposal.title }}</a><br>
+            </div>
+            <div class="article-title">
+                Article {{ article.proposal.articles.indexOf(article) + 1 }}<br>
+                {{ article.title }}
+            </div>
+        </div>
+    </div>
+
+    {% block page_content %}{% endblock page_content %}
+{% endblock content %}

@@ -1,0 +1,18 @@
+{% extends 'Article/layout_article.html.twig' %}
+
+{% block page_content %}
+    <div class="section-menu row">
+        <ul>
+            <li class="active"><a data-toggle="tab" href="#motivation">Motifs</a></li>
+            <li><a data-toggle="tab" href="#content">Contenu</a></li>
+        </ul>
+    </div>
+    <div class="tab-content">
+        <div id="motivation" class="tab-pane fade in active">
+            {{ article.motivation | markdown }}
+        </div>
+        <div id="content" class="tab-pane fade">
+            {{ article.content | markdown }}
+        </div>
+    </div>
+{% endblock page_content %}

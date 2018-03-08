@@ -401,6 +401,27 @@ body {
     border-radius: 6px;
 }
 
+/**************/
+/** Article ***/
+/**************/
+
+.article-title {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 30px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.article-link {
+    color: #333333;
+}
+
+.article-link:hover {
+    color: #F0BD00;
+    text-decoration: none;
+}
+
 /*****************/
 /** OldProposal **/
 /*****************/

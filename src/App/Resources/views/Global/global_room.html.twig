@@ -1,6 +1,6 @@
 {% extends '::layout.html.twig' %}
 
-{% block page_content %}
+{% block content %}
     <div class="global-room-header row">
         <div class="section-header-image col-md-3 col-xs-3">
             <img src="{{ asset('img/globalRoom_128.png') }}">
@@ -47,4 +47,4 @@
             <a href="{{ path('public_discussion_add_to_global_discussions')}}" class="btn btn-default custom-admin-btn">Ouvrir une discussion</a>
         {% endif %}
     </div>
-{% endblock page_content %}
+{% endblock content %}

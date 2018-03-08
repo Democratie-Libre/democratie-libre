@@ -31,3 +31,7 @@ app_private_discussion:
 app_post:
     resource: "@App/Resources/config/routing/post.yml"
     prefix: "/post"
+
+app_article:
+    resource: "@App/Resources/config/routing/article.yml"
+    prefix: "/article"

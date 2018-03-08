@@ -9,6 +9,13 @@ services:
             - { name: 'security.voter' }
         arguments: ['@security.access.decision_manager']
 
+    app.article_voter:
+        class: App\Security\Authorization\Voter\ArticleVoter
+        public: false
+        tags:
+            - { name: 'security.voter' }
+        arguments: ['@security.access.decision_manager']
+
     app.old_proposal_voter:
         class: App\Security\Authorization\Voter\OldProposalVoter
         public: false
