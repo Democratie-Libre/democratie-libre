@@ -5,6 +5,7 @@
         <ul>
             <li class="active"><a data-toggle="tab" href="#motivation">Motifs</a></li>
             <li><a data-toggle="tab" href="#content">Contenu</a></li>
+            <li><a data-toggle="tab" href="#discussions">Salon</a></li>
         </ul>
     </div>
     <div class="tab-content">
@@ -13,6 +14,28 @@
         </div>
         <div id="content" class="tab-pane fade">
             {{ article.content | markdown }}
+        </div>
+        <div id="discussions" class="tab-pane fade">
+            <table class="table discussion-table">
+                <thead>
+                    <tr>
+                        <th>Discussion</th>
+                        <th>Dernier commentaire</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for discussion in article.discussions %}
+                    <tr>
+                        <td><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="discussion-link">{{ discussion.title }}</a></td>
+                        {% if discussion.posts is empty %}
+                            <td>Vide</td>
+                        {% else %}
+                            <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 {% endblock page_content %}

@@ -5,7 +5,7 @@
         <div class="col-md-10 col-md-offset-1 col-xs-10 col-xs-offset-1">
             <div class="row">
                 <div class="col-md-10 col-md-offset-2">
-                    <h1>Déplacement de la discussion<br><span class="italic">{{ discussion.title }}</span> vers une thématique</h1>
+                    <h1>Déplacement de la discussion<br><span class="italic">{{ discussion.title }}</span> vers un article</h1>
                 </div>
             </div>
 
@@ -13,13 +13,13 @@
                 <div class="form-group row">
                     <div class="col-md-10 col-md-offset-2">
                         {{ form_errors(form) }}
-                        {{ form_errors(form.theme) }}
+                        {{ form_errors(form.article) }}
                     </div>
                 </div>
                 <div class="form-group row">
-                    {{ form_label(form.theme, 'Host theme', {'label_attr': {'class': 'control-label col-md-2'}}) }}
+                    {{ form_label(form.article, 'Host article', {'label_attr': {'class': 'control-label col-md-2'}}) }}
                     <div class="col-md-10">
-                        {{ form_widget(form.theme, {'attr': {
+                        {{ form_widget(form.article, {'attr': {
                             'class'       : 'form-control',
                             }})
                         }}

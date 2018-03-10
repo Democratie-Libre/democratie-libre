@@ -14,13 +14,11 @@
                         {% endif %}
                         {% if is_granted('ROLE_ADMIN') %}
                             <li><a href="{{ path('public_discussion_edit', {'slug': discussion.slug}) }}">Éditer la discussion</a></li>
-                            {% if discussion.globalDiscussion %}
-                                <li><a href="{{ path('public_discussion_move_to_theme', {'slug': discussion.slug}) }}">Déplacer vers une thématique</a></li>
-                                <li><a href="{{ path('public_discussion_move_to_proposal', {'slug': discussion.slug}) }}">Déplacer vers une proposition</a></li>
-                            {% else %}
+                            <li><a href="{{ path('public_discussion_move_to_theme', {'slug': discussion.slug}) }}">Déplacer vers une thématique</a></li>
+                            <li><a href="{{ path('public_discussion_move_to_proposal', {'slug': discussion.slug}) }}">Déplacer vers une proposition</a></li>
+                            <li><a href="{{ path('public_discussion_move_to_article', {'slug': discussion.slug}) }}">Déplacer vers un article</a></li>
+                            {% if not discussion.globalDiscussion %}
                                 <li><a href="{{ path('public_discussion_move_to_global', {'slug': discussion.slug}) }}">Déplacer vers les discussions globales</a></li>
-                                <li><a href="{{ path('public_discussion_move_to_proposal', {'slug': discussion.slug}) }}">Déplacer vers une proposition</a></li>
-                                <li><a href="{{ path('public_discussion_move_to_theme', {'slug': discussion.slug}) }}">Déplacer vers une thématique</a></li>
                             {% endif %}
                             {% if discussion.locked %}
                                 <li><a href="{{ path('public_discussion_unlock', {'slug': discussion.slug}) }}">Dévérouiller la discussion</a></li>
@@ -40,6 +38,8 @@
                 <div>discussion | thématique <a href="{{ path('theme_show', {'slug': discussion.theme.slug}) }}">{{ discussion.theme.title }}</a></div>
             {% elseif discussion.type == 'proposal_discussion' %}
                 <div>discussion | proposition <a href="{{ path('proposal_show', {'slug': discussion.proposal.slug}) }}">{{ discussion.proposal.title }}</a></div>
+            {% elseif discussion.type == 'article_discussion' %}
+                <div>discussion | article <a href="{{ path('article_show', {'slug': discussion.article.slug}) }}">{{ discussion.article.title }}</a></div>
             {% endif %}
             <h1>{{ discussion.title }}</h1>
             {% if discussion.locked %}

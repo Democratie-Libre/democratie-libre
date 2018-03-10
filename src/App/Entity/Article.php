@@ -70,10 +70,17 @@ class Article
      */
     private $proposal;
 
+    /**
+     * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="article")
+     * @Assert\Valid()
+     */
+    private $discussions;
+
     public function __construct()
     {
         $this->creationDate  = new \Datetime();
         $this->versionNumber = 1;
+        $this->discussions   = new ArrayCollection();
     }
 
     public function getId()
@@ -177,5 +184,24 @@ class Article
     public function getProposal()
     {
         return $this->proposal;
+    }
+
+    public function addDiscussion(PublicDiscussion $discussion)
+    {
+        $this->discussions->add($discussion);
+
+        return $this;
+    }
+
+    public function removeDiscussion(PublicDiscussion $discussion)
+    {
+        $this->discussions->removeElement($discussion);
+
+        return $this;
+    }
+
+    public function getDiscussions()
+    {
+        return $this->discussions;
     }
 }
