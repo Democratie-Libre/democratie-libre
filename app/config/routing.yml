@@ -35,3 +35,7 @@ app_post:
 app_article:
     resource: "@App/Resources/config/routing/article.yml"
     prefix: "/article"
+
+app_article_version:
+    resource: "@App/Resources/config/routing/article_version.yml"
+    prefix: "/article_version"

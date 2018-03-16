@@ -6,6 +6,7 @@
             <li class="active"><a data-toggle="tab" href="#motivation">Motifs</a></li>
             <li><a data-toggle="tab" href="#content">Contenu</a></li>
             <li><a data-toggle="tab" href="#discussions">Salon</a></li>
+            <li><a data-toggle="tab" href="#versioning">Historique</a></li>
         </ul>
     </div>
     <div class="tab-content">
@@ -36,6 +37,29 @@
                 {% endfor %}
                 </tbody>
             </table>
+        </div>
+        <div id="versioning" class="tab-pane fade">
+            <div class="subsection-content col-md-10 col-xs-10">
+                {% for articleVersion in article.versioning %}
+                    <a href="{{ path('article_version_show', {'slug': articleVersion.slug}) }}" class="subsection-panel col-md-12 col-xs-12">
+                        <div class="subsection-panel-heading">
+                            <div class="subsection-panel-title">
+                                version {{ articleVersion.versionNumber }}
+                            </div>
+                        </div>
+                        <div class="subsection-panel-body">
+                            le  {{ articleVersion.snapDate|date('d/m/Y') }}
+                        </div>
+                    </a>
+                {% else %}
+                    Pas d'historique !
+                {% endfor %}
+            </div>
+            <div class="col-md-2 col-xs-2">
+                Date de création : {{ article.creationDate|date('d/m/Y') }}<br><br>
+                Date de dernière modification : {{ article.lastEditDate|date('d/m/Y') }}<br><br>
+                Version actuelle : {{ article.versionNumber }}
+            </div>
         </div>
     </div>
 {% endblock page_content %}

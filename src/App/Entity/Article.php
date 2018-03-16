@@ -76,11 +76,18 @@ class Article
      */
     private $discussions;
 
+    /**
+     * @ORM\OneToMany(targetEntity="ArticleVersion", mappedBy="recordedArticle", cascade={"persist", "remove"})
+     * @Assert\Valid()
+     */
+    private $versioning;
+
     public function __construct()
     {
         $this->creationDate  = new \Datetime();
         $this->versionNumber = 1;
         $this->discussions   = new ArrayCollection();
+        $this->versioning    = new ArrayCollection();
     }
 
     public function getId()
@@ -203,5 +210,17 @@ class Article
     public function getDiscussions()
     {
         return $this->discussions;
+    }
+
+    public function addToVersioning(ArticleVersion $articleVersion)
+    {
+        $this->versioning->add($articleVersion);
+
+        return $this;
+    }
+
+    public function getVersioning()
+    {
+        return $this->versioning;
     }
 }

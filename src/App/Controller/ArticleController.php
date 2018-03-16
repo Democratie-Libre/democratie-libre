@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use App\Entity\Article;
+use App\Entity\ArticleVersion;
 use App\Form\Article\EditArticleType;
 
 class ArticleController extends Controller
@@ -73,11 +74,16 @@ class ArticleController extends Controller
 
         $this->denyAccessUnlessGranted('edit', $article);
 
+        $articleVersion = new ArticleVersion($article);
         $form = $this->createForm(EditArticleType::class, $article);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Here we should update the history of the article and of the proposal associated
+            $article
+                ->addToVersioning($articleVersion)
+                ->incrementVersionNumber()
+            ;
             $em = $this->getDoctrine()->getManager();
             $em->persist($article);
             $em->flush();
