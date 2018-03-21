@@ -44,9 +44,12 @@ class ArticleController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             // Here we should update the history of the article and of the proposal associated
             $article->setProposal($proposal);
+            $articleVersion = new ArticleVersion($article);
+            $article->addToVersioning($articleVersion);
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($article);
+            $em->persist($articleVersion);
             $em->flush();
 
             return $this->redirect($this->generateUrl('article_show', [
@@ -74,18 +77,18 @@ class ArticleController extends Controller
 
         $this->denyAccessUnlessGranted('edit', $article);
 
-        $articleVersion = new ArticleVersion($article);
         $form = $this->createForm(EditArticleType::class, $article);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Here we should update the history of the article and of the proposal associated
-            $article
-                ->addToVersioning($articleVersion)
-                ->incrementVersionNumber()
-            ;
+            $article->incrementVersionNumber();
+            $articleVersion = new ArticleVersion($article);
+            $article->addToVersioning($articleVersion);
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($article);
+            $em->persist($articleVersion);
             $em->flush();
 
             return $this->redirect($this->generateUrl('article_show', [

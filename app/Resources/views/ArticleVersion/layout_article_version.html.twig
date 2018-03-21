@@ -14,8 +14,9 @@
             {% if not articleVersion.isFirstVersion %}
                 <a href="{{ path('article_version_previous_version', {'slug': articleVersion.slug}) }}" class="btn btn-default">Version précédente</a>
             {% endif %}
-
-            <a href="{{ path('article_version_next_version', {'slug': articleVersion.slug}) }}" class="btn btn-default">Version suivante</a>
+            {% if not articleVersion.isLastVersion %}
+                <a href="{{ path('article_version_next_version', {'slug': articleVersion.slug}) }}" class="btn btn-default">Version suivante</a>
+            {% endif %}
         </div>
     </div>
 

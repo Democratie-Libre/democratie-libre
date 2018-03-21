@@ -50,9 +50,7 @@ class ArticleVersionController extends Controller
         }
 
         if ($articleVersion->isLastVersion()) {
-            return $this->redirect($this->generateUrl('article_show', [
-                'slug' => $articleVersion->getRecordedArticle()->getSlug(),
-            ]));
+            throw $this->createNotFoundException();
         }
 
         $nextVersion = $repository->findNextVersion($articleVersion);

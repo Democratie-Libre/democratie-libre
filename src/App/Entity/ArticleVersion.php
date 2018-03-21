@@ -135,6 +135,6 @@ class ArticleVersion
         $recordedArticleVersionNumber = $this->getRecordedArticle()
             ->getVersionNumber();
 
-        return $thisVersionNumber + 1 === $recordedArticleVersionNumber;
+        return $thisVersionNumber === $recordedArticleVersionNumber;
     }
 }
