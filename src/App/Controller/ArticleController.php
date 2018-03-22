@@ -44,12 +44,9 @@ class ArticleController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             // Here we should update the history of the article and of the proposal associated
             $article->setProposal($proposal);
-            $articleVersion = new ArticleVersion($article);
-            $article->addToVersioning($articleVersion);
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($article);
-            $em->persist($articleVersion);
             $em->flush();
 
             return $this->redirect($this->generateUrl('article_show', [
@@ -82,18 +79,16 @@ class ArticleController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Here we should update the history of the article and of the proposal associated
-            $article->incrementVersionNumber();
-            $articleVersion = new ArticleVersion($article);
-            $article->addToVersioning($articleVersion);
+            $article->incrementVersionNumber()
+                ->snapshot();
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($article);
-            $em->persist($articleVersion);
             $em->flush();
 
             return $this->redirect($this->generateUrl('article_show', [
                 'slug' => $article->getSlug(),
-             ]));
+            ]));
         }
 
         return $this->render('App:Article:edit_article.html.twig', [

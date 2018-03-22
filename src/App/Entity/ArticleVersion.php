@@ -62,12 +62,6 @@ class ArticleVersion
     private $versionNumber;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Proposal", inversedBy="articles", cascade={"persist"})
-     * @Assert\Valid()
-     */
-    private $proposal;
-
-    /**
      * @ORM\ManyToOne(targetEntity="Article", inversedBy="versioning")
      * @Assert\Valid()
      */
@@ -75,13 +69,12 @@ class ArticleVersion
 
     public function __construct(Article $article)
     {
-        $this->title                 = sprintf('%s_v%s', $article->getTitle(), $article->getVersionNumber());
-        $this->snapDate              = new \Datetime(); 
-        $this->content               = $article->getContent();
-        $this->motivation            = $article->getMotivation();
-        $this->versionNumber         = $article->getVersionNumber();
-        $this->proposal              = $article->getProposal();
-        $this->recordedArticle       = $article;
+        $this->title           = sprintf('%s_v%s', $article->getTitle(), $article->getVersionNumber());
+        $this->snapDate        = new \Datetime();
+        $this->content         = $article->getContent();
+        $this->motivation      = $article->getMotivation();
+        $this->versionNumber   = $article->getVersionNumber();
+        $this->recordedArticle = $article;
     }
 
     public function getId()

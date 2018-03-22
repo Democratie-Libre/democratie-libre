@@ -223,4 +223,15 @@ class Article
     {
         return $this->versioning;
     }
+
+    /**
+     * @ORM\PrePersist()
+     */
+    public function snapshot()
+    {
+        $articleVersion = new ArticleVersion($this);
+        $this->addToVersioning($articleVersion);
+
+        return $this;
+    }
 }
