@@ -22,7 +22,7 @@ class ArticleVersionController extends Controller
 
     public function previousVersionAction($slug)
     {
-        $repository  = $this->getDoctrine()->getRepository('App:ArticleVersion');
+        $repository     = $this->getDoctrine()->getRepository('App:ArticleVersion');
         $articleVersion = $repository->findOneBySlug($slug);
 
         if (null === $articleVersion) {
@@ -42,7 +42,7 @@ class ArticleVersionController extends Controller
 
     public function nextVersionAction($slug)
     {
-        $repository  = $this->getDoctrine()->getRepository('App:ArticleVersion');
+        $repository     = $this->getDoctrine()->getRepository('App:ArticleVersion');
         $articleVersion = $repository->findOneBySlug($slug);
 
         if (null === $articleVersion) {

@@ -224,9 +224,11 @@ class Article
         return $this->versioning;
     }
 
-    /**
-     * @ORM\PrePersist()
-     */
+    public function getLastVersion()
+    {
+        return $this->versioning->last();
+    }
+
     public function snapshot()
     {
         $articleVersion = new ArticleVersion($this);

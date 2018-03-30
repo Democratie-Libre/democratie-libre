@@ -17,6 +17,9 @@ class EditProposalType extends AbstractType
         $builder
             ->add('title', TextType::class)
             ->add('abstract', TextareaType::class)
+            ->add('motivation', TextareaType::class, [
+                'required' => false,
+            ])
             ->add('save', SubmitType::class)
         ;
     }

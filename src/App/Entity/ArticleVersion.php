@@ -67,14 +67,21 @@ class ArticleVersion
      */
     private $recordedArticle;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="ProposalVersion", mappedBy="articleVersions")
+     * @Assert\Valid()
+     */
+    private $proposalVersions;
+
     public function __construct(Article $article)
     {
-        $this->title           = sprintf('%s_v%s', $article->getTitle(), $article->getVersionNumber());
-        $this->snapDate        = new \Datetime();
-        $this->content         = $article->getContent();
-        $this->motivation      = $article->getMotivation();
-        $this->versionNumber   = $article->getVersionNumber();
-        $this->recordedArticle = $article;
+        $this->title            = sprintf('%s_v%s', $article->getTitle(), $article->getVersionNumber());
+        $this->snapDate         = new \Datetime();
+        $this->content          = $article->getContent();
+        $this->motivation       = $article->getMotivation();
+        $this->versionNumber    = $article->getVersionNumber();
+        $this->recordedArticle  = $article;
+        $this->proposalVersions = new ArrayCollection();
     }
 
     public function getId()
@@ -129,5 +136,15 @@ class ArticleVersion
             ->getVersionNumber();
 
         return $thisVersionNumber === $recordedArticleVersionNumber;
+    }
+
+    public function getProposalVersions()
+    {
+        return $this->proposalVersions;
+    }
+
+    public function addProposalVersion(ProposalVersion $proposalVersion)
+    {
+        $this->proposalVersions->add($proposalVersion);
     }
 }

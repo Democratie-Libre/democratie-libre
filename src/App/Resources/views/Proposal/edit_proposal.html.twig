@@ -1,48 +1,60 @@
-{% extends '::layout.html.twig' %}
+{% extends 'Proposal/layout_proposal.html.twig' %}
 
-{% block content %}
-    <div class="row">
-        <div class="col-md-10 col-md-offset-1 col-xs-10 col-xs-offset-1">
-            <div class="row">
-                <div class="col-md-10 col-md-offset-2">
-                    <h1>Édition de la proposition<br><span class="italic">{{ proposal.title }}</span></h1>
-                </div>
+{% block page_content %}
+    {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+        <div class="form-group row">
+            <div class="col-md-10 col-md-offset-2">
+                {{ form_errors(form) }}
+                {{ form_errors(form.title) }}
+                {{ form_errors(form.abstract) }}
             </div>
-
-            {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
-                <div class="form-group row">
-                    <div class="col-md-10 col-md-offset-2">
-                        {{ form_errors(form) }}
-                        {{ form_errors(form.title) }}
-                        {{ form_errors(form.abstract) }}
-                    </div>
-                </div>
-                <div class="form-group row">
-                    {{ form_label(form.title, 'Title', {'label_attr': {'class': 'control-label col-md-2'}}) }}
-                    <div class="col-md-10">
-                        {{ form_widget(form.title, {'attr': {
-                            'class'       : 'form-control',
-                            'placeholder' : 'Your title must not exceed 40 characters'
-                            }})
-                        }}
-                    </div>
-                </div>
-                <div class="form-group row">
-                    {{ form_label(form.abstract, 'Abstract', {'label_attr': {'class': 'control-label col-md-2'}}) }}
-                    <div class="col-md-10">
-                        {{ form_widget(form.abstract, {'attr': {
-                            'class': 'form-control form-abstract-textarea',
-                            'placeholder' : 'Your abstract must not exceed 400 characters'
-                            }})
-                        }}
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-md-2 col-md-offset-2">
-                        {{ form_widget(form.save, {'label': 'Save', 'attr': {'class': 'btn btn-default custom-btn'}}) }}
-                    </div>
-                </div>
-            {{ form_end(form) }}
         </div>
-    </div>
-{% endblock content %}
+        <div class="form-group row">
+            {{ form_label(form.title, 'Title', {'label_attr': {'class': 'control-label col-md-2'}}) }}
+            <div class="col-md-10">
+                {{ form_widget(form.title, {'attr': {
+                    'class'       : 'form-control',
+                    'placeholder' : 'Your title must not exceed 40 characters'
+                    }})
+                }}
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.abstract, 'Abstract', {'label_attr': {'class': 'control-label col-md-2'}}) }}
+            <div class="col-md-10">
+                {{ form_widget(form.abstract, {'attr': {
+                    'class': 'form-control form-abstract-textarea',
+                    'placeholder' : 'Your abstract must not exceed 400 characters'
+                    }})
+                }}
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.motivation, 'Motivation', {'label_attr': {'class': 'control-label col-md-2'}}) }}
+            <div class="col-md-10">
+                {{ form_widget(form.motivation, {'attr': {
+                    'class': 'form-control form-abstract-textarea',
+                    'placeholder' : 'Here express the motives of your project'
+                    }})
+                }}
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-2 col-md-offset-2">
+                {{ form_widget(form.save, {'label': 'Save', 'attr': {'class': 'btn btn-default custom-btn'}}) }}
+            </div>
+        </div>
+    {{ form_end(form) }}
+{% endblock page_content %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+    <script>
+        new SimpleMDE({
+            element: document.getElementById("edit_proposal_motivation"),
+            spellChecker: false,
+            status: false,
+        });
+    </script>
+{% endblock javascript %}

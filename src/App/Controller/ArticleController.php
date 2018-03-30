@@ -42,8 +42,15 @@ class ArticleController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Here we should update the history of the article and of the proposal associated
-            $article->setProposal($proposal);
+            $article
+                ->setProposal($proposal)
+                ->snapshot()
+            ;
+
+            $proposal
+                ->incrementVersionNumber()
+                ->snapshot()
+            ;
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($article);
@@ -79,8 +86,10 @@ class ArticleController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Here we should update the history of the article and of the proposal associated
-            $article->incrementVersionNumber()
-                ->snapshot();
+            $article
+                ->incrementVersionNumber()
+                ->snapshot()
+            ;
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($article);

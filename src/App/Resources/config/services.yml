@@ -16,12 +16,6 @@ services:
             - { name: 'security.voter' }
         arguments: ['@security.access.decision_manager']
 
-    app.old_proposal_voter:
-        class: App\Security\Authorization\Voter\OldProposalVoter
-        public: false
-        tags:
-            - { name: 'security.voter' }
-
     app.private_discussion_voter:
         class: App\Security\Authorization\Voter\PrivateDiscussionVoter
         public: false

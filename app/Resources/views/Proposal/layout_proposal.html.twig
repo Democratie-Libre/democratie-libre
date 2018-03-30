@@ -9,8 +9,7 @@
                     <ul class="dropdown-menu pull-right">
                         <li><a href="{{ path('public_discussion_add_to_proposal', {'slug': proposal.slug}) }}">Ouvrir une discussion</a></li>
                         {% if is_granted('edit', proposal) %}
-                            <li><a href="{{ path('proposal_edit', {'slug': proposal.slug}) }}">Éditer l'en-tête</a></li>
-                            <li><a href="{{ path('proposal_edit_motivation', {'slug': proposal.slug}) }}">Éditer les motifs</a></li>
+                            <li><a href="{{ path('proposal_edit', {'slug': proposal.slug}) }}">Éditer</a></li>
                             <li><a href="{{ path('article_add', {'proposalSlug': proposal.slug}) }}">Ajouter un article</a></li>
                         {% endif %}
                         {% if is_granted('author', proposal) and not proposal.isPublished %}

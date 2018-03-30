@@ -37,7 +37,3 @@ proposal_oppose:
 proposal_removeoppose:
     path: /removeoppose/{slug}
     defaults: { _controller: 'App:Proposal:removeOppose' }
-
-proposal_discussions:
-    path: /{slug}/discussions
-    defaults: { _controller: 'App:Proposal:showDiscussions' }

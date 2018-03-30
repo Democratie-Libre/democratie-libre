@@ -65,7 +65,7 @@ class Proposal
     private $motivation;
 
     /**
-     * @ORM\OneToMany(targetEntity="Article", mappedBy="proposal")
+     * @ORM\OneToMany(targetEntity="Article", mappedBy="proposal", cascade={"remove"})
      * @Assert\Valid()
      */
     private $articles;
@@ -124,10 +124,10 @@ class Proposal
     private $opponents;
 
     /**
-     * @ORM\OneToMany(targetEntity="OldProposal", mappedBy="recordedProposal", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="ProposalVersion", mappedBy="recordedProposal", cascade={"persist", "remove"})
      * @Assert\Valid()
      */
-    private $history;
+    private $versioning;
 
     /**
      * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="proposal")
@@ -144,7 +144,7 @@ class Proposal
         $this->isAWiki       = false;
         $this->supporters    = new ArrayCollection();
         $this->opponents     = new ArrayCollection();
-        $this->history       = new ArrayCollection();
+        $this->versioning    = new ArrayCollection();
         $this->discussions   = new ArrayCollection();
     }
 
@@ -365,27 +365,24 @@ class Proposal
         return $this->opponents;
     }
 
-    public function addToHistory(OldProposal $oldProposal)
+    public function addToVersioning(ProposalVersion $proposalVersion)
     {
-        $this->history->add($oldProposal);
+        $this->versioning->add($proposalVersion);
 
         return $this;
     }
 
-    public function snapshotHistory()
+    public function snapshot()
     {
-        $oldProposal = new OldProposal($this);
-        $this
-            ->addToHistory($oldProposal)
-            ->incrementVersionNumber()
-        ;
+        $proposalVersion = new ProposalVersion($this);
+        $this->addToVersioning($proposalVersion);
 
         return $this;
     }
 
-    public function getHistory()
+    public function getVersioning()
     {
-        return $this->history;
+        return $this->versioning;
     }
 
     public function addDiscussion(PublicDiscussion $discussion)

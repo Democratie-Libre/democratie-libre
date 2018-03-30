@@ -11,7 +11,7 @@ class ArticleVersionRepository extends EntityRepository
     {
         return $this->findOneBy([
             'recordedArticle' => $articleVersion->getRecordedArticle(),
-            'versionNumber' => $articleVersion->getVersionNumber() - 1,
+            'versionNumber'   => $articleVersion->getVersionNumber() - 1,
         ]);
     }
 
@@ -19,7 +19,7 @@ class ArticleVersionRepository extends EntityRepository
     {
         return $this->findOneBy([
             'recordedArticle' => $articleVersion->getRecordedArticle(),
-            'versionNumber' => $articleVersion->getVersionNumber() + 1,
+            'versionNumber'   => $articleVersion->getVersionNumber() + 1,
         ]);
     }
 }

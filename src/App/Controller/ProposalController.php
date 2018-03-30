@@ -7,7 +7,6 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use App\Entity\Proposal;
-use App\Entity\OldProposal;
 use App\Form\Proposal\EditProposalType;
 use App\Form\Proposal\EditMotivationProposalType;
 use App\Form\Proposal\PublishProposalType;
@@ -38,6 +37,7 @@ class ProposalController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $proposal->setAuthor($this->getUser());
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($proposal);
             $em->flush();
@@ -66,15 +66,15 @@ class ProposalController extends Controller
 
         $this->denyAccessUnlessGranted('edit', $proposal);
 
-        $oldProposal = new OldProposal($proposal);
-        $form        = $this->createForm(EditProposalType::class, $proposal);
+        $form            = $this->createForm(EditProposalType::class, $proposal);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $proposal
-                ->addToHistory($oldProposal)
                 ->incrementVersionNumber()
+                ->snapshot()
             ;
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($proposal);
             $em->flush();
@@ -85,43 +85,6 @@ class ProposalController extends Controller
         }
 
         return $this->render('App:Proposal:edit_proposal.html.twig', [
-            'proposal' => $proposal,
-            'form'     => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Security("has_role('ROLE_USER')")
-     */
-    public function editMotivationAction(Request $request, $slug)
-    {
-        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
-
-        if (null ===  $proposal) {
-            throw $this->createNotFoundException();
-        }
-
-        $this->denyAccessUnlessGranted('edit', $proposal);
-
-        $oldProposal = new OldProposal($proposal);
-        $form        = $this->createForm(EditMotivationProposalType::class, $proposal);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $proposal
-                ->addToHistory($oldProposal)
-                ->incrementVersionNumber()
-            ;
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($proposal);
-            $em->flush();
-
-            return $this->redirect($this->generateUrl('proposal_show', [
-                'slug' => $proposal->getSlug(),
-             ]));
-        }
-
-        return $this->render('App:Proposal:edit_motivation_proposal.html.twig', [
             'proposal' => $proposal,
             'form'     => $form->createView(),
         ]);
@@ -283,20 +246,5 @@ class ProposalController extends Controller
         return $this->redirect($this->generateUrl('proposal_show', [
             'slug' => $proposal->getSlug(),
         ]));
-    }
-
-    public function showDiscussionsAction($slug)
-    {
-        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
-
-        if (null === $proposal) {
-            throw $this->createNotFoundException();
-        }
-
-        $discussions = $this->getDoctrine()->getRepository('App:Discussion')->findByProposal($proposal);
-
-        return $this->render('App:Proposal:discussions.html.twig', [
-            'discussions' => $discussions,
-        ]);
     }
 }
