@@ -12,7 +12,8 @@
     <div class="section-header row">
         <div class="proposal-header">
             <div>
-                Version {{ proposalVersion.versionNumber }} archivée le {{ proposalVersion.snapDate|date('d/m/Y') }} | proposition <a href="{{ path('proposal_show', {'slug': proposalVersion.recordedProposal.slug}) }}">{{ proposalVersion.recordedProposal.title }}</a><br>
+                Version {{ proposalVersion.versionNumber }} archivée le {{ proposalVersion.snapDate|date('d/m/Y') }}<br>
+                proposition #{{ proposalVersion.recordedProposal.id }} <a href="{{ path('proposal_show', {'slug': proposalVersion.recordedProposal.slug}) }}">{{ proposalVersion.recordedProposal.title }}</a> | thématique #{{ proposalVersion.theme.id }} <a href="{{ path('theme_show', {'slug': proposalVersion.theme.slug}) }}">{{ proposalVersion.theme.title }}</a><br>
             </div>
             <div class="proposal-title">
                 {{ proposalVersion.title }}

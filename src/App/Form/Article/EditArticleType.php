@@ -16,10 +16,10 @@ class EditArticleType extends AbstractType
     {
         $builder
             ->add('title', TextType::class)
-            ->add('motivation', TextareaType::class, [
+            ->add('content', TextareaType::class, [
                 'required' => false,
             ])
-            ->add('content', TextareaType::class, [
+            ->add('motivation', TextareaType::class, [
                 'required' => false,
             ])
             ->add('save', SubmitType::class)

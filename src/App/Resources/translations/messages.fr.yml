@@ -19,6 +19,8 @@
   'Ajouter'
 'Move':
   'Déplacer'
+'Motivation':
+  'Motifs'
 
 # Security
 'Bad credentials':
@@ -67,7 +69,5 @@
   'Exprimez ici les motifs de votre article'
 'Here express the content of your article':
   'Exprimez ici le contenu de votre article'
-'Motivation':
-  'Exposé des motifs'
 'Content':
   'Contenu'

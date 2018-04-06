@@ -20,21 +20,21 @@
             </div>
         </div>
         <div class="form-group row">
-            {{ form_label(form.motivation, 'Motivation', {'label_attr': {'class': 'control-label col-md-2'}}) }}
-            <div class="col-md-10">
-                {{ form_widget(form.motivation, {'attr': {
-                    'class': 'form-control form-abstract-textarea',
-                    'placeholder' : 'Here express the motives of your article'
-                    }})
-                }}
-            </div>
-        </div>
-        <div class="form-group row">
             {{ form_label(form.content, 'Content', {'label_attr': {'class': 'control-label col-md-2'}}) }}
             <div class="col-md-10">
                 {{ form_widget(form.content, {'attr': {
                     'class': 'form-control form-abstract-textarea',
                     'placeholder' : 'Here express the content of your article'
+                    }})
+                }}
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.motivation, 'Motivation', {'label_attr': {'class': 'control-label col-md-2'}}) }}
+            <div class="col-md-10">
+                {{ form_widget(form.motivation, {'attr': {
+                    'class': 'form-control form-abstract-textarea',
+                    'placeholder' : 'Here express the motives of your article'
                     }})
                 }}
             </div>

@@ -85,8 +85,14 @@ class ArticleController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Here we should update the history of the article and of the proposal associated
             $article
+                ->incrementVersionNumber()
+                ->snapshot()
+            ;
+
+            $proposal = $article->getProposal();
+
+            $proposal
                 ->incrementVersionNumber()
                 ->snapshot()
             ;
