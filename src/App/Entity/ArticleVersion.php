@@ -75,7 +75,7 @@ class ArticleVersion
 
     public function __construct(Article $article)
     {
-        $this->title            = sprintf('%s_v%s', $article->getTitle(), $article->getVersionNumber());
+        $this->title            = $article->getTitle();
         $this->snapDate         = new \Datetime();
         $this->content          = $article->getContent();
         $this->motivation       = $article->getMotivation();

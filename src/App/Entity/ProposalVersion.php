@@ -13,7 +13,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * It is instanciated each time a proposal is modified.
  *
  * @ORM\Entity(repositoryClass="App\Repository\ProposalVersionRepository")
- * @UniqueEntity(fields={"slug","title"})
+ * @UniqueEntity(fields={"slug"})
  * @ORM\HasLifecycleCallbacks
  */
 class ProposalVersion
@@ -32,7 +32,7 @@ class ProposalVersion
     private $slug;
 
     /**
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255)
      * @Assert\Length(
      *      min = "2",
      *      max = "255"
@@ -110,7 +110,7 @@ class ProposalVersion
 
     public function __construct(Proposal $proposal)
     {
-        $this->title            = sprintf('%s_v%s', $proposal->getTitle(), $proposal->getVersionNumber());
+        $this->title            = $proposal->getTitle();
         $this->abstract         = $proposal->getAbstract();
         $this->snapDate         = new \Datetime();
         $this->motivation       = $proposal->getMotivation();

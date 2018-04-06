@@ -3,30 +3,32 @@
 {% block page_content %}
     <div class="section-menu row">
         <ul>
-            <li class="active"><a data-toggle="tab" href="#motivation">Motifs</a></li>
-            <li><a data-toggle="tab" href="#articles">Articles</a></li>
+            <li class="active"><a data-toggle="tab" href="#content">Texte</a></li>
             <li><a data-toggle="tab" href="#discussions">Salon</a></li>
             <li><a data-toggle="tab" href="#versioning">Historique</a></li>
         </ul>
     </div>
     <div class="tab-content">
-        <div id="motivation" class="tab-pane fade in active">
-            {{ proposal.motivation | markdown }}
-        </div>
-        <div id="articles" class="tab-pane fade">
-            <table class="table discussion-table">
-                <tbody>
+        <div id="content" class="tab-pane fade in active">
+            <div class="proposal-motivation">
+                <h4>Motifs</h4>
+                {{ proposal.motivation | markdown }}
+            </div>
+            <div class="proposal-articles">
                 {% for article in proposal.articles %}
-                    <tr>
-                        <td>Article {{ proposal.articles.indexOf(article) + 1 }}</td>
-                        <td><a href="{{ path('article_show', {'slug': article.slug}) }}" class="article-link">{{ article.title }}</a></td>
-                    </tr>
+                    <h4><a href="{{ path('article_show', {'slug': article.slug}) }}" class="article-link">Article {{ proposal.articles.indexOf(article) + 1 }}<br>{{ article.title }}</a></h4>
+                    <p>{{ article.content | markdown }}</p>
+                    <div class="article-motivation">
+                        {% if article.motivation %}
+                            <h5>Motifs</h5>
+                            {{ article.motivation | markdown }}
+                        {% endif %}
+                    </div>
                 {% endfor %}
-                </tbody>
-            </table>
+            </div>
         </div>
         <div id="discussions" class="tab-pane fade">
-            <table class="table discussion-table">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Discussion</th>
@@ -36,7 +38,7 @@
                 <tbody>
                 {% for discussion in proposal.discussions %}
                     <tr>
-                        <td><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="discussion-link">{{ discussion.title }}</a></td>
+                        <td><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="table-link">{{ discussion.title }}</a></td>
                         {% if discussion.posts is empty %}
                             <td>Vide</td>
                         {% else %}
@@ -49,20 +51,22 @@
         </div>
         <div id="versioning" class="tab-pane fade">
             <div class="subsection-content col-md-10 col-xs-10">
-                {% for proposalVersion in proposal.versioning %}
-                    <a href="{{ path('proposal_version_show', {'slug': proposalVersion.slug}) }}" class="subsection-panel col-md-12 col-xs-12">
-                        <div class="subsection-panel-heading">
-                            <div class="subsection-panel-title">
-                                version {{ proposalVersion.versionNumber }}
-                            </div>
-                        </div>
-                        <div class="subsection-panel-body">
-                            par {{ proposalVersion.author.username }} le  {{ proposalVersion.snapDate|date('d/m/Y') }}
-                        </div>
-                    </a>
-                {% else %}
-                    Pas d'historique !
-                {% endfor %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Version</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for proposalVersion in proposal.versioning %}
+                            <tr>
+                                <td><a href="{{ path('proposal_version_show', {'slug': proposalVersion.slug}) }}" class="table-link">Version {{ proposalVersion.versionNumber }}</a></td>
+                                <td>{{ proposalVersion.snapDate|date('d/m/Y à  H:i')}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
             <div class="col-md-2 col-xs-2">
                 Date de création : {{ proposal.creationDate|date('d/m/Y') }}<br><br>

@@ -1,10 +1,18 @@
 {% extends '::layout.html.twig' %}
 
 {% block content %}
+    <div class="proposal-version-change-version-btn">
+        {% if not proposalVersion.isFirstVersion %}
+            <a href="{{ path('proposal_version_previous_version', {'slug': proposalVersion.slug}) }}" class="btn btn-default">Version précédente</a>
+        {% endif %}
+        {% if not proposalVersion.isLastVersion %}
+            <a href="{{ path('proposal_version_next_version', {'slug': proposalVersion.slug}) }}" class="btn btn-default">Version suivante</a>
+        {% endif %}
+    </div>
     <div class="section-header row">
         <div class="proposal-header">
             <div>
-                Version archivée du {{ proposalVersion.snapDate|date('d/m/Y') }} | proposition <a href="{{ path('proposal_show', {'slug': proposalVersion.recordedProposal.slug}) }}">{{ proposalVersion.recordedProposal.title }}</a><br>
+                Version {{ proposalVersion.versionNumber }} archivée le {{ proposalVersion.snapDate|date('d/m/Y') }} | proposition <a href="{{ path('proposal_show', {'slug': proposalVersion.recordedProposal.slug}) }}">{{ proposalVersion.recordedProposal.title }}</a><br>
             </div>
             <div class="proposal-title">
                 {{ proposalVersion.title }}
@@ -14,14 +22,6 @@
             <div class="col-md-10 col-md-offset-1">
                 {{ proposalVersion.abstract }}
             </div>
-        </div>
-        <div>
-            {% if not proposalVersion.isFirstVersion %}
-                <a href="{{ path('proposal_version_previous_version', {'slug': proposalVersion.slug}) }}" class="btn btn-default">Version précédente</a>
-            {% endif %}
-            {% if not proposalVersion.isLastVersion %}
-                <a href="{{ path('proposal_version_next_version', {'slug': proposalVersion.slug}) }}" class="btn btn-default">Version suivante</a>
-            {% endif %}
         </div>
     </div>
 

@@ -1,18 +1,11 @@
 {% extends 'ArticleVersion/layout_article_version.html.twig' %}
 
 {% block page_content %}
-    <div class="section-menu row">
-        <ul>
-            <li class="active"><a data-toggle="tab" href="#motivation">Motifs</a></li>
-            <li><a data-toggle="tab" href="#content">Contenu</a></li>
-        </ul>
+    <div>
+        {{ articleVersion.content | markdown }}
     </div>
-    <div class="tab-content">
-        <div id="motivation" class="tab-pane fade in active">
-            {{ articleVersion.motivation | markdown }}
-        </div>
-        <div id="content" class="tab-pane fade">
-            {{ articleVersion.content | markdown }}
-        </div>
+    <div class="article-version-motivation">
+        <h3>Motifs</h3>
+        {{ articleVersion.motivation | markdown }}
     </div>
 {% endblock page_content %}

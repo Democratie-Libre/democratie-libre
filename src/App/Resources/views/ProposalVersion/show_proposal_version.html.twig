@@ -1,27 +1,18 @@
 {% extends 'ProposalVersion/layout_proposal_version.html.twig' %}
 
 {% block page_content %}
-    <div class="section-menu row">
-        <ul>
-            <li class="active"><a data-toggle="tab" href="#motivation">Motifs</a></li>
-            <li><a data-toggle="tab" href="#articles">Articles</a></li>
-        </ul>
+    <div class="proposal-version-motivation">
+        <h3>Motifs</h3>
+        {{ proposalVersion.motivation | markdown }}
     </div>
-    <div class="tab-content">
-        <div id="motivation" class="tab-pane fade in active">
-            {{ proposalVersion.motivation | markdown }}
-        </div>
-        <div id="articles" class="tab-pane fade">
-            <table class="table discussion-table">
-                <tbody>
-                {% for articleVersion in proposalVersion.articleVersions %}
-                    <tr>
-                        <td>Article {{ proposalVersion.articleVersions.indexOf(articleVersion) + 1 }}</td>
-                        <td><a href="{{ path('article_version_show', {'slug': articleVersion.slug}) }}" class="article-link">{{ articleVersion.title }}</a></td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
+    <div class="proposal-version-articles">
+        {% for articleVersion in proposalVersion.articleVersions %}
+            <h3>Article {{ proposalVersion.articleVersions.indexOf(articleVersion) + 1 }} <br> {{ articleVersion.title }}</h3>
+            <p>{{ articleVersion.content | markdown }}</p>
+            <div class="article-motivation">
+                <h4>Motifs</h4>
+                <p>{{ articleVersion.motivation | markdown }}</p>
+            </div>
+        {% endfor %}
     </div>
 {% endblock page_content %}

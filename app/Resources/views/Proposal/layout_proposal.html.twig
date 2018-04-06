@@ -35,7 +35,7 @@
         </div>
         <div class="proposal-header">
             <div>
-                proposition
+                proposition #{{ proposal.id }}
                 {% if proposal.isPublished %}
                     | thématique <a href="{{ path('theme_show', {'slug': proposal.theme.slug}) }}">{{ proposal.theme.title }}</a><br>
                 {% else %}
@@ -52,11 +52,6 @@
                     auteur : {{ proposal.author }}
                 {% endif %}
             </div>
-        </div>
-    </div>
-    <div class="section-abstract row">
-        <div class="col-md-10 col-md-offset-1">
-            {{ proposal.abstract }}
         </div>
     </div>
 
