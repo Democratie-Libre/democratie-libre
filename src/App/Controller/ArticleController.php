@@ -42,8 +42,11 @@ class ArticleController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $numberOfArticles = $proposal->getNumberOfArticles();
+
             $article
                 ->setProposal($proposal)
+                ->setNumber($numberOfArticles + 1)
                 ->snapshot()
             ;
 

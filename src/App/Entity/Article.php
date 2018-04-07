@@ -29,6 +29,11 @@ class Article
     private $slug;
 
     /**
+     * @ORM\Column(type="integer")
+     */
+    private $number;
+
+    /**
      * @ORM\Column(type="string", unique=true)
      * @Assert\NotBlank()
      * @Assert\Length(
@@ -98,6 +103,18 @@ class Article
     public function getSlug()
     {
         return $this->slug;
+    }
+
+    public function setNumber($number)
+    {
+        $this->number = $number;
+
+        return $this;
+    }
+
+    public function getNumber()
+    {
+        return $this->number;
     }
 
     public function setTitle($title)

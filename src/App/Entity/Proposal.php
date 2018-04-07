@@ -66,6 +66,7 @@ class Proposal
 
     /**
      * @ORM\OneToMany(targetEntity="Article", mappedBy="proposal", cascade={"remove"})
+     * @ORM\OrderBy({"number" = "ASC"})
      * @Assert\Valid()
      */
     private $articles;

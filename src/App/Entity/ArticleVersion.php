@@ -32,6 +32,11 @@ class ArticleVersion
     private $slug;
 
     /**
+     * @ORM\Column(type="integer")
+     */
+    private $number;
+
+    /**
      * @ORM\Column(type="string", length=255, unique=true)
      * @Assert\Length(
      *      min = "2",
@@ -75,6 +80,7 @@ class ArticleVersion
 
     public function __construct(Article $article)
     {
+        $this->number           = $article->getNumber();
         $this->title            = $article->getTitle();
         $this->snapDate         = new \Datetime();
         $this->content          = $article->getContent();
@@ -94,6 +100,10 @@ class ArticleVersion
         return $this->slug;
     }
 
+    public function getNumber()
+    {
+        return $this->number;
+    }
     public function getTitle()
     {
         return $this->title;

@@ -23,7 +23,7 @@
                 proposition #{{ article.proposal.id }} <a href="{{ path('proposal_show', {'slug': article.proposal.slug}) }}">{{ article.proposal.title }}</a><br>
             </div>
             <div class="article-title">
-                Article {{ article.proposal.articles.indexOf(article) + 1 }}<br>
+                Article {{ article.number }}<br>
                 {{ article.title }}
             </div>
         </div>

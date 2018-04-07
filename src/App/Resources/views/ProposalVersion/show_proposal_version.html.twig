@@ -7,7 +7,7 @@
     </div>
     <div class="proposal-version-articles">
         {% for articleVersion in proposalVersion.articleVersions %}
-            <h3>Article {{ proposalVersion.articleVersions.indexOf(articleVersion) + 1 }} <br> {{ articleVersion.title }}</h3>
+            <h3>Article {{ articleVersion.number }} <br> {{ articleVersion.title }}</h3>
             <p>{{ articleVersion.content | markdown }}</p>
             <div class="article-motivation">
                 <h4>Motifs</h4>

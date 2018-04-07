@@ -16,7 +16,7 @@
             </div>
             <div class="proposal-articles">
                 {% for article in proposal.articles %}
-                    <h4><a href="{{ path('article_show', {'slug': article.slug}) }}" class="article-link">Article {{ proposal.articles.indexOf(article) + 1 }}<br>{{ article.title }}</a></h4>
+                    <h4><a href="{{ path('article_show', {'slug': article.slug}) }}" class="article-link">Article {{ article.number }}<br>{{ article.title }}</a></h4>
                     <p>{{ article.content | markdown }}</p>
                     <div class="article-motivation">
                         {% if article.motivation %}
