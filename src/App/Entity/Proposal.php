@@ -126,6 +126,7 @@ class Proposal
 
     /**
      * @ORM\OneToMany(targetEntity="ProposalVersion", mappedBy="recordedProposal", cascade={"persist", "remove"})
+     * @ORM\OrderBy({"versionNumber" = "DESC"})
      * @Assert\Valid()
      */
     private $versioning;

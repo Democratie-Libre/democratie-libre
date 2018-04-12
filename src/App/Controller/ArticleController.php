@@ -37,13 +37,12 @@ class ArticleController extends Controller
 
         $this->denyAccessUnlessGranted('edit', $proposal);
 
-        $article = new Article();
-        $form    = $this->createForm(EditArticleType::class, $article);
+        $article          = new Article();
+        $numberOfArticles = $proposal->getNumberOfArticles();
+        $form             = $this->createForm(EditArticleType::class, $article);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $numberOfArticles = $proposal->getNumberOfArticles();
-
             $article
                 ->setProposal($proposal)
                 ->setNumber($numberOfArticles + 1)
@@ -65,9 +64,10 @@ class ArticleController extends Controller
         }
 
         return $this->render('App:Article:add_article.html.twig', [
-            'form'     => $form->createView(),
-            'article'  => $article,
-            'proposal' => $proposal,
+            'form'             => $form->createView(),
+            'article'          => $article,
+            'proposal'         => $proposal,
+            'articleNumber'    => $numberOfArticles + 1,
         ]);
     }
 

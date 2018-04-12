@@ -7,11 +7,13 @@
                 <div class="btn-group custom-btn-group ">
                     <button class="dropdown-toggle btn btn-default" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
                     <ul class="dropdown-menu pull-right">
+                        <li><a href="{{ path('public_discussion_add_to_article', {'slug': article.slug}) }}">Ouvrir une discussion</a></li>
                         {% if is_granted('edit', article) %}
+                            <li class="divider"></li>
                             <li><a href="{{ path('article_edit', {'slug': article.slug}) }}">Éditer</a></li>
                         {% endif %}
-                        <li><a href="{{ path('public_discussion_add_to_article', {'slug': article.slug}) }}">Ouvrir une discussion</a></li>
                         {% if is_granted('delete', article) %}
+                            <li class="divider"></li>
                             <li><a href="{{ path('article_delete', {'slug': article.slug}) }}">Supprimer</a></li>
                         {% endif %}
                     </ul>

@@ -83,6 +83,7 @@ class Article
 
     /**
      * @ORM\OneToMany(targetEntity="ArticleVersion", mappedBy="recordedArticle", cascade={"persist", "remove"})
+     * @ORM\OrderBy({"versionNumber" = "DESC"})
      * @Assert\Valid()
      */
     private $versioning;
