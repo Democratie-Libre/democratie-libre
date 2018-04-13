@@ -227,6 +227,7 @@ class Proposal
     public function removeArticle(Article $article)
     {
         $this->articles->removeElement($article);
+        $article->removeProposal($this);
 
         return $this;
     }

@@ -82,7 +82,7 @@ class Article
     private $discussions;
 
     /**
-     * @ORM\OneToMany(targetEntity="ArticleVersion", mappedBy="recordedArticle", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="ArticleVersion", mappedBy="recordedArticle", cascade={"persist"})
      * @ORM\OrderBy({"versionNumber" = "DESC"})
      * @Assert\Valid()
      */
@@ -209,6 +209,11 @@ class Article
     public function getProposal()
     {
         return $this->proposal;
+    }
+
+    public function removeProposal()
+    {
+        $this->proposal = null;
     }
 
     public function addDiscussion(PublicDiscussion $discussion)

@@ -129,9 +129,14 @@ class ArticleController extends Controller
         $this->denyAccessUnlessGranted('delete', $article);
 
         $proposal = $article->getProposal();
+        $proposal
+            ->removeArticle($article)
+            ->incrementVersionNumber()
+            ->snapshot()
+        ;
 
         $em = $this->getDoctrine()->getManager();
-        $em->remove($article);
+        $em->persist($article);
         $em->flush();
 
         $this->get('session')->getFlashBag()->add('info', 'The article '.$article->getTitle().' has been suppressed');

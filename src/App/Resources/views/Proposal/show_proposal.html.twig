@@ -14,7 +14,6 @@
                 <h4>Motifs</h4>
                 {{ proposal.motivation | markdown }}
             </div>
-            <hr>
             <div class="proposal-articles">
                 {% for article in proposal.articles %}
                     <h4><a href="{{ path('article_show', {'slug': article.slug}) }}" class="article-link">Article {{ article.number }}<br>{{ article.title }}</a></h4>
@@ -25,7 +24,6 @@
                             {{ article.motivation | markdown }}
                         {% endif %}
                     </div>
-                    <hr>
                 {% endfor %}
             </div>
         </div>
