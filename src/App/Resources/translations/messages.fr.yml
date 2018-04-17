@@ -19,6 +19,8 @@
   'Ajouter'
 'Move':
   'Déplacer'
+'Motivation':
+  'Motifs'
 
 # Security
 'Bad credentials':
@@ -61,3 +63,11 @@
 # Themes
 'Parent theme':
   'Thématique parente'
+
+# Articles
+'Here express the motives of your article':
+  'Exprimez ici les motifs de votre article'
+'Here express the content of your article':
+  'Exprimez ici le contenu de votre article'
+'Content':
+  'Contenu'

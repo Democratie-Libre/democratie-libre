@@ -16,9 +16,9 @@ app_proposal:
     resource: "@App/Resources/config/routing/proposal.yml"
     prefix: "/proposal"
 
-app_old_proposal:
-    resource: "@App/Resources/config/routing/old_proposal.yml"
-    prefix: "/old_proposal"
+app_proposal_version:
+    resource: "@App/Resources/config/routing/proposal_version.yml"
+    prefix: "/proposal_version"
 
 app_public_discussion:
     resource: "@App/Resources/config/routing/public_discussion.yml"
@@ -31,3 +31,11 @@ app_private_discussion:
 app_post:
     resource: "@App/Resources/config/routing/post.yml"
     prefix: "/post"
+
+app_article:
+    resource: "@App/Resources/config/routing/article.yml"
+    prefix: "/article"
+
+app_article_version:
+    resource: "@App/Resources/config/routing/article_version.yml"
+    prefix: "/article_version"

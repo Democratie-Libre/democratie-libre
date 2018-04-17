@@ -15,10 +15,9 @@ class PublicDiscussion extends AbstractDiscussion
     const GLOBAL_DISCUSSION   = 'global_discussion';
     const THEME_DISCUSSION    = 'theme_discussion';
     const PROPOSAL_DISCUSSION = 'proposal_discussion';
+    const ARTICLE_DISCUSSION  = 'article_discussion';
 
     /**
-     * A public discussion can be of three different types : GLOBAL_DISCUSSION, THEME_DISCUSSION or PROPOSAL_DISCUSSION
-     *
      * @ORM\Column(type="string", length=255)
      */
     private $type;
@@ -36,6 +35,12 @@ class PublicDiscussion extends AbstractDiscussion
     private $proposal;
 
     /**
+     * @ORM\ManyToOne(targetEntity="Article", inversedBy="discussions", cascade={"persist"})
+     * @Assert\Valid()
+     */
+    private $article;
+
+    /**
      * @ORM\ManyToMany(targetEntity="User", inversedBy="followedDiscussions", cascade={"persist"})
      * @ORM\JoinTable(name="public_discussions_followers")
      * @Assert\Valid()
@@ -50,6 +55,31 @@ class PublicDiscussion extends AbstractDiscussion
 
     public function setType($type)
     {
+        if ($type === self::GLOBAL_DISCUSSION) {
+            $this
+                ->setTheme(null)
+                ->setProposal(null)
+                ->setArticle(null);
+        }
+
+        if ($type === self::THEME_DISCUSSION) {
+            $this
+                ->setProposal(null)
+                ->setArticle(null);
+        }
+
+        if ($type === self::PROPOSAL_DISCUSSION) {
+            $this
+                ->setTheme(null)
+                ->setArticle(null);
+        }
+
+        if ($type === self::ARTICLE_DISCUSSION) {
+            $this
+                ->setTheme(null)
+                ->setProposal(null);
+        }
+
         $this->type = $type;
 
         return $this;
@@ -70,6 +100,11 @@ class PublicDiscussion extends AbstractDiscussion
         if ($this->proposal) {
             $this->proposal->removeDiscussion($this);
             $this->proposal = null;
+        }
+
+        if ($this->article) {
+            $this->article->removeDiscussion($this);
+            $this->article = null;
         }
 
         if ($theme) {
@@ -97,6 +132,11 @@ class PublicDiscussion extends AbstractDiscussion
             $this->proposal = null;
         }
 
+        if ($this->article) {
+            $this->article->removeDiscussion($this);
+            $this->article = null;
+        }
+
         if ($proposal) {
             $this->proposal = $proposal;
             $proposal->addDiscussion($this);
@@ -108,6 +148,36 @@ class PublicDiscussion extends AbstractDiscussion
     public function getProposal()
     {
         return $this->proposal;
+    }
+
+    public function setArticle(Article $article = null)
+    {
+        if ($this->theme) {
+            $this->theme->removeDiscussion($this);
+            $this->theme = null;
+        }
+
+        if ($this->proposal) {
+            $this->proposal->removeDiscussion($this);
+            $this->proposal = null;
+        }
+
+        if ($this->article) {
+            $this->article->removeDiscussion($this);
+            $this->article = null;
+        }
+
+        if ($article) {
+            $this->article = $article;
+            $article->addDiscussion($this);
+        }
+
+        return $this;
+    }
+
+    public function getArticle()
+    {
+        return $this->article;
     }
 
     public function addFollower(User $follower)
@@ -151,6 +221,11 @@ class PublicDiscussion extends AbstractDiscussion
     public function isProposalDiscussion()
     {
         return $this->type === self::PROPOSAL_DISCUSSION;
+    }
+
+    public function isArticleDiscussion()
+    {
+        return $this->type === self::ARTICLE_DISCUSSION;
     }
 
     public function resetUnreaders()

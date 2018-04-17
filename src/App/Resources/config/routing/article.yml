@@ -1,0 +1,15 @@
+article_show:
+    path: /show/{slug}
+    defaults: { _controller: 'App:Article:show'}
+
+article_add:
+    path: /add/{proposalSlug}
+    defaults: { _controller: 'App:Article:add' }
+
+article_edit:
+    path: /edit/{slug}
+    defaults: { _controller: 'App:Article:edit' }
+
+article_delete:
+    path: /delete/{slug}
+    defaults: { _controller: 'App:Article:delete' }

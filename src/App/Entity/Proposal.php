@@ -6,12 +6,12 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity
- * @UniqueEntity(fields={"slug","title"})
+ * @UniqueEntity(fields="slug")
+ * @UniqueEntity(fields="title")
  * @ORM\HasLifecycleCallbacks
  */
 class Proposal
@@ -63,6 +63,13 @@ class Proposal
      * @ORM\Column(type="text", nullable=true)
      */
     private $motivation;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Article", mappedBy="proposal", cascade={"remove"})
+     * @ORM\OrderBy({"number" = "ASC"})
+     * @Assert\Valid()
+     */
+    private $articles;
 
     /**
      * @ORM\Column(type="integer")
@@ -118,10 +125,11 @@ class Proposal
     private $opponents;
 
     /**
-     * @ORM\OneToMany(targetEntity="OldProposal", mappedBy="recordedProposal", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="ProposalVersion", mappedBy="recordedProposal", cascade={"persist", "remove"})
+     * @ORM\OrderBy({"versionNumber" = "DESC"})
      * @Assert\Valid()
      */
-    private $history;
+    private $versioning;
 
     /**
      * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="proposal")
@@ -132,12 +140,13 @@ class Proposal
     public function __construct()
     {
         $this->creationDate  = new \Datetime();
+        $this->articles      = new ArrayCollection();
         $this->versionNumber = 1;
         $this->isPublished   = false;
         $this->isAWiki       = false;
         $this->supporters    = new ArrayCollection();
         $this->opponents     = new ArrayCollection();
-        $this->oldProposals  = new ArrayCollection();
+        $this->versioning    = new ArrayCollection();
         $this->discussions   = new ArrayCollection();
     }
 
@@ -206,6 +215,31 @@ class Proposal
     public function getMotivation()
     {
         return $this->motivation;
+    }
+
+    public function addArticle(Article $article)
+    {
+        $this->articles->add($article);
+
+        return $this;
+    }
+
+    public function removeArticle(Article $article)
+    {
+        $this->articles->removeElement($article);
+        $article->removeProposal($this);
+
+        return $this;
+    }
+
+    public function getArticles()
+    {
+        return $this->articles;
+    }
+
+    public function getNumberOfArticles()
+    {
+        return $this->articles->count();
     }
 
     public function setVersionNumber($number)
@@ -334,16 +368,24 @@ class Proposal
         return $this->opponents;
     }
 
-    public function addToHistory(OldProposal $oldProposal)
+    public function addToVersioning(ProposalVersion $proposalVersion)
     {
-        $this->history->add($oldProposal);
+        $this->versioning->add($proposalVersion);
 
         return $this;
     }
 
-    public function getHistory()
+    public function snapshot()
     {
-        return $this->history;
+        $proposalVersion = new ProposalVersion($this);
+        $this->addToVersioning($proposalVersion);
+
+        return $this;
+    }
+
+    public function getVersioning()
+    {
+        return $this->versioning;
     }
 
     public function addDiscussion(PublicDiscussion $discussion)

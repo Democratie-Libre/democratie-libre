@@ -1,6 +1,6 @@
 {% extends '::layout.html.twig' %}
 
-{% block page_content %}
+{% block content %}
     <div class="row">
         {% for root in roots %}
             <div class="root-frame col-md-4 col-xs-6">
@@ -34,4 +34,4 @@
             <a href="{{ path('theme_addroot')}}" class="btn btn-default custom-admin-btn">Ajouter une racine</a>
         {% endif %}
     </div>
-{% endblock page_content %}
+{% endblock content %}

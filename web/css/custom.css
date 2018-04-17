@@ -109,6 +109,19 @@ body {
     min-height: 100px;
 }
 
+/************/
+/** Tables **/
+/************/
+
+.table-link {
+    color: #333333;
+}
+
+.table-link:hover {
+    color: #F0BD00;
+    text-decoration: none;
+}
+
 /***************/
 /** Top menu **/
 /***************/
@@ -157,10 +170,12 @@ body {
 }
 
 .section-header {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .section-header-image {
+    margin-top: -20px;
+    margin-left: -30px;
     text-align: center;
 }
 
@@ -379,6 +394,30 @@ body {
     line-height: 1;
 }
 
+.proposal-motivation {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.proposal-motivation > h4 {
+    text-align: center;
+    font-weight: bold;
+}
+
+.proposal-articles > h4 {
+    text-align: center;
+    font-weight: bold;
+}
+
+.proposal-articles > a > h4 {
+    font-weight: bold;
+}
+
+.proposal-articles > h5 {
+    text-align: center;
+    font-weight: bold;
+}
+
 .support-btn {
     color: #067000;
     border-radius: 6px;
@@ -401,12 +440,31 @@ body {
     border-radius: 6px;
 }
 
-/*****************/
-/** OldProposal **/
-/*****************/
+/*********************/
+/** ProposalVersion **/
+/*********************/
 
-.old-proposal-header {
+.proposal-version-change-version-btn {
     text-align: center;
+    margin-bottom: 20px;
+}
+
+.proposal-version-motivation {
+    text-align: center;
+}
+
+.proposal-version-motivation > h3 {
+    text-align: center;
+    font-weight: bold;
+}
+
+.proposal-version-articles > h3 {
+    text-align: center;
+    font-weight: bold;
+}
+
+.proposal-version-articles > h4 {
+    font-weight: bold;
 }
 
 /************************/
@@ -419,22 +477,67 @@ body {
     color: red;
 }
 
-/****************/
-/** Discussion **/
-/****************/
+/**************/
+/** Article ***/
+/**************/
 
-.discussion-table {
-    font-size: 18px;
+.article-header {
+    text-align: center;
 }
 
-.discussion-link {
+.article-title {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 30px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.article-link {
     color: #333333;
 }
 
-.discussion-link:hover {
+.article-link:hover {
     color: #F0BD00;
     text-decoration: none;
 }
+
+.article-motivation {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.article-motivation > h4 {
+    text-align: center;
+    font-weight: bold;
+}
+
+.add-article-title > h4 {
+    text-align: center;
+    font-weight: bold;
+}
+
+/********************/
+/** ArticleVersion **/
+/********************/
+
+.article-version-change-version-btn {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.article-version-motivation {
+    text-align: center;
+}
+
+.article-version-motivation > h3 {
+    text-align: center;
+    font-weight: bold;
+}
+
+/****************/
+/** Discussion **/
+/****************/
 
 .discussion-unread {
     background-color: #EEEEEE;

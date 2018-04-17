@@ -1,0 +1,11 @@
+article_version_show:
+    path: /show/{slug}
+    defaults: { _controller: 'App:ArticleVersion:show'}
+
+article_version_previous_version:
+    path: /previous_version/{slug}
+    defaults: { _controller: 'App:ArticleVersion:previousVersion' }
+
+article_version_next_version:
+    path: /next_version/{slug}
+    defaults: { _controller: 'App:ArticleVersion:nextVersion' }

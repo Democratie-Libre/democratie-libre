@@ -1,0 +1,23 @@
+{% extends '::layout.html.twig' %}
+
+{% block content %}
+    <div class="article-version-change-version-btn">
+        {% if not articleVersion.isFirstVersion %}
+            <a href="{{ path('article_version_previous_version', {'slug': articleVersion.slug}) }}" class="btn btn-default">Version précédente</a>
+        {% endif %}
+        {% if not articleVersion.isLastVersion %}
+            <a href="{{ path('article_version_next_version', {'slug': articleVersion.slug}) }}" class="btn btn-default">Version suivante</a>
+        {% endif %}
+    </div>
+    <div class="section-header row">
+        <div class="article-header">
+            <div>
+                Version {{ articleVersion.versionNumber }} archivée le {{ articleVersion.snapDate|date('d/m/Y') }} | article <a href="{{ path('article_show', {'slug': articleVersion.recordedArticle.slug}) }}">{{ articleVersion.recordedArticle.title }}</a><br>
+            </div>
+            <div class="article-title">
+                {{ articleVersion.title }}
+            </div>
+        </div>
+    </div>
+    {% block page_content %}{% endblock page_content %}
+{% endblock content %}

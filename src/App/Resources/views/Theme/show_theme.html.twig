@@ -1,6 +1,6 @@
 {% extends '::layout.html.twig' %}
 
-{% block page_content %}
+{% block content %}
     <div class="section-header row">
         <div class="section-header-menu col-md-12 col-xs-12">
             {% if is_granted('ROLE_USER') %}
@@ -68,7 +68,7 @@
             </div>
         </div>
         <div id="discussions" class="tab-pane fade">
-            <table class="table discussion-table">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Discussion</th>
@@ -124,4 +124,4 @@
             </div>
         </div>
     </div>
-{% endblock page_content %}
+{% endblock content %}

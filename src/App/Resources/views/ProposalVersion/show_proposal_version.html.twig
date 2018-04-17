@@ -1,0 +1,22 @@
+{% extends 'ProposalVersion/layout_proposal_version.html.twig' %}
+
+{% block page_content %}
+    <div class="proposal-version-motivation">
+        {% if proposalVersion.motivation %}
+            <h3>Motifs</h3>
+            {{ proposalVersion.motivation | markdown }}
+        {% endif %}
+    </div>
+    <div class="proposal-version-articles">
+        {% for articleVersion in proposalVersion.articleVersions %}
+            <h3>Article {{ articleVersion.number }} <br> {{ articleVersion.title }}</h3>
+            <p>{{ articleVersion.content | markdown }}</p>
+            <div class="article-motivation">
+                {% if articleVersion.motivation %}
+                    <h4>Motifs</h4>
+                    <p>{{ articleVersion.motivation | markdown }}</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock page_content %}

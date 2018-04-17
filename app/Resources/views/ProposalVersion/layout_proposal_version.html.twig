@@ -1,0 +1,31 @@
+{% extends '::layout.html.twig' %}
+
+{% block content %}
+    <div class="proposal-version-change-version-btn">
+        {% if not proposalVersion.isFirstVersion %}
+            <a href="{{ path('proposal_version_previous_version', {'slug': proposalVersion.slug}) }}" class="btn btn-default">Version précédente</a>
+        {% endif %}
+        {% if not proposalVersion.isLastVersion %}
+            <a href="{{ path('proposal_version_next_version', {'slug': proposalVersion.slug}) }}" class="btn btn-default">Version suivante</a>
+        {% endif %}
+    </div>
+    <div class="section-header row">
+        <div class="proposal-header">
+            <div>
+                thématique #{{ proposalVersion.theme.id }} {{ proposalVersion.theme.title }}<br>
+                proposition #{{ proposalVersion.recordedProposal.id }} <a href="{{ path('proposal_show', {'slug': proposalVersion.recordedProposal.slug}) }}">{{ proposalVersion.recordedProposal.title }}</a><br>
+                <h3>Version {{ proposalVersion.versionNumber }}</h3> archivée le {{ proposalVersion.snapDate|date('d/m/Y') }}
+            </div>
+            <div class="proposal-title">
+                {{ proposalVersion.title }}
+            </div>
+        </div>
+        <div class="section-abstract row">
+            <div class="col-md-10 col-md-offset-1">
+                {{ proposalVersion.abstract }}
+            </div>
+        </div>
+    </div>
+
+    {% block page_content %}{% endblock page_content %}
+{% endblock content %}

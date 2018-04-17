@@ -1,0 +1,86 @@
+{% extends 'Proposal/layout_proposal.html.twig' %}
+
+{% block page_content %}
+    <div class="proposal-motivation">
+        <h4>Motifs</h4>
+        {{ proposal.motivation | markdown }}
+    </div>
+    <div class="proposal-articles">
+        {% for article in proposal.articles %}
+            <h4><a href="{{ path('article_show', {'slug': article.slug}) }}" class="article-link">Article {{ article.number }}<br>{{ article.title }}</a></h4>
+            <p>{{ article.content | markdown }}</p>
+            <div class="article-motivation">
+                {% if article.motivation %}
+                    <h5>Motifs</h5>
+                    {{ article.motivation | markdown }}
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    <div class="row">
+        <div class="add-article-title">
+            <h4>Article {{ articleNumber }}</h4>
+        </div>
+    </div>
+    {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+        <div class="form-group row">
+            <div class="col-md-10 col-md-offset-2">
+                {{ form_errors(form) }}
+                {{ form_errors(form.title) }}
+                {{ form_errors(form.motivation) }}
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.title, 'Title', {'label_attr': {'class': 'control-label col-md-1'}}) }}
+            <div class="col-md-10">
+                {{ form_widget(form.title, {'attr': {
+                    'class'       : 'form-control',
+                    'placeholder' : 'Your title must not exceed 40 characters'
+                    }})
+                }}
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.content, 'Content', {'label_attr': {'class': 'control-label col-md-1'}}) }}
+            <div class="col-md-10">
+                {{ form_widget(form.content, {'attr': {
+                    'class': 'form-control form-abstract-textarea',
+                    'placeholder' : 'Here express the content of your article'
+                    }})
+                }}
+            </div>
+        </div>
+        <div class="form-group row">
+            {{ form_label(form.motivation, 'Motivation', {'label_attr': {'class': 'control-label col-md-1'}}) }}
+            <div class="col-md-10">
+                {{ form_widget(form.motivation, {'attr': {
+                    'class': 'form-control form-abstract-textarea',
+                    'placeholder' : 'Here express the motives of your article'
+                    }})
+                }}
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-2 col-md-offset-1">
+                {{ form_widget(form.save, {'label': 'Save', 'attr': {'class': 'btn btn-default custom-btn'}}) }}
+            </div>
+        </div>
+    {{ form_end(form) }}
+{% endblock page_content %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+    <script>
+        new SimpleMDE({
+            element: document.getElementById("edit_article_motivation"),
+            spellChecker: false,
+            status: false,
+        });
+        new SimpleMDE({
+            element: document.getElementById("edit_article_content"),
+            spellChecker: false,
+            status: false,
+        });
+    </script>
+{% endblock javascript %}

@@ -14,6 +14,10 @@ public_discussion_add_to_proposal:
     path: /add_to_proposal/{slug}
     defaults: { _controller: 'App:PublicDiscussion:addToProposal' }
 
+public_discussion_add_to_article:
+    path: /add_to_article/{slug}
+    defaults: { _controller: 'App:PublicDiscussion:addToArticle' }
+
 public_discussion_edit:
     path: /edit/{slug}
     defaults: { _controller: 'App:PublicDiscussion:edit' }
@@ -33,6 +37,10 @@ public_discussion_move_to_theme:
 public_discussion_move_to_proposal:
     path: /move_to_proposal/{slug}
     defaults: { _controller: 'App:PublicDiscussion:moveToProposal' }
+
+public_discussion_move_to_article:
+    path: /move_to_article/{slug}
+    defaults: { _controller: 'App:PublicDiscussion:moveToArticle' }
 
 public_discussion_lock:
     path: /lock/{slug}
