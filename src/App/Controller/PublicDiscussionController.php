@@ -277,6 +277,8 @@ class PublicDiscussionController extends Controller
                 'slug' => $articleSlug,
             ]));
         }
+
+        throw new \LogicException('This code should not be reached!');
     }
 
     /**

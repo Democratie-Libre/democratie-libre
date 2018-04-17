@@ -201,7 +201,16 @@ class Article
         }
 
         $this->proposal = $proposal;
-        $proposal->addArticle($this);
+        $this
+            ->setNumber($proposal->getNumberOfArticles() + 1)
+            ->snapshot()
+        ;
+
+        $proposal
+            ->addArticle($this)
+            ->incrementVersionNumber()
+            ->snapshot()
+        ;
 
         return $this;
     }

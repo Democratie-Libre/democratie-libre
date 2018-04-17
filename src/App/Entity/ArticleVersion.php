@@ -13,7 +13,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * It is instanciated each time an article is modified.
  *
  * @ORM\Entity(repositoryClass="App\Repository\ArticleVersionRepository")
- * @UniqueEntity(fields={"slug","title"})
+ * @UniqueEntity(fields={"slug"})
  * @ORM\HasLifecycleCallbacks
  */
 class ArticleVersion 
@@ -37,7 +37,7 @@ class ArticleVersion
     private $number;
 
     /**
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255)
      * @Assert\Length(
      *      min = "2",
      *      max = "255"
