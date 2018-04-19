@@ -1,0 +1,43 @@
+{% extends '::layout.html.twig' %}
+
+{% block content %}
+    <div class="section-header row">
+        <div class="section-header-menu col-md-12 col-xs-12">
+            {% if is_granted('ROLE_USER') %}
+                <div class="btn-group custom-btn-group ">
+                    <button class="dropdown-toggle btn btn-default" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
+                    <ul class="dropdown-menu pull-right">
+                        <li><a href="{{ path('public_discussion_add_to_theme', {'slug': theme.slug}) }}">Ouvrir une discussion</a></li>
+                        <li><a href="{{ path('proposal_add', {'themeSlug': theme.slug}) }}">Ajouter une proposition</a></li>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <li class="divider"></li>
+                            <li><a href="{{ path('theme_edit', {'slug': theme.slug}) }}">Éditer cette thématique</a></li>
+                            <li><a href="{{ path('theme_move', {'slug': theme.slug}) }}">Déplacer cette thématique</a></li>
+                            <li><a href="{{ path('theme_add', {'slug': theme.slug}) }}">Ajouter une thématique fille</span></a></li>
+                            {% if theme.isEmpty %}
+                                <li class="divider"></li>
+                                <li><a href="{{ path('theme_delete', {'slug': theme.slug}) }}">Supprimer cette thématique</a></li>
+                            {% endif %}
+                        {% endif %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+        <div class="section-header-image col-md-3 col-xs-3">
+            {% if theme.webPath is empty %}
+                <img src="{{ asset('img/defaultTheme_128.png') }}">
+            {% else %}
+                <img src="{{ asset(theme.webPath) }}">
+            {% endif %}
+        </div>
+        <div class="section-header-title col-md-6 col-xs-6">
+            <div>thématique | niveau {{ theme.lvl }}</div>
+            <div class="theme-title">{{ theme.title }}</div>
+            {% if theme.lvl > 0 %}
+                <div class="theme-under-title">thématique mère : <a href="{{ path('theme_show', {'slug': theme.parent.slug}) }}">{{ theme.parent.title }}</a></div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% block page_content %}{% endblock page_content %}
+{% endblock content %}

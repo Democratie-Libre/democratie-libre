@@ -77,14 +77,6 @@ class Proposal
     private $versionNumber;
 
     /**
-     * If the proposal is published it is classified in a theme and visible by all the users.
-     * The author is the only one that can publish it.
-     *
-     * @ORM\Column(type="boolean")
-     */
-    private $isPublished;
-
-    /**
      * If the proposal is a wiki, every user can edit it.
      * The author is the only one that can make it a wiki.
      *
@@ -142,7 +134,6 @@ class Proposal
         $this->creationDate  = new \Datetime();
         $this->articles      = new ArrayCollection();
         $this->versionNumber = 1;
-        $this->isPublished   = false;
         $this->isAWiki       = false;
         $this->supporters    = new ArrayCollection();
         $this->opponents     = new ArrayCollection();
@@ -259,18 +250,6 @@ class Proposal
     public function getVersionNumber()
     {
         return $this->versionNumber;
-    }
-
-    public function setIsPublished($isPublished)
-    {
-        $this->isPublished = $isPublished;
-
-        return $this;
-    }
-
-    public function isPublished()
-    {
-        return $this->isPublished;
     }
 
     public function setIsAWiki($isAWiki = true)

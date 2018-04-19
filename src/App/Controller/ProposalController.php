@@ -29,14 +29,24 @@ class ProposalController extends Controller
     /**
      * @Security("has_role('ROLE_USER')")
      */
-    public function addAction(Request $request)
+    public function addAction(Request $request, $themeSlug)
     {
+        $theme = $this->getDoctrine()->getRepository('App:Theme')->findOneBySlug($themeSlug);
+
+        if(null === $theme) {
+            throw $this->createNotFoundException();
+        }
+
         $proposal = new Proposal();
         $form     = $this->createForm(EditProposalType::class, $proposal);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $proposal->setAuthor($this->getUser());
+            $proposal
+                ->setAuthor($this->getUser())
+                ->setTheme($theme)
+                ->snapshot()
+            ;
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($proposal);
@@ -49,6 +59,7 @@ class ProposalController extends Controller
 
         return $this->render('App:Proposal:add_proposal.html.twig', [
             'proposal' => $proposal,
+            'theme'    => $theme,
             'form'     => $form->createView(),
         ]);
     }

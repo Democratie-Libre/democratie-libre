@@ -1,6 +1,6 @@
-{% extends '::layout.html.twig' %}
+{% extends 'Theme/layout_theme.html.twig' %}
 
-{% block content %}
+{% block page_content %}
     <div class="row">
         <div class="col-md-10 col-md-offset-1 col-xs-10 col-xs-offset-1">
             <div class="row">
@@ -38,15 +38,13 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <div class="col-md-10 col-md-offset-2">
-                        <div class="panel panel-warning">
-                            <div class="panel-heading">
-                                <span class="glyphicon glyphicon-info-sign"></span>
-                            </div>
-                            <div class="panel-body">
-                                Votre proposition sera dans un premier temps uniquement accessible via votre profil
-                            </div>
-                        </div>
+                    {{ form_label(form.motivation, 'Motivation', {'label_attr': {'class': 'control-label col-md-2'}}) }}
+                    <div class="col-md-10">
+                        {{ form_widget(form.motivation, {'attr': {
+                            'class': 'form-control form-motivation-textarea',
+                            'placeholder' : 'Here express the motives of your project'
+                            }})
+                        }}
                     </div>
                 </div>
                 <div class="form-group row">
@@ -57,4 +55,16 @@
             {{ form_end(form) }}
         </div>
     </div>
-{% endblock content %}
+{% endblock page_content %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+    <script>
+        new SimpleMDE({
+            element: document.getElementById("edit_proposal_motivation"),
+            spellChecker: false,
+            status: false,
+        });
+    </script>
+{% endblock javascript %}
