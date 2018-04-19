@@ -9,7 +9,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use App\Entity\Proposal;
 use App\Form\Proposal\EditProposalType;
 use App\Form\Proposal\EditMotivationProposalType;
-use App\Form\Proposal\PublishProposalType;
 
 class ProposalController extends Controller
 {
@@ -98,39 +97,6 @@ class ProposalController extends Controller
         return $this->render('App:Proposal:edit_proposal.html.twig', [
             'proposal' => $proposal,
             'form'     => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Security("has_role('ROLE_USER')")
-     */
-    public function publishAction(Request $request, $slug)
-    {
-        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
-
-        if (null ===  $proposal) {
-            throw $this->createNotFoundException();
-        }
-
-        $this->denyAccessUnlessGranted('author', $proposal);
-
-        $form = $this->createForm(PublishProposalType::class, $proposal);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $proposal->setIsPublished(true);
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($proposal);
-            $em->flush();
-
-            return $this->redirect($this->generateUrl('proposal_show', [
-                'slug' => $proposal->getSlug(),
-             ]));
-        }
-
-        return $this->render('App:Proposal:publish_proposal.html.twig', [
-            'form'     => $form->createView(),
-            'proposal' => $proposal,
         ]);
     }
 
