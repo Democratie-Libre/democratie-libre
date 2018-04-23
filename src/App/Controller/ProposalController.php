@@ -111,22 +111,18 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $title = $proposal->getTitle();
-        $em    = $this->getDoctrine()->getManager();
+        $title     = $proposal->getTitle();
+        $themeSlug = $proposal->getTheme()->getSlug();
+
+        $em = $this->getDoctrine()->getManager();
         $em->remove($proposal);
         $em->flush();
 
-        $this->get('session')->getFlashBag()->add('info', 'The proposal '.$title.' has been suppressed');
+        $this->get('session')->getFlashBag()->add('info', 'The proposal '.$title.' has been removed');
 
-        if ($proposal->isPublished()) {
-            $themeSlug = $proposal->getTheme()->getSlug();
-
-            return $this->redirect($this->generateUrl('theme_show', [
-                'slug' => $themeSlug,
-            ]));
-        }
-
-        return $this->redirect($this->generateUrl('profile'));
+        return $this->redirect($this->generateUrl('theme_show', [
+            'slug' => $themeSlug,
+        ]));
     }
 
     /**
