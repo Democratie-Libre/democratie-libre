@@ -3,7 +3,7 @@ proposal_show:
     defaults: { _controller: 'App:Proposal:show'}
 
 proposal_add:
-    path: /add
+    path: /add/{themeSlug}
     defaults: { _controller: 'App:Proposal:add' }
 
 proposal_edit:

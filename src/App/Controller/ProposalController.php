@@ -9,7 +9,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use App\Entity\Proposal;
 use App\Form\Proposal\EditProposalType;
 use App\Form\Proposal\EditMotivationProposalType;
-use App\Form\Proposal\PublishProposalType;
 
 class ProposalController extends Controller
 {
@@ -29,14 +28,24 @@ class ProposalController extends Controller
     /**
      * @Security("has_role('ROLE_USER')")
      */
-    public function addAction(Request $request)
+    public function addAction(Request $request, $themeSlug)
     {
+        $theme = $this->getDoctrine()->getRepository('App:Theme')->findOneBySlug($themeSlug);
+
+        if(null === $theme) {
+            throw $this->createNotFoundException();
+        }
+
         $proposal = new Proposal();
         $form     = $this->createForm(EditProposalType::class, $proposal);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $proposal->setAuthor($this->getUser());
+            $proposal
+                ->setAuthor($this->getUser())
+                ->setTheme($theme)
+                ->snapshot()
+            ;
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($proposal);
@@ -49,6 +58,7 @@ class ProposalController extends Controller
 
         return $this->render('App:Proposal:add_proposal.html.twig', [
             'proposal' => $proposal,
+            'theme'    => $theme,
             'form'     => $form->createView(),
         ]);
     }
@@ -91,39 +101,6 @@ class ProposalController extends Controller
     }
 
     /**
-     * @Security("has_role('ROLE_USER')")
-     */
-    public function publishAction(Request $request, $slug)
-    {
-        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
-
-        if (null ===  $proposal) {
-            throw $this->createNotFoundException();
-        }
-
-        $this->denyAccessUnlessGranted('author', $proposal);
-
-        $form = $this->createForm(PublishProposalType::class, $proposal);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $proposal->setIsPublished(true);
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($proposal);
-            $em->flush();
-
-            return $this->redirect($this->generateUrl('proposal_show', [
-                'slug' => $proposal->getSlug(),
-             ]));
-        }
-
-        return $this->render('App:Proposal:publish_proposal.html.twig', [
-            'form'     => $form->createView(),
-            'proposal' => $proposal,
-        ]);
-    }
-
-    /**
      * @Security("has_role('ROLE_ADMIN')")
      */
     public function deleteAction($slug)
@@ -134,22 +111,18 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $title = $proposal->getTitle();
-        $em    = $this->getDoctrine()->getManager();
+        $title     = $proposal->getTitle();
+        $themeSlug = $proposal->getTheme()->getSlug();
+
+        $em = $this->getDoctrine()->getManager();
         $em->remove($proposal);
         $em->flush();
 
-        $this->get('session')->getFlashBag()->add('info', 'The proposal '.$title.' has been suppressed');
+        $this->get('session')->getFlashBag()->add('info', 'The proposal '.$title.' has been removed');
 
-        if ($proposal->isPublished()) {
-            $themeSlug = $proposal->getTheme()->getSlug();
-
-            return $this->redirect($this->generateUrl('theme_show', [
-                'slug' => $themeSlug,
-            ]));
-        }
-
-        return $this->redirect($this->generateUrl('profile'));
+        return $this->redirect($this->generateUrl('theme_show', [
+            'slug' => $themeSlug,
+        ]));
     }
 
     /**
