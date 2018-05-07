@@ -1,5 +1,10 @@
 {% extends '::layout.html.twig' %}
 
+{% block stylesheets %}
+{{ parent() }}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+{% endblock %}
+
 {% block content %}
     <div class="row">
         <div class="col-md-10 col-md-offset-1 col-xs-10 col-xs-offset-1">
@@ -38,3 +43,13 @@
         </div>
     </div>
 {% endblock content %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        $('.multi-select').select2();
+    });
+    </script>
+{% endblock javascript %}

@@ -25,6 +25,9 @@ class AddPrivateDiscussionType extends AbstractType
             ->add('title', TextType::class)
             ->add('members', EntityType::class, [
                 'class'         => User::class,
+                'attr' => [
+                    'class' => 'multi-select'
+                ],
                 'choice_label'  => 'username',
                 'query_builder' => function (EntityRepository $er) use ($userId) {
                     $qb = $er->createQueryBuilder('u');
@@ -36,7 +39,7 @@ class AddPrivateDiscussionType extends AbstractType
                     return $qb;
                 },
                 'required'      => true,
-                'expanded'      => true,
+                'expanded'      => false,
                 'multiple'      => true,
             ])
             ->add('save', SubmitType::class)
