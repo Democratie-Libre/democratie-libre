@@ -47,40 +47,80 @@ class PublicDiscussion extends AbstractDiscussion
      */
     private $followers;
 
-    public function __construct()
+    private function __construct()
     {
         parent::__construct();
         $this->followers = new ArrayCollection();
     }
 
-    public function setType($type)
+    public static function createGlobalDiscussion()
     {
-        if ($type === self::GLOBAL_DISCUSSION) {
-            $this
-                ->setTheme(null)
-                ->setProposal(null)
-                ->setArticle(null);
+        $discussion = new self();
+        $discussion->type = self::GLOBAL_DISCUSSION;
+
+        return $discussion;
+    }
+
+    public static function createThemeDiscussion(Theme $theme)
+    {
+        $discussion = new self();
+        $discussion->setTheme($theme);
+
+        return $discussion;
+    }
+
+    public static function createProposalDiscussion(Proposal $proposal)
+    {
+        $discussion = new self();
+        $discussion->setProposal($proposal);
+
+        return $discussion;
+    }
+
+    public static function createArticleDiscussion(Article $article)
+    {
+        $discussion = new self();
+        $discussion->setArticle($article);
+
+        return $discussion;
+    }
+
+    public function moveAs($type, $target)
+    {
+        if ($this->theme) {
+            $this->theme->removeDiscussion($this);
+            $this->theme = null;
         }
 
-        if ($type === self::THEME_DISCUSSION) {
-            $this
-                ->setProposal(null)
-                ->setArticle(null);
+        if ($this->proposal) {
+            $this->proposal->removeDiscussion($this);
+            $this->proposal = null;
         }
 
-        if ($type === self::PROPOSAL_DISCUSSION) {
-            $this
-                ->setTheme(null)
-                ->setArticle(null);
+        if ($this->article) {
+            $this->article->removeDiscussion($this);
+            $this->article = null;
         }
-
-        if ($type === self::ARTICLE_DISCUSSION) {
-            $this
-                ->setTheme(null)
-                ->setProposal(null);
+        
+        switch ($type) {
+            case self::GLOBAL_DISCUSSION:
+                $this->type = self::GLOBAL_DISCUSSION;
+                break;
+            case self::THEME_DISCUSSION:
+                $this->setTheme($target);
+                break;
+            case self::PROPOSAL_DISCUSSION:
+                $this->setProposal($target);
+                break;
+            case self::ARTICLE_DISCUSSION:
+                $this->setArticle($target);
+                break;
+            default:
+                throw new \Exception(sprintf(
+                    '%s is not a valid type',
+                    $type
+                ));
         }
-
-        $this->type = $type;
 
         return $this;
     }
@@ -90,27 +130,10 @@ class PublicDiscussion extends AbstractDiscussion
         return $this->type;
     }
 
-    public function setTheme(Theme $theme = null)
+    private function setTheme(Theme $theme)
     {
-        if ($this->theme) {
-            $this->theme->removeDiscussion($this);
-            $this->theme = null;
-        }
-
-        if ($this->proposal) {
-            $this->proposal->removeDiscussion($this);
-            $this->proposal = null;
-        }
-
-        if ($this->article) {
-            $this->article->removeDiscussion($this);
-            $this->article = null;
-        }
-
-        if ($theme) {
-            $this->theme = $theme;
-            $theme->addDiscussion($this);
-        }
+        $this->type = self::THEME_DISCUSSION;
+        $this->theme = $theme;
 
         return $this;
     }
@@ -120,27 +143,10 @@ class PublicDiscussion extends AbstractDiscussion
         return $this->theme;
     }
 
-    public function setProposal(Proposal $proposal = null)
+    private function setProposal(Proposal $proposal)
     {
-        if ($this->theme) {
-            $this->theme->removeDiscussion($this);
-            $this->theme = null;
-        }
-
-        if ($this->proposal) {
-            $this->proposal->removeDiscussion($this);
-            $this->proposal = null;
-        }
-
-        if ($this->article) {
-            $this->article->removeDiscussion($this);
-            $this->article = null;
-        }
-
-        if ($proposal) {
-            $this->proposal = $proposal;
-            $proposal->addDiscussion($this);
-        }
+        $this->type = self::PROPOSAL_DISCUSSION;
+        $this->proposal = $proposal;
 
         return $this;
     }
@@ -150,27 +156,12 @@ class PublicDiscussion extends AbstractDiscussion
         return $this->proposal;
     }
 
-    public function setArticle(Article $article = null)
+    private function setArticle(Article $article)
     {
-        if ($this->theme) {
-            $this->theme->removeDiscussion($this);
-            $this->theme = null;
-        }
+        $this->type = self::ARTICLE_DISCUSSION;
 
-        if ($this->proposal) {
-            $this->proposal->removeDiscussion($this);
-            $this->proposal = null;
-        }
-
-        if ($this->article) {
-            $this->article->removeDiscussion($this);
-            $this->article = null;
-        }
-
-        if ($article) {
-            $this->article = $article;
-            $article->addDiscussion($this);
-        }
+        $this->article = $article;
+        $article->addDiscussion($this);
 
         return $this;
     }
