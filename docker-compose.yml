@@ -1,0 +1,48 @@
+version: '3.1'
+
+services:
+    php:
+        build: './docker/php'
+        volumes:
+            - '.:/usr/share/www/DL'
+        environment:
+            DATABASE_HOST: "${DATABASE_HOST}"
+            DATABASE_NAME: "${DATABASE_NAME}"
+            DATABASE_PASSWORD: "${DATABASE_PASSWORD}"
+
+    php-fpm:
+        build: './docker/php-fpm'
+        volumes:
+            - '.:/usr/share/www/DL'
+        depends_on:
+            - 'db'
+        environment:
+            DATABASE_HOST: "${DATABASE_HOST}"
+            DATABASE_NAME: "${DATABASE_NAME}"
+            DATABASE_PASSWORD: "${DATABASE_PASSWORD}"
+
+    nginx:
+        build: './docker/nginx'
+        volumes:
+            - '.:/usr/share/www/DL:ro'
+        ports:
+            - '80:80'
+        depends_on:
+            - 'php-fpm'
+
+    db:
+        image: 'mariadb:10.2.15'
+        volumes:
+            - 'db_data:/var/lib/mysql'
+        environment:
+            MYSQL_ROOT_PASSWORD: "${DATABASE_PASSWORD}"
+
+    adminer:
+        image: 'adminer'
+        ports:
+            - '9000:8080'
+        depends_on:
+            - 'db'
+
+volumes:
+    db_data:

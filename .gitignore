@@ -30,3 +30,6 @@
 
 # Composer PHAR
 /composer.phar
+
+# Env variables
+/.env

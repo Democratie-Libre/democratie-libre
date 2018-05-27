@@ -1,10 +1,25 @@
-# Demo website 
-----
+# Demo website
+
+---
 
 This repo aims at implementing the demo website of the Démocratie Libre project : www.democratie-libre.org
 
 ## INSTALLATION
-----
+
+---
+
+### With Docker
+
+After installing `docker` and `docker-compose`, copy `.env.dist` to `.env` and change the few parameters there. Then in `parameters.yml` you can use the environment variables like `database_host: "%env(DATABASE_HOST)%"`.
+
+    - To fix cache and logs permissions: `make configure`
+    - To install the project: `make install`
+    - To launch it: `make up`
+
+The project will be available on `http://localhost`.
+An adminer is available on `http://localhost:9000` for debug purpose.
+
+### Without Docker
 
 Get into the directory 'refonte-dl' that you have just download (a composer.json file should also be present, we will stay there in the following)
 
@@ -48,7 +63,8 @@ Then the application should then be ready from your browser at the address :
 `http://localhost:8000`
 
 ## TODO
-----
+
+---
 
 # User profile
 
