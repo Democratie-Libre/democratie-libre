@@ -23,3 +23,6 @@ parameters:
     user.name:         user
     user.email:        user@user.com
     user.pass:         user
+
+    google_recaptcha.site_key: null
+    google_recaptcha.secret: null

@@ -28,7 +28,8 @@
         "knplabs/rad-user": "~2.0",
         "knplabs/rad-fixtures-load": "^1.6",
         "michelf/php-markdown": "^1.7",
-        "aptoma/twig-markdown": "^3.0"
+        "aptoma/twig-markdown": "^3.0",
+        "beelab/recaptcha2-bundle": "^2.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

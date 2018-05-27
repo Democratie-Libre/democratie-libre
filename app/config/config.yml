@@ -60,3 +60,7 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+
+beelab_recaptcha2:
+    site_key: '%google_recaptcha.site_key%'
+    secret: '%google_recaptcha.secret%'

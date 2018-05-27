@@ -45,10 +45,16 @@
                 </div>
                 <div class="form-group row">
                     <div class="col-md-2 col-md-offset-4">
+                        {{ form_widget(form.recaptcha) }}
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-2 col-md-offset-4">
                         {{ form_widget(form.save, {'label': 'Sign in', 'attr': {'class': 'btn btn-default custom-btn'}}) }}
                     </div>
                 </div>
             {{ form_end(form) }}
         </div>
     </div>
+<script src="//www.google.com/recaptcha/api.js?hl=en"></script>
 {% endblock content %}

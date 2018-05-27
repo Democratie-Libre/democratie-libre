@@ -19,6 +19,7 @@ class AppKernel extends Kernel
             new Knp\Rad\User\Bundle\UserBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
             new Knp\Rad\FixturesLoad\Bundle\FixturesLoadBundle(),
+            new Beelab\Recaptcha2Bundle\BeelabRecaptcha2Bundle(),
             new App\App(),
         );
 
