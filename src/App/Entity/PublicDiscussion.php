@@ -85,7 +85,7 @@ class PublicDiscussion extends AbstractDiscussion
         return $discussion;
     }
 
-    public function moveAs($type, $target)
+    public function moveAs($type, $target = null)
     {
         if ($this->theme) {
             $this->theme->removeDiscussion($this);
@@ -101,7 +101,7 @@ class PublicDiscussion extends AbstractDiscussion
             $this->article->removeDiscussion($this);
             $this->article = null;
         }
-        
+
         switch ($type) {
             case self::GLOBAL_DISCUSSION:
                 $this->type = self::GLOBAL_DISCUSSION;
