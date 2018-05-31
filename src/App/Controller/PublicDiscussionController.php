@@ -72,14 +72,12 @@ class PublicDiscussionController extends Controller
      */
     public function addToGlobalDiscussionsAction(Request $request)
     {
-        $discussion = new PublicDiscussion();
+        $discussion = PublicDiscussion::createGlobalDiscussion();
         $form       = $this->createForm(EditDiscussionType::class, $discussion);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $discussion
-                ->setType(PublicDiscussion::GLOBAL_DISCUSSION)
-                ->addFollower($this->getUser());
+            $discussion->addFollower($this->getUser());
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
             $em->flush();
@@ -106,14 +104,12 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $discussion = new PublicDiscussion();
+        $discussion = PublicDiscussion::createThemeDiscussion($theme);
         $form       = $this->createForm(EditDiscussionType::class, $discussion);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $discussion->setType(PublicDiscussion::THEME_DISCUSSION)
-                ->setTheme($theme)
-                ->addFollower($this->getUser());
+            $discussion->addFollower($this->getUser());
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
             $em->flush();
@@ -140,14 +136,12 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $discussion = new PublicDiscussion();
+        $discussion = PublicDiscussion::createProposalDiscussion($proposal);
         $form       = $this->createForm(EditDiscussionType::class, $discussion);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $discussion->setType(PublicDiscussion::PROPOSAL_DISCUSSION)
-                ->setProposal($proposal)
-                ->addFollower($this->getUser());
+            $discussion->addFollower($this->getUser());
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
             $em->flush();
@@ -174,15 +168,12 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $discussion = new PublicDiscussion();
+        $discussion = PublicDiscussion::createArticleDiscussion($article);
         $form       = $this->createForm(EditDiscussionType::class, $discussion);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $discussion
-                ->setType(PublicDiscussion::ARTICLE_DISCUSSION)
-                ->setArticle($article)
-                ->addFollower($this->getUser());
+            $discussion->addFollower($this->getUser());
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
             $em->flush();
@@ -292,7 +283,7 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $discussion->setType(PublicDiscussion::GLOBAL_DISCUSSION);
+        $discussion->moveAs(PublicDiscussion::GLOBAL_DISCUSSION);
         $em = $this->getDoctrine()->getManager();
         $em->persist($discussion);
         $em->flush();
@@ -320,9 +311,7 @@ class PublicDiscussionController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $hostTheme = $form->get('theme')->getData();
-            $discussion
-                ->setType(PublicDiscussion::THEME_DISCUSSION)
-                ->setTheme($hostTheme);
+            $discussion->moveAs(PublicDiscussion::THEME_DISCUSSION, $hostTheme);
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
             $em->flush();
@@ -356,9 +345,7 @@ class PublicDiscussionController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $hostProposal = $form->get('proposal')->getData();
-            $discussion
-                ->setType(PublicDiscussion::PROPOSAL_DISCUSSION)
-                ->setProposal($hostProposal);
+            $discussion->moveAs(PublicDiscussion::PROPOSAL_DISCUSSION, $hostProposal);
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
             $em->flush();
@@ -392,9 +379,7 @@ class PublicDiscussionController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $hostArticle = $form->get('article')->getData();
-            $discussion
-                ->setType(PublicDiscussion::ARTICLE_DISCUSSION)
-                ->setArticle($hostArticle);
+            $discussion->moveAs(PublicDiscussion::ARTICLE_DISCUSSION, $hostArticle);
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
             $em->flush();
