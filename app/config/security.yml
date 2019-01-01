@@ -2,6 +2,7 @@ security:
     encoders:
         App\Entity\User:
             algorithm: bcrypt
+            cost: 13
 
     role_hierarchy:
         ROLE_ADMIN: ROLE_USER
