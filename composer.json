@@ -36,6 +36,9 @@
         "symfony/phpunit-bridge": "3.0",
         "phpspec/phpspec": "^4.3"
     },
+    "config": {
+        "bin-dir": "bin"
+    },
     "scripts": {
         "post-install-cmd": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
