@@ -16,8 +16,8 @@ class PrivateDiscussionSpec extends ObjectBehavior
 
     function it_sets_the_admin(User $user)
     {
-        $user->addAdminDiscussion($this)->willReturn(null);
-        $user->addUnreadDiscussion($this)->willReturn(null);
+        $user->addAdminDiscussion($this)->shouldBeCalled();
+        $user->addUnreadDiscussion($this)->shouldBeCalled();
         $user->addPrivateDiscussion($this)->willReturn($user);
 
         $this->setAdmin($user);
