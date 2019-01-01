@@ -137,7 +137,7 @@ class Theme
 
     public function __construct()
     {
-        $this->creationDate = new \Datetime();
+        $this->creationDate = new \DateTime();
         $this->children     = new ArrayCollection();
         $this->proposals    = new ArrayCollection();
         $this->discussions  = new ArrayCollection();
@@ -195,7 +195,7 @@ class Theme
      */
     public function setEditDate()
     {
-        $this->editDate = new \Datetime();
+        $this->editDate = new \DateTime();
 
         return $this;
     }

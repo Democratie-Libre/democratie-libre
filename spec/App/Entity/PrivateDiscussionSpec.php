@@ -9,6 +9,11 @@ use App\Entity\User;
 
 class PrivateDiscussionSpec extends ObjectBehavior
 {
+    function let()
+    {
+        $this->beConstructedThrough('create');
+    }
+
     function it_is_initializable()
     {
         $this->shouldHaveType(PrivateDiscussion::class);

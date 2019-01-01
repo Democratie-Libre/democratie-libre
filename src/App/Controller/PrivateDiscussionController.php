@@ -67,7 +67,7 @@ class PrivateDiscussionController extends Controller
      */
     public function addAction(Request $request)
     {
-        $discussion = new PrivateDiscussion();
+        $discussion = PrivateDiscussion::create();
         $user       = $this->getUser();
         $form       = $this->createForm(AddPrivateDiscussionType::class, $discussion, [
             'userId' => $user->getId(),

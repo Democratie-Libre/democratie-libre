@@ -112,7 +112,7 @@ class ProposalVersion
     {
         $this->title            = $proposal->getTitle();
         $this->abstract         = $proposal->getAbstract();
-        $this->snapDate         = new \Datetime();
+        $this->snapDate         = new \DateTime();
         $this->motivation       = $proposal->getMotivation();
         $this->articleVersions  = new ArrayCollection();
         $this->versionNumber    = $proposal->getVersionNumber();

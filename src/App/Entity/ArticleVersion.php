@@ -82,7 +82,7 @@ class ArticleVersion
     {
         $this->number           = $article->getNumber();
         $this->title            = $article->getTitle();
-        $this->snapDate         = new \Datetime();
+        $this->snapDate         = new \DateTime();
         $this->content          = $article->getContent();
         $this->motivation       = $article->getMotivation();
         $this->versionNumber    = $article->getVersionNumber();

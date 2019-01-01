@@ -47,7 +47,7 @@ class PublicDiscussion extends AbstractDiscussion
      */
     private $followers;
 
-    private function __construct()
+    protected function __construct()
     {
         parent::__construct();
         $this->followers = new ArrayCollection();
