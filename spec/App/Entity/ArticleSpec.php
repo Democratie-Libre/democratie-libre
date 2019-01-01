@@ -31,9 +31,7 @@ class ArticleSpec extends ObjectBehavior
 
         $this->setProposal($proposal);
 
-        if (! $this->getProposal()->getWrappedObject() instanceOf Proposal) {
-            throw new Exception('Proposal does not contain a Proposal entity !');
-        }
+        $this->getProposal()->shouldBeAnInstanceOf(Proposal::class);
 
         $this->getNumber()->shouldReturn(4);
     }
@@ -42,8 +40,22 @@ class ArticleSpec extends ObjectBehavior
     {
         $this->snapshot();
         $this->getVersioning()->count()->shouldBe(1);
-        if (! $this->getVersioning()->getWrappedObject()[0] instanceOf ArticleVersion) {
-            throw new Exception('Versioning does not contain an ArticleVersion entity !');
-        }
+
+        $this->getVersioning()->shouldOnlyContainArticleVersions();
+    }
+
+    public function getMatchers() : array
+    {
+        return [
+            'onlyContainArticleVersions' => function($subject) {
+                foreach ($subject as $articleVersion) {
+                    if (! $articleVersion instanceOf ArticleVersion) {
+                        return false;
+                    }
+                }
+
+                return true;
+            },
+        ];
     }
 }
