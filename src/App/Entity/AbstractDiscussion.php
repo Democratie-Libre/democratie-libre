@@ -72,9 +72,9 @@ class AbstractDiscussion
      */
     protected $unreaders;
 
-    public function __construct()
+    protected function __construct()
     {
-        $this->creationDate = new \Datetime();
+        $this->creationDate = new \DateTime();
         $this->locked       = false;
         $this->posts        = new ArrayCollection();
         $this->unreaders    = new ArrayCollection();
@@ -115,7 +115,7 @@ class AbstractDiscussion
      */
     public function setLastEditDate()
     {
-        $this->lastEditDate = new \Datetime();
+        $this->lastEditDate = new \DateTime();
 
         return $this;
     }

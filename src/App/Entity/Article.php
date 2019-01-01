@@ -90,7 +90,7 @@ class Article
 
     public function __construct()
     {
-        $this->creationDate  = new \Datetime();
+        $this->creationDate  = new \DateTime();
         $this->versionNumber = 1;
         $this->discussions   = new ArrayCollection();
         $this->versioning    = new ArrayCollection();
@@ -141,7 +141,7 @@ class Article
      */
     public function setLastEditDate()
     {
-        $this->lastEditDate = new \Datetime();
+        $this->lastEditDate = new \DateTime();
 
         return $this;
     }

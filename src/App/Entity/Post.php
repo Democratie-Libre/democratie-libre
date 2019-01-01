@@ -63,7 +63,7 @@ class Post
      */
     public function updateDate()
     {
-        $this->date = new \Datetime();
+        $this->date = new \DateTime();
     }
 
     public function getDate()

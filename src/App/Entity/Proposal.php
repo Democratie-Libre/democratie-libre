@@ -131,7 +131,7 @@ class Proposal
 
     public function __construct()
     {
-        $this->creationDate  = new \Datetime();
+        $this->creationDate  = new \DateTime();
         $this->articles      = new ArrayCollection();
         $this->versionNumber = 1;
         $this->isAWiki       = false;
@@ -186,7 +186,7 @@ class Proposal
      */
     public function setLastEditDate()
     {
-        $this->lastEditDate = new \Datetime();
+        $this->lastEditDate = new \DateTime();
 
         return $this;
     }

@@ -10,3 +10,9 @@ install:
 
 up:
 	docker-compose up -d
+
+stan:
+	docker-compose run --rm php composer stan
+
+specs:
+	docker-compose run --rm php composer specs

@@ -130,7 +130,7 @@ class User implements UserInterface, \Serializable, HasPassword
 
     public function __construct()
     {
-        $this->registrationDate    = new \Datetime;
+        $this->registrationDate    = new \DateTime;
         $this->roles               = ['ROLE_USER'];
         $this->banned              = false;
         $this->email               = null;
@@ -375,7 +375,7 @@ class User implements UserInterface, \Serializable, HasPassword
 
     public function hasFollowedDiscussion(PublicDiscussion $discussion)
     {
-        return $this->publicDiscussions->contains($discussion);
+        return $this->followedDiscussions->contains($discussion);
     }
 
     public function removeFollowedDiscussion(PublicDiscussion $discussion)
