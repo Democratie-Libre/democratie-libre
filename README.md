@@ -74,6 +74,39 @@ Specs (unit tests) are done thanks to [PHPSpec](https://github.com/phpspec/phpsp
 
 To launch the specs, run `composer specs` (or `make specs` with docker).
 
+## Deploy
+
+Using deployer to deploy.
+
+### First, configure your ssh config
+
+Add to your `~/.ssh/config` file :
+
+```
+Host dl-deploy
+  Hostname <Address Or Ip of the Server>
+  User deployment
+  Port 22
+  IdentityFile ~/.ssh/id_rsa
+```
+
+### Then install deployer
+
+curl -LO https://deployer.org/deployer.phar
+sudo mv deployer.phar /usr/local/bin/dep
+sudo chmod +x /usr/local/bin/dep
+
+### Forward your ssh agent
+
+`eval $(ssh-agent)`
+`ssh-add`
+
+### Deploy
+
+`dep deploy prod`
+
+(Add the `-vvv` option if you want it to be more verbose)
+
 ## TODO
 
 ---
