@@ -6,9 +6,8 @@ require 'recipe/symfony3.php';
 inventory('hosts.yml');
 
 // Project name
-set('application', 'DL');
+set('application', 'dL');
 set('keep_releases', 5);
-set('http_user', 'deployment');
 set('shared_dirs', ['var/logs', 'var/cache']);
 set('writable_dirs', ['var/cache', 'var/logs']);
 set('shared_files', [
