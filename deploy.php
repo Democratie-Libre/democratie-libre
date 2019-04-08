@@ -31,16 +31,15 @@ set('repository', 'git@github.com:Democratie-Libre/democratie-libre.git');
 set('git_tty', true); 
 
 // Shared files/dirs between deploys 
-add('shared_files', [
-    web/uploads
+add('shared_files', []);
+add('shared_dirs', [
+    'web/uploads'
 ]);
-add('shared_dirs', []);
 
 // Writable dirs by web server 
 add('writable_dirs', [
-    web/uploads
+    'web/uploads'
 ]);
-
 
 // Tasks
 task('build', function () {
