@@ -8,8 +8,14 @@ inventory('hosts.yml');
 // Project name
 set('application', 'dL');
 set('keep_releases', 5);
-set('shared_dirs', ['var/logs', 'var/cache']);
-set('writable_dirs', ['var/cache', 'var/logs']);
+set('shared_dirs', [
+    'var/logs',
+    'var/cache'
+]);
+set('writable_dirs', [
+    'var/cache',
+    'var/logs'
+]);
 set('shared_files', [
     'app/config/parameters.yml',
 ]);
@@ -25,15 +31,18 @@ set('repository', 'git@github.com:Democratie-Libre/democratie-libre.git');
 set('git_tty', true); 
 
 // Shared files/dirs between deploys 
-add('shared_files', []);
+add('shared_files', [
+    web/uploads
+]);
 add('shared_dirs', []);
 
 // Writable dirs by web server 
-add('writable_dirs', []);
+add('writable_dirs', [
+    web/uploads
+]);
 
 
 // Tasks
-
 task('build', function () {
     run('cd {{release_path}} && build');
 });
@@ -42,7 +51,6 @@ task('build', function () {
 after('deploy:failed', 'deploy:unlock');
 
 // Migrate database before symlink new release.
-
 before('deploy:symlink', 'database:migrate');
 
 task('deploy', [
