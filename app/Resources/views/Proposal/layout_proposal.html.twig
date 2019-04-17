@@ -16,7 +16,6 @@
                         {% elseif is_granted('opponent', proposal) %}
                             <li><a href="{{ path('proposal_removeoppose', {'slug': proposal.slug}) }}">Ne plus s'opposer à cette proposition</a></li>
                         {% endif %}
-                        <li><a href="{{ path('public_discussion_add_to_proposal', {'slug': proposal.slug}) }}">Ouvrir une discussion</a></li>
                         {% if is_granted('edit', proposal) %}
                             <li class="divider"></li>
                             <li><a href="{{ path('proposal_edit', {'slug': proposal.slug}) }}">Éditer</a></li>
