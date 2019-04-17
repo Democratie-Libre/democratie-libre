@@ -29,13 +29,18 @@
         </div>
         <div id="discussions" class="tab-pane fade">
             <table class="table">
-                <thead>
-                    <tr>
-                        <th>Discussion</th>
-                        <th>Dernier commentaire</th>
-                    </tr>
-                </thead>
+                {% if not theme.discussions is empty %}
+                    <thead>
+                        <tr>
+                            <th>Discussion</th>
+                            <th>Dernier commentaire</th>
+                        </tr>
+                    </thead>
+                {% endif %}
                 <tbody>
+                <div class="col-md-3 col-md-offset-9">
+                    <a href="{{ path('public_discussion_add_to_theme', {'slug': theme.slug}) }}" class="btn btn-default custom-btn">Ouvrir une discussion</a>
+                </div>
                 {% for discussion in theme.discussions %}
                     <tr>
                         <td><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="discussion-link">{{ discussion.title }}</a></td>
