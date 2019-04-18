@@ -1,30 +1,6 @@
-{% extends "::layout.html.twig" %}
+{% extends "Security/layout_profile.html.twig" %}
 
-{% block content %}
-    <div class="section-header-menu">
-        <div class="btn-group custom-btn-group ">
-            <button class="dropdown-toggle btn btn-default" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
-            <ul class="dropdown-menu pull-right">
-                <li><a href="{{ path('email_edit') }}">Modifier mon email</a></li>
-                <li><a href="{{ path('password_edit') }}">Modifier mon mot de passe</a></li>
-                <li><a href="{{ path('avatar_edit') }}">Modifier mon avatar</a></li>
-                <li><a href="{{ path('private_discussion_add') }}">Ouvrir une discussion privée</a></li>
-            </ul>
-        </div>
-    </div>
-    <div class="profile-header row">
-        <div class="col-md-3 col-xs-3">
-            {% if user.webPath is empty %}
-                <img src="{{ asset('img/defaultProfile_128.png') }}" class="marginAuto">
-            {% else %}
-                <img src="{{ asset(user.webPath) }}" class="marginAuto">
-            {% endif %}
-        </div>
-        <div class="col-md-9 col-xs-3">
-            <span class="profile-title">{{ user.username }}</span><br>
-            <span>{{ user.email }}</span><br>
-        </div>
-    </div>
+{% block page_content %}
     <div class="section-menu row">
         <ul>
             <li class="active"><a data-toggle="tab" href="#private_discussions">Messagerie</a></li>
@@ -42,21 +18,24 @@
                     </tr>
                 </thead>
                 <tbody>
+                <div class="col-md-3 col-md-offset-9">
+                    <a href="{{ path('private_discussion_add') }}" class="btn btn-default custom-btn">Ouvrir une discussion</a>
+                </div>
                 {% for discussion in app.user.privateDiscussions %}
                     {% if is_granted('unreader', discussion) %}
                         <tr class="discussion-unread">
-                            <td><a href="{{ path('private_discussion_show', {'slug': discussion.slug}) }}" class="discussion-link">{{ discussion.title }}</a></td>
+                            <td><a href="{{ path('private_discussion_show', {'slug': discussion.slug}) }}" class="table-link">{{ discussion.title }}</a></td>
                             {% if discussion.posts is empty %}
-                                <td>Vide</td>
+                                <td></td>
                             {% else %}
                                 <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
                             {% endif %}
                         </tr>
                     {% else %}
                         <tr>
-                            <td><a href="{{ path('private_discussion_show', {'slug': discussion.slug}) }}" class="discussion-link">{{ discussion.title }}</a></td>
+                            <td><a href="{{ path('private_discussion_show', {'slug': discussion.slug}) }}" class="table-link">{{ discussion.title }}</a></td>
                             {% if discussion.posts is empty %}
-                                <td>Vide</td>
+                                <td></td>
                             {% else %}
                                 <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
                             {% endif %}
@@ -78,18 +57,18 @@
                 {% for discussion in app.user.followedDiscussions %}
                     {% if is_granted('unreader', discussion) %}
                         <tr class="discussion-unread">
-                            <td><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="discussion-link">{{ discussion.title }}</a></td>
+                            <td><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="table-link">{{ discussion.title }}</a></td>
                             {% if discussion.posts is empty %}
-                                <td>Vide</td>
+                                <td></td>
                             {% else %}
                                 <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
                             {% endif %}
                         </tr>
                     {% else %}
                         <tr>
-                            <td><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="discussion-link">{{ discussion.title }}</a></td>
+                            <td><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="table-link">{{ discussion.title }}</a></td>
                             {% if discussion.posts is empty %}
-                                <td>Vide</td>
+                                <td></td>
                             {% else %}
                                 <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
                             {% endif %}
@@ -141,4 +120,4 @@
             </div>
         </div>
     </div>
-{% endblock content %}
+{% endblock page_content %}
