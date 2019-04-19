@@ -1,0 +1,29 @@
+{% extends "::layout.html.twig" %}
+
+{% block content %}
+    <div class="section-header-menu">
+        <div class="btn-group custom-btn-group ">
+            <button class="dropdown-toggle btn btn-default" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
+            <ul class="dropdown-menu pull-right">
+                <li><a href="{{ path('email_edit') }}">Modifier mon email</a></li>
+                <li><a href="{{ path('password_edit') }}">Modifier mon mot de passe</a></li>
+                <li><a href="{{ path('avatar_edit') }}">Modifier mon avatar</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="profile-header row">
+        <div class="col-md-3 col-xs-3">
+            {% if app.user.webPath is empty %}
+                <img src="{{ asset('img/defaultProfile_128.png') }}" class="marginAuto">
+            {% else %}
+                <img src="{{ asset(app.user.webPath) }}" class="marginAuto">
+            {% endif %}
+        </div>
+        <div class="col-md-9 col-xs-3">
+            <span class="profile-title">{{ app.user.username }}</span><br>
+            <span>{{ app.user.email }}</span><br>
+        </div>
+    </div>
+
+    {% block page_content %}{% endblock page_content %}
+{% endblock content %}
