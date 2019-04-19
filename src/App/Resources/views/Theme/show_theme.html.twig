@@ -9,7 +9,9 @@
             <li><a data-toggle="tab" href="#">Bibliothèque</a></li>
             <li><a data-toggle="tab" href="#">Débats</a></li>
             -->
-            <li><a data-toggle="tab" href="#children">Thématiques filles</a></li>
+            {% if not theme.children is empty %}
+                <li><a data-toggle="tab" href="#children">Thématiques filles</a></li>
+            {% endif %}
         </ul>
     </div>
     <div class="tab-content">
@@ -54,39 +56,41 @@
                 </tbody>
             </table>
         </div>
-        <div id="children" class="tab-pane fade">
-            <div class="subsection-content col-md-10 col-xs-10">
-                <div class="row">
-                    {% for theme in theme.children %}
-                        <div class="root-frame col-md-4 col-xs-6">
-                            <a href="{{ path('theme_show', {'slug': theme.slug}) }}" class="root-link">
-                                <div class="root-title row">
-                                    <div>{{ theme.title }}</div>
-                                </div>
-                                <div class="row">
-                                    {% if theme.webPath is empty %}
-                                        <img src="{{ asset('img/defaultTheme_128.png') }}" class="img-responsive custom-img">
-                                    {% else %}
-                                        <img src="{{ asset(theme.webPath) }}" class="img-responsive custom-img">
-                                    {% endif %}
-                                </div>
-                            </a>
-                            {% if not theme.children is empty %}
-                                <div class="btn-group root-btn-group">
-                                    <button class="dropdown-toggle root-dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
-                                    <ul class="dropdown-menu root-dropdown-menu">
-                                        {% for child in theme.children %}
-                                            <li><a href="{{ path('theme_show', {'slug': child.slug}) }}">{{ child.title }}</a></li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                            {% endif %}
-                        </div>
-                    {% else %}
-                        Pas de thématique fille !
-                    {% endfor %}
+        {% if not theme.children is empty %}
+            <div id="children" class="tab-pane fade">
+                <div class="subsection-content col-md-10 col-xs-10">
+                    <div class="row">
+                        {% for theme in theme.children %}
+                            <div class="root-frame col-md-4 col-xs-6">
+                                <a href="{{ path('theme_show', {'slug': theme.slug}) }}" class="root-link">
+                                    <div class="root-title row">
+                                        <div>{{ theme.title }}</div>
+                                    </div>
+                                    <div class="row">
+                                        {% if theme.webPath is empty %}
+                                            <img src="{{ asset('img/defaultTheme_128.png') }}" class="img-responsive custom-img">
+                                        {% else %}
+                                            <img src="{{ asset(theme.webPath) }}" class="img-responsive custom-img">
+                                        {% endif %}
+                                    </div>
+                                </a>
+                                {% if not theme.children is empty %}
+                                    <div class="btn-group root-btn-group">
+                                        <button class="dropdown-toggle root-dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
+                                        <ul class="dropdown-menu root-dropdown-menu">
+                                            {% for child in theme.children %}
+                                                <li><a href="{{ path('theme_show', {'slug': child.slug}) }}">{{ child.title }}</a></li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            Pas de thématique fille !
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
     </div>
 {% endblock page_content %}
