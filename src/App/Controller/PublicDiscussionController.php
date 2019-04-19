@@ -73,12 +73,24 @@ class PublicDiscussionController extends Controller
     public function addToGlobalDiscussionsAction(Request $request)
     {
         $discussion = PublicDiscussion::createGlobalDiscussion();
-        $form       = $this->createForm(EditDiscussionType::class, $discussion);
+        $form       = $this->createForm(EditDiscussionType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+
+            $firstPost = new Post();
+            $firstPost
+                ->setContent($data['first_post'])
+                ->setDiscussion($discussion)
+                ->setAuthor($this->getUser())
+            ;
+
+            $discussion->setTitle($data['title']);
             $discussion->addFollower($this->getUser());
+
             $em = $this->getDoctrine()->getManager();
+            $em->persist($firstPost);
             $em->persist($discussion);
             $em->flush();
 
@@ -105,12 +117,24 @@ class PublicDiscussionController extends Controller
         }
 
         $discussion = PublicDiscussion::createThemeDiscussion($theme);
-        $form       = $this->createForm(EditDiscussionType::class, $discussion);
+        $form       = $this->createForm(EditDiscussionType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+
+            $firstPost = new Post();
+            $firstPost
+                ->setContent($data['first_post'])
+                ->setDiscussion($discussion)
+                ->setAuthor($this->getUser())
+            ;
+
+            $discussion->setTitle($data['title']);
             $discussion->addFollower($this->getUser());
+
             $em = $this->getDoctrine()->getManager();
+            $em->persist($firstPost);
             $em->persist($discussion);
             $em->flush();
 
@@ -137,12 +161,24 @@ class PublicDiscussionController extends Controller
         }
 
         $discussion = PublicDiscussion::createProposalDiscussion($proposal);
-        $form       = $this->createForm(EditDiscussionType::class, $discussion);
+        $form       = $this->createForm(EditDiscussionType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+
+            $firstPost = new Post();
+            $firstPost
+                ->setContent($data['first_post'])
+                ->setDiscussion($discussion)
+                ->setAuthor($this->getUser())
+            ;
+
+            $discussion->setTitle($data['title']);
             $discussion->addFollower($this->getUser());
+
             $em = $this->getDoctrine()->getManager();
+            $em->persist($firstPost);
             $em->persist($discussion);
             $em->flush();
 
@@ -169,12 +205,24 @@ class PublicDiscussionController extends Controller
         }
 
         $discussion = PublicDiscussion::createArticleDiscussion($article);
-        $form       = $this->createForm(EditDiscussionType::class, $discussion);
+        $form       = $this->createForm(EditDiscussionType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+
+            $firstPost = new Post();
+            $firstPost
+                ->setContent($data['first_post'])
+                ->setDiscussion($discussion)
+                ->setAuthor($this->getUser())
+            ;
+
+            $discussion->setTitle($data['title']);
             $discussion->addFollower($this->getUser());
+
             $em = $this->getDoctrine()->getManager();
+            $em->persist($firstPost);
             $em->persist($discussion);
             $em->flush();
 
