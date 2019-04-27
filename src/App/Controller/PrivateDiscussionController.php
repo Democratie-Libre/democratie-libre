@@ -116,7 +116,7 @@ class PrivateDiscussionController extends Controller
              ]));
         }
 
-        return $this->render('App:Discussion:edit_discussion.html.twig', [
+        return $this->render('App:Discussion:edit_private_discussion.html.twig', [
             'discussion' => $discussion,
             'form' => $form->createView(),
         ]);

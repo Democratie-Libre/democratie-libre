@@ -1,11 +1,6 @@
-{% extends 'Article/layout_article.html.twig' %}
+{% extends 'Discussion/layout_public_discussion.html.twig' %}
 
 {% block page_content %}
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <h2>Ouvrir une discussion</h2>
-        </div>
-    </div>
     {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
         <div class="form-group row">
             <div class="col-md-10 col-md-offset-2">
@@ -25,7 +20,7 @@
         </div>
         <div class="form-group row">
             <div class="col-md-2 col-md-offset-2">
-                {{ form_widget(form.save, {'label': 'Open the discussion', 'attr': {'class': 'btn btn-default custom-btn'}}) }}
+                {{ form_widget(form.save, {'label': 'Save', 'attr': {'class': 'btn btn-default custom-btn'}}) }}
             </div>
         </div>
     {{ form_end(form) }}

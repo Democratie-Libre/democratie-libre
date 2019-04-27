@@ -1,0 +1,14 @@
+{% extends '::layout.html.twig' %}
+
+{% block content %}
+    <div class="global-room-header row">
+        <div class="section-header-image col-md-3 col-xs-3">
+            <img src="{{ asset('img/globalRoom_128.png') }}">
+        </div>
+        <div class="section-header-title col-md-6 col-xs-6">
+            <div class="global-room-title">Salon général</div> 
+        </div>
+    </div>
+
+    {% block page_content %}{% endblock page_content %}
+{% endblock content %}

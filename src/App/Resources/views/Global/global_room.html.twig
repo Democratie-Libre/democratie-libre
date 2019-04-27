@@ -1,14 +1,6 @@
-{% extends '::layout.html.twig' %}
+{% extends 'Discussion/layout_global_discussion.html.twig' %}
 
-{% block content %}
-    <div class="global-room-header row">
-        <div class="section-header-image col-md-3 col-xs-3">
-            <img src="{{ asset('img/globalRoom_128.png') }}">
-        </div>
-        <div class="section-header-title col-md-6 col-xs-6">
-            <div class="global-room-title">Salon général</div> 
-        </div>
-    </div>
+{% block page_content %}
     <div class="row">
         <table class="table discussion-table">
             <thead>
@@ -47,4 +39,4 @@
             <a href="{{ path('public_discussion_add_to_global_discussions')}}" class="btn btn-default custom-admin-btn">Ouvrir une discussion</a>
         {% endif %}
     </div>
-{% endblock content %}
+{% endblock page_content %}

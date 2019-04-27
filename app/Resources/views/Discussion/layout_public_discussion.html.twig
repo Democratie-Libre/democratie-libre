@@ -1,0 +1,54 @@
+{% extends '::layout.html.twig' %}
+
+{% block content %}
+    <div class="section-header row">
+        <div class="section-header-menu col-md-12 col-xs-12">
+            {% if is_granted('ROLE_USER') %}
+                <div class="btn-group custom-btn-group ">
+                    <button class="dropdown-toggle btn btn-default" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
+                    <ul class="dropdown-menu pull-right">
+                        {% if is_granted('follow', discussion) %}
+                            <li><a href="{{ path('public_discussion_stop_following', {'slug': discussion.slug}) }}">Ne plus suivre cette discussion</a></li>
+                        {% else %}
+                            <li><a href="{{ path('public_discussion_follow', {'slug': discussion.slug}) }}">Suivre cette discussion</a></li>
+                        {% endif %}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <li class="divider"></li>
+                            <li><a href="{{ path('public_discussion_edit', {'slug': discussion.slug}) }}">Éditer la discussion</a></li>
+                            {% if not discussion.globalDiscussion %}
+                                <li><a href="{{ path('public_discussion_move_to_global', {'slug': discussion.slug}) }}">Déplacer vers les discussions globales</a></li>
+                            {% endif %}
+                            <li><a href="{{ path('public_discussion_move_to_theme', {'slug': discussion.slug}) }}">Déplacer vers une thématique</a></li>
+                            <li><a href="{{ path('public_discussion_move_to_proposal', {'slug': discussion.slug}) }}">Déplacer vers une proposition</a></li>
+                            <li><a href="{{ path('public_discussion_move_to_article', {'slug': discussion.slug}) }}">Déplacer vers un article</a></li>
+                            <li class="divider"></li>
+                            {% if discussion.locked %}
+                                <li><a href="{{ path('public_discussion_unlock', {'slug': discussion.slug}) }}">Dévérouiller la discussion</a></li>
+                            {% else %}
+                                <li><a href="{{ path('public_discussion_lock', {'slug': discussion.slug}) }}">Vérouiller la discussion</a></li>
+                            {% endif %}
+                            <li><a href="{{ path('public_discussion_delete', {'slug': discussion.slug}) }}">Supprimer la discussion</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+        <div class="section-header-title col-md-6 col-xs-6">
+            {% if discussion.type == 'global_discussion' %}
+                <div>discussion du <a href="{{ path('global_room') }}">salon général</a></div>
+            {% elseif discussion.type == 'theme_discussion' %}
+                <div>discussion | thématique <a href="{{ path('theme_show', {'slug': discussion.theme.slug}) }}">{{ discussion.theme.title }}</a></div>
+            {% elseif discussion.type == 'proposal_discussion' %}
+                <div>discussion | proposition <a href="{{ path('proposal_show', {'slug': discussion.proposal.slug}) }}">{{ discussion.proposal.title }}</a></div>
+            {% elseif discussion.type == 'article_discussion' %}
+                <div>discussion | article <a href="{{ path('article_show', {'slug': discussion.article.slug}) }}">{{ discussion.article.title }}</a></div>
+            {% endif %}
+            <h1>{{ discussion.title }}</h1>
+            {% if discussion.locked %}
+                discussion fermée
+            {% endif %}
+        </div>
+    </div>
+
+    {% block page_content %}{% endblock page_content %}
+{% endblock content %}
