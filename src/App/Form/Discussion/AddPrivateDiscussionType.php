@@ -25,7 +25,7 @@ class AddPrivateDiscussionType extends AbstractType
             ->add('title', TextType::class)
             ->add('members', EntityType::class, [
                 'class'         => User::class,
-                'attr' => [
+                'attr'          => [
                     'class' => 'multi-select'
                 ],
                 'choice_label'  => 'username',
