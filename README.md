@@ -21,46 +21,51 @@ An adminer is available on `http://localhost:9000` for debug purpose.
 
 ### Without Docker
 
-Get into the directory 'refonte-dl' that you have just download (a composer.json file should also be present, we will stay there in the following)
+Prerequisites are php and mysql installed on your local machine.
 
-You have to download the dependencies. For that download firstly composer with the following command :
+Clone the master branch of the Github repository, in a new dl directory
 
-    curl -s http://getcomposer.org/installer | php
+    git clone https://github.com/Democratie-Libre/democratie-libre.git dl
 
-Then do :
+cd to the dl directory
+
+    cd dl
+
+Install Composer with a copy paste of the command lines in this page. This will download and launch the Composer installer
+
+    https://getcomposer.org/download/
+
+Then launch Composer to install the dependencies of the project
 
     php composer.phar install
 
-This last command will install all the dependencies and will ask a few configuration parameters for your database in particular (you can keep the default values but not for the name and the password if you have one, you could face a dependency problem if you have not already installed 'php intl')
+When it is asked, enter your password for the access to mysql.
 
-For those who work with Linux, you have to give the writing rights for the files 'app/cache' and '/app/logs'. For that use following commands :
+You may have to change the permissions on the directories /var/cache and /var/logs
 
-    sudo setfacl -R -m u:www-data:rwx -m u:`whoami`:rwx app/cache app/logs
-    sudo setfacl -dR -m u:www-data:rwx -m u:`whoami`:rwx app/cache app/logs
+    chmod 777 /var/cache /var/logs
 
-Check your PHP configuration by using the following URL in your browser :
+Run the embedded php server
 
-    http://votre/chemin/projetdL/web/config.php
+    bin/console server:run
 
-In principle a PHP version 5.4.11 or above is needed.
-If you are asked to update the 'timezone' in '/etc/php5/apache2/php.ini, in principle you also have to update it in '/etc/php5/cli/php.ini
-If after refreshing the page you get the message "Your configuration looks good to run Symfony" you can proceed further
+and check that your configuration is ok using this url in your browser
 
-Use the bin/install script that contains everything to install the project :
+    http://localhost:8000/config.php
 
-```bash
-app/console doctrine:database:drop --force " Destroy the database (beware of your parameters.yml!)
-app/console doctrine:database:create " Create the database
-app/console doctrine:schema:create " Create the schema
-app/console rad:fixtures:load " Load the fixtures
-```
+and follow the recommandations.
 
-Then run a simple php embedded server with:
-`app/console server:run`
+Create the database and fill it
 
-Then the application should then be ready from your browser at the address :
+    bin/console doctrine:database:create
+    bin/console doctrine:schema:update
+    bin/console rad:fixture:load
 
-`http://localhost:8000`
+The application should be ready in your browser at
+
+    http://localhost:8000
+
+Two users are created by default : admin (password: admin) who has the administrator rights, and user (password: user) who has the users rights.
 
 ## Code analysis
 
