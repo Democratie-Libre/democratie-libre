@@ -114,36 +114,3 @@ sudo chmod +x /usr/local/bin/dep
 
 (Add the `-vvv` option if you want it to be more verbose)
 
-## TODO
-
----
-
-# User profile
-
-- Following of the discussions (notifications)
-
-# User roles
-
-- Moderator
-
-# General
-
-- Proposal versions: the link to go to the previous version should not appear if it is the first version
-- Put submit buttons in templates not in types
-- A service to take care of the versions ? (Einenlum)
-- Logic in the EditProposalType
-- Translation of the messages in the FlashBag
-- History of the proposal drafts
-- Remove the useless methods in the repositories
-- Confirmation messages for important actions (administration…)
-- History of the themes ?
-- PDF edition of the proposals ?
-- Fork of the proposals
-- Use Assetic (management of CSS and JS)
-- Pagination
-- Make a service to upload the files ?
-- Design
-- Form for the edition of the proposals : the main author should not be able to be a side author in the mean time. Form events ?
-- History of the tree
-- WYSIWYG editor
-- Peer review ?
