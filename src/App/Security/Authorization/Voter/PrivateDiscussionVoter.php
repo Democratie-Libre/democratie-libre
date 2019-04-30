@@ -77,7 +77,7 @@ class PrivateDiscussionVoter extends Voter
     private function canAddMember($privateDiscussion, $user)
     {
         $isAdmin       = $user === $privateDiscussion->getAdmin();
-        $usersNumber   = $this->doctrine->getRepository('App:User')->count();
+        $usersNumber   = $this->doctrine->getRepository('App:User')->count([]);
         $membersNumber = count($privateDiscussion->getMembers());
 
         return $isAdmin and $usersNumber !== $membersNumber;

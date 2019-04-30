@@ -82,7 +82,7 @@ class ThemeController extends Controller
 
         return $this->render('App:Theme:add_theme.html.twig', [
             'form'   => $form->createView(),
-            'parent' => $parent,
+            'theme' => $parent,
         ]);
     }
 

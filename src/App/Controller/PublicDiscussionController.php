@@ -78,6 +78,7 @@ class PublicDiscussionController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $discussion->addFollower($this->getUser());
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
             $em->flush();
@@ -110,6 +111,7 @@ class PublicDiscussionController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $discussion->addFollower($this->getUser());
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
             $em->flush();
@@ -142,6 +144,7 @@ class PublicDiscussionController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $discussion->addFollower($this->getUser());
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
             $em->flush();
@@ -174,6 +177,7 @@ class PublicDiscussionController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $discussion->addFollower($this->getUser());
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
             $em->flush();
@@ -213,7 +217,7 @@ class PublicDiscussionController extends Controller
              ]));
         }
 
-        return $this->render('App:Discussion:edit_discussion.html.twig', [
+        return $this->render('App:Discussion:edit_public_discussion.html.twig', [
             'discussion' => $discussion,
             'form' => $form->createView(),
         ]);

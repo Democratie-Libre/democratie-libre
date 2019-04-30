@@ -76,7 +76,7 @@ class ProposalController extends Controller
 
         $this->denyAccessUnlessGranted('edit', $proposal);
 
-        $form            = $this->createForm(EditProposalType::class, $proposal);
+        $form = $this->createForm(EditProposalType::class, $proposal);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

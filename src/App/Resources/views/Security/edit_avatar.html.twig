@@ -1,16 +1,11 @@
-{% extends '::layout.html.twig' %}
+{% extends 'Security/layout_profile.html.twig' %}
 
-{% block content %}
+{% block page_content %}
     <div class="row">
         <div class="col-md-10 col-md-offset-1 col-xs-10 col-xs-offset-1">
             <div class="row">
                 <div class="col-md-10 col-md-offset-2">
                     <h1>Modifier mon avatar</h1>
-                    {% if app.user.webPath is empty %}
-                        <img src="{{ asset('img/defaultProfile_128.png') }}" class="marginAuto"><br>
-                    {% else %}
-                        <img src="{{ asset(app.user.webPath) }}" class="marginAuto"><br>
-                    {% endif %}
                 </div>
             </div>
 
@@ -40,4 +35,4 @@
             {{ form_end(form) }}
         </div>
     </div>
-{% endblock content %}
+{% endblock page_content %}
