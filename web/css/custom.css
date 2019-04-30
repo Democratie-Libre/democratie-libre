@@ -44,6 +44,18 @@ body {
     background-color: #F0BD00;
 }
 
+.custom-inverse-btn {
+    display: block;
+    background-color: #333333;
+    color: white;
+}
+
+.custom-inverse-btn:hover {
+    display: block;
+    background-color: white;
+    color: black;
+}
+
 .custom-admin-btn {
     display: block;
     color: #C7000D;

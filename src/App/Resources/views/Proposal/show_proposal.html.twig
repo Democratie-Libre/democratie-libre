@@ -6,14 +6,27 @@
             <li class="active"><a data-toggle="tab" href="#content">Texte</a></li>
             <li><a data-toggle="tab" href="#discussions">Salon</a></li>
             <li><a data-toggle="tab" href="#versioning">Historique</a></li>
+            {% if is_granted('ROLE_ADMIN') %}
+                <li><a data-toggle="tab" href="#suppression">Suppression</a></li>
+            {% endif %}
         </ul>
     </div>
     <div class="tab-content">
         <div id="content" class="tab-pane fade in active">
+            {% if is_granted('edit', proposal) %}
+                <div class="col-md-3 col-md-offset-9">
+                    <a href="{{ path('proposal_edit', {'slug': proposal.slug}) }}" class="btn btn-default custom-btn">Éditer la proposition</a>
+                </div>
+            {% endif %}
             <div class="proposal-motivation">
                 <h4>Motifs</h4>
                 {{ proposal.motivation | markdown }}
             </div>
+            {% if is_granted('edit', proposal) %}
+                <div class="col-md-3 col-md-offset-9">
+                    <a href="{{ path('article_add', {'proposalSlug': proposal.slug}) }}" class="btn btn-default custom-btn">Ajouter un article</a>
+                </div>
+            {% endif %}
             <div class="proposal-articles">
                 {% for article in proposal.articles %}
                     <h4><a href="{{ path('article_show', {'slug': article.slug}) }}" class="article-link">Article {{ article.number }}<br>{{ article.title }}</a></h4>
@@ -28,6 +41,9 @@
             </div>
         </div>
         <div id="discussions" class="tab-pane fade">
+            <div class="col-md-3 col-md-offset-9">
+                <a href="{{ path('public_discussion_add_to_proposal', {'slug': proposal.slug}) }}" class="btn btn-default custom-btn">Ouvrir une discussion</a>
+            </div>
             <table class="table">
                 {% if not proposal.discussions is empty %}
                     <thead>
@@ -38,19 +54,16 @@
                     </thead>
                 {% endif %}
                 <tbody>
-                <div class="col-md-3 col-md-offset-9">
-                    <a href="{{ path('public_discussion_add_to_proposal', {'slug': proposal.slug}) }}" class="btn btn-default custom-btn">Ouvrir une discussion</a>
-                </div>
-                {% for discussion in proposal.discussions %}
-                    <tr>
-                        <td><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="table-link">{{ discussion.title }}</a></td>
-                        {% if discussion.posts is empty %}
-                            <td>Vide</td>
-                        {% else %}
-                            <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
-                        {% endif %}
-                    </tr>
-                {% endfor %}
+                    {% for discussion in proposal.discussions %}
+                        <tr>
+                            <td><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="table-link">{{ discussion.title }}</a></td>
+                            {% if discussion.posts is empty %}
+                                <td>Vide</td>
+                            {% else %}
+                                <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -79,5 +92,12 @@
                 Version actuelle : {{ proposal.versionNumber }}
             </div>
         </div>
+        {% if is_granted('ROLE_ADMIN') %}
+            <div id="suppression" class="tab-pane fade">
+                <div class="col-md-3 col-md-offset-9">
+                    <a href="{{ path('proposal_delete', {'slug': proposal.slug}) }}" class="btn btn-default custom-admin-btn">Supprimer la proposition</a>
+                </div>
+            </div>
+        {% endif %}
     </div>
 {% endblock page_content %}
