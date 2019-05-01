@@ -31,12 +31,14 @@
                 <a href="{{ path('public_discussion_add_to_article', {'slug': article.slug}) }}" class="btn btn-default custom-btn">Ouvrir une discussion</a>
             </div>
             <table class="table">
-                <thead>
-                    <tr>
-                        <th>Discussion</th>
-                        <th>Dernier commentaire</th>
-                    </tr>
-                </thead>
+                {% if not article.discussions is empty %}
+                    <thead>
+                        <tr>
+                            <th>Discussion</th>
+                            <th>Dernier commentaire</th>
+                        </tr>
+                    </thead>
+                {% endif %}
                 <tbody>
                 {% for discussion in article.discussions %}
                     <tr>
