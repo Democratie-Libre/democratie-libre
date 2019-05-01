@@ -1,8 +1,8 @@
-# Demo website
+# dL web application
 
 ---
 
-This repo aims at implementing the demo website of the Démocratie Libre project : www.democratie-libre.org
+This repository aims at implementing the demonstration website of the Démocratie Libre project : www.democratie-libre.org
 
 ## INSTALLATION
 
