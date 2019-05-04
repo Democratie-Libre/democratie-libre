@@ -137,6 +137,13 @@ class ThemeController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $parent = $form->get('parent')->getData();
+
+            // if the user enters a null value for the parent, the theme becomes a root
+            if ($parent === null) {
+                $theme->setParent();
+            }
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($theme);
             $em->flush();
