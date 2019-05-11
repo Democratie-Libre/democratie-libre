@@ -124,7 +124,7 @@ class Proposal
     private $versioning;
 
     /**
-     * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="proposal")
+     * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="proposal", cascade={"remove"})
      * @Assert\Valid()
      */
     private $discussions;
