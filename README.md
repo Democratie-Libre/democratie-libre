@@ -4,9 +4,7 @@
 
 This repository aims at implementing the demonstration website of the Démocratie Libre project : www.democratie-libre.org
 
-The documentation can be found here :
-
-    https://github.com/Democratie-Libre/democratie-libre/wiki
+The documentation can be found here : www.github.com/Democratie-Libre/democratie-libre/wiki
 
 ## INSTALLATION
 
