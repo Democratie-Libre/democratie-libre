@@ -130,7 +130,7 @@ class Theme
     private $file;
 
     /**
-     * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="theme")
+     * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="theme", cascade={"persist", "remove"})
      * @Assert\Valid()
      */
     private $discussions;

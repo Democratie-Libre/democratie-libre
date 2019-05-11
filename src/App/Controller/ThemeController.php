@@ -179,10 +179,23 @@ class ThemeController extends Controller
             ]));
         }
 
+        $em = $this->getDoctrine()->getManager();
+
+        // we suppress all the discussions associated before removing the theme
+        // we do it manually because Doctrine cascading does not work has we expect here
+        $discussions = $theme->getDiscussions();
+
+        foreach ($discussions as $discussion) {
+            $em->remove($discussion);
+        }
+
+        $em->flush();
+
         $parent = $theme->getParent();
         $repository->removeFromTree($theme);
-        $this->getDoctrine()->getManager()->clear(); // clear cached nodes
+        $em->clear(); // clear cached nodes
         // it will remove this node from tree and reparent all children
+
         $this->addFlash('info', 'La thématique '.$theme->getTitle().' a été supprimée !');
 
         if ($parent instanceof Theme) {
