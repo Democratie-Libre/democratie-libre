@@ -13,7 +13,6 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Entity(repositoryClass="App\Repository\ThemeRepository")
  * @Gedmo\Tree(type="nested")
  * @UniqueEntity(fields="slug")
- * @UniqueEntity(fields="title")
  * @ORM\HasLifecycleCallbacks
  */
 class Theme
@@ -32,7 +31,7 @@ class Theme
     private $slug;
 
     /**
-     * @ORM\Column(type="string", unique=true)
+     * @ORM\Column(type="string")
      * @Assert\NotBlank()
      * @Assert\Length(
      *      max = 40,
