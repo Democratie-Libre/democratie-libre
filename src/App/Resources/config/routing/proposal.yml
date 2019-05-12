@@ -10,18 +10,6 @@ proposal_edit:
     path: /edit/{slug}
     defaults: { _controller: 'App:Proposal:edit' }
 
-proposal_edit_motivation:
-    path: /edit/motivation/{slug}
-    defaults: { _controller: 'App:Proposal:editMotivation' }
-
-proposal_publish:
-    path: /publish/{slug}
-    defaults: { _controller: 'App:Proposal:publish' }
-
-proposal_delete:
-    path: /delete/{slug}
-    defaults: { _controller: 'App:Proposal:delete' }
-
 proposal_support:
     path: /support/{slug}
     defaults: { _controller: 'App:Proposal:support' }
@@ -37,3 +25,11 @@ proposal_oppose:
 proposal_removeoppose:
     path: /removeoppose/{slug}
     defaults: { _controller: 'App:Proposal:removeOppose' }
+
+proposal_move:
+    path: /move/{slug}
+    defaults: { _controller: 'App:Proposal:move' }
+
+proposal_delete:
+    path: /delete/{slug}
+    defaults: { _controller: 'App:Proposal:delete' }

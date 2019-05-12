@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use App\Entity\Proposal;
 use App\Form\Proposal\EditProposalType;
-use App\Form\Proposal\EditMotivationProposalType;
+use App\Form\SelectThemeType;
 
 class ProposalController extends Controller
 {
@@ -98,31 +98,6 @@ class ProposalController extends Controller
             'proposal' => $proposal,
             'form'     => $form->createView(),
         ]);
-    }
-
-    /**
-     * @Security("has_role('ROLE_ADMIN')")
-     */
-    public function deleteAction($slug)
-    {
-        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
-
-        if (null === $proposal) {
-            throw $this->createNotFoundException();
-        }
-
-        $title     = $proposal->getTitle();
-        $themeSlug = $proposal->getTheme()->getSlug();
-
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($proposal);
-        $em->flush();
-
-        $this->get('session')->getFlashBag()->add('info', 'The proposal '.$title.' has been removed');
-
-        return $this->redirect($this->generateUrl('theme_show', [
-            'slug' => $themeSlug,
-        ]));
     }
 
     /**
@@ -218,6 +193,66 @@ class ProposalController extends Controller
 
         return $this->redirect($this->generateUrl('proposal_show', [
             'slug' => $proposal->getSlug(),
+        ]));
+    }
+
+    /**
+     * @Security("has_role('ROLE_ADMIN')")
+     */
+    public function moveAction(Request $request, $slug)
+    {
+        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+
+        if (null === $proposal) {
+            throw $this->createNotFoundException();
+        }
+
+        $form = $this->createForm(SelectThemeType::class, null);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $hostTheme = $form->get('theme')->getData();
+            $proposal->setTheme($hostTheme);
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($proposal);
+            $em->flush();
+
+            $this->get('session')->getFlashBag()->add('info', 'The proposal has been moved in the theme '.$hostTheme->getTitle());
+
+            return $this->redirect($this->generateUrl('proposal_show', [
+                'slug' => $proposal->getSlug(),
+             ]));
+        }
+
+        return $this->render('App:Proposal:move_proposal.html.twig', [
+            'proposal' => $proposal,
+            'form'     => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Security("has_role('ROLE_ADMIN')")
+     */
+    public function deleteAction($slug)
+    {
+        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+
+        if (null === $proposal) {
+            throw $this->createNotFoundException();
+        }
+
+        $title     = $proposal->getTitle();
+        $themeSlug = $proposal->getTheme()->getSlug();
+
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($proposal);
+        $em->flush();
+
+        $this->get('session')->getFlashBag()->add('info', 'The proposal '.$title.' has been removed');
+
+        return $this->redirect($this->generateUrl('theme_show', [
+            'slug' => $themeSlug,
         ]));
     }
 }

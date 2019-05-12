@@ -7,7 +7,7 @@
             <li><a data-toggle="tab" href="#discussions">Salon</a></li>
             <li><a data-toggle="tab" href="#versioning">Historique</a></li>
             {% if is_granted('ROLE_ADMIN') %}
-                <li><a data-toggle="tab" href="#suppression">Suppression</a></li>
+                <li><a data-toggle="tab" href="#administration">Administration</a></li>
             {% endif %}
         </ul>
     </div>
@@ -93,7 +93,10 @@
             </div>
         </div>
         {% if is_granted('ROLE_ADMIN') %}
-            <div id="suppression" class="tab-pane fade">
+            <div id="administration" class="tab-pane fade">
+                <div class="col-md-3 col-md-offset-9">
+                    <a href="{{ path('proposal_move', {'slug': proposal.slug}) }}" class="btn btn-default custom-admin-btn">Déplacer la proposition</a>
+                </div>
                 <div class="col-md-3 col-md-offset-9">
                     <a href="{{ path('proposal_delete', {'slug': proposal.slug}) }}" class="btn btn-default custom-admin-btn">Supprimer la proposition</a>
                 </div>
