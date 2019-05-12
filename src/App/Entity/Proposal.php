@@ -11,7 +11,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * @ORM\Entity
  * @UniqueEntity(fields="slug")
- * @UniqueEntity(fields="title")
  * @ORM\HasLifecycleCallbacks
  */
 class Proposal
@@ -30,7 +29,7 @@ class Proposal
     private $slug;
 
     /**
-     * @ORM\Column(type="string", unique=true)
+     * @ORM\Column(type="string")
      * @Assert\NotBlank()
      * @Assert\Length(
      *      max = 100,
