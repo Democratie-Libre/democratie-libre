@@ -268,6 +268,23 @@ class Theme
         return $this->parent;
     }
 
+    public function getParents()
+    {
+        if ($this->parent === null) {
+            return null;
+        }
+
+        $parent = $this->parent;
+        $parents = [];
+
+        while ($parent !== null) {
+            $parents[] = $parent;
+            $parent = $parent->getParent();
+        }
+
+        return array_reverse($parents);
+    }
+
     public function addChild(Theme $child)
     {
         $this->children->add($child);

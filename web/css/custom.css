@@ -205,6 +205,35 @@ body {
     margin-bottom: 30px;
 }
 
+
+/******************/
+/** Section path **/
+/******************/
+
+.section-path {
+    margin-top: -20px;
+    margin-bottom: -10px;
+}
+
+.section-path > ul {
+    padding-left: 30px;
+}
+
+.section-path > ul > li {
+    display: inline-block;
+    margin-bottom: -2px;
+}
+
+.section-path > ul > li > a {
+    display: block;
+    color: #333333;
+    padding: 10px;
+}
+
+.section-path > ul > li > a:hover {
+    text-decoration: none;
+}
+
 /******************/
 /** Section menu **/
 /******************/
