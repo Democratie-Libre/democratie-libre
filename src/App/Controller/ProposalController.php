@@ -212,7 +212,11 @@ class ProposalController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $hostTheme = $form->get('theme')->getData();
-            $proposal->setTheme($hostTheme);
+            $proposal
+                ->setTheme($hostTheme)
+                ->incrementVersionNumber()
+                ->snapshot()
+            ;
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($proposal);
