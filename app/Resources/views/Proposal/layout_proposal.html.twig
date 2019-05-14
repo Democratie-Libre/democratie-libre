@@ -2,6 +2,19 @@
 
 {% block content %}
     <div class="section-header row">
+        <div class="section-path row">
+            <ul>
+                <li><a href="{{ path('roots') }}">Arbre</a></li>
+                {% for parent in proposal.theme.parents %}
+                    <li>></li>
+                    <li><a href="{{ path('theme_show', {'slug': parent.slug}) }}">{{ parent.title }}</a></li>
+                {% endfor %}
+                <li>></li>
+                <li><a href="{{ path('theme_show', {'slug': proposal.theme.slug}) }}">{{ proposal.theme.title }}</a></li>
+                <li>>></li>
+                <li><a href="{{ path('proposal_show', {'slug': proposal.slug}) }}">{{ proposal.title }}</a></li>
+            </ul>
+        </div>
         {% if is_granted('ROLE_USER') %}
             <div class="section-header-menu col-md-12 col-xs-12">
                 {% if is_granted('neutral', proposal) %}

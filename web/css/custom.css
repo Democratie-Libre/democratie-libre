@@ -205,14 +205,13 @@ body {
     margin-bottom: 30px;
 }
 
-
 /******************/
 /** Section path **/
 /******************/
 
 .section-path {
     margin-top: -20px;
-    margin-bottom: -10px;
+    margin-bottom: 10px;
 }
 
 .section-path > ul {
