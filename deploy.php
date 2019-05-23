@@ -2,6 +2,7 @@
 namespace Deployer;
 
 require 'recipe/symfony3.php';
+require 'recipe/cachetool.php';
 
 inventory('hosts.yml');
 
@@ -86,4 +87,5 @@ task('deploy', [
     'deploy:symlink',
     'deploy:unlock',
     'cleanup',
+    'cachetool:clear:opcache'
 ])->desc('Deploy your project');
