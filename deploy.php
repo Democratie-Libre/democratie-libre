@@ -54,6 +54,14 @@ task('deploy:vendors', function () {
     run('cd {{release_path}} && {{bin/composer}} '.$opts.'', ['tty' => true]);
 });
 
+task('backup:database-dump', function() {
+    run('/var/www/dump-backup.sh');
+});
+
+task('backup:database-push-dump', function() {
+    run('/var/www/push-dump.sh');
+});
+
 // [Optional] if deploy fails automatically unlock.
 after('deploy:failed', 'deploy:unlock');
 
@@ -61,6 +69,8 @@ after('deploy:failed', 'deploy:unlock');
 before('deploy:symlink', 'database:migrate');
 
 task('deploy', [
+    'backup:database-dump',
+    'backup:database-push-dump',
     'deploy:prepare',
     'deploy:lock',
     'deploy:release',
