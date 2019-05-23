@@ -13,6 +13,7 @@ set('shared_dirs', [
     'var/logs',
     'var/cache'
 ]);
+set('cachetool', '/var/run/php/php7.2-fpm.sock');
 set('writable_dirs', [
     'var/cache',
     'var/logs'
