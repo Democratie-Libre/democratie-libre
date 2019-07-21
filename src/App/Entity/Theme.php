@@ -13,7 +13,6 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Entity(repositoryClass="App\Repository\ThemeRepository")
  * @Gedmo\Tree(type="nested")
  * @UniqueEntity(fields="slug")
- * @UniqueEntity(fields="title")
  * @ORM\HasLifecycleCallbacks
  */
 class Theme
@@ -32,7 +31,7 @@ class Theme
     private $slug;
 
     /**
-     * @ORM\Column(type="string", unique=true)
+     * @ORM\Column(type="string")
      * @Assert\NotBlank()
      * @Assert\Length(
      *      max = 40,
@@ -130,7 +129,7 @@ class Theme
     private $file;
 
     /**
-     * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="theme")
+     * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="theme", cascade={"persist", "remove"})
      * @Assert\Valid()
      */
     private $discussions;
@@ -267,6 +266,23 @@ class Theme
     public function getParent()
     {
         return $this->parent;
+    }
+
+    public function getParents()
+    {
+        if ($this->parent === null) {
+            return null;
+        }
+
+        $parent = $this->parent;
+        $parents = [];
+
+        while ($parent !== null) {
+            $parents[] = $parent;
+            $parent = $parent->getParent();
+        }
+
+        return array_reverse($parents);
     }
 
     public function addChild(Theme $child)

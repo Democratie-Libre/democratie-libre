@@ -14,7 +14,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\DiscriminatorColumn(name="discr", type="string")
  * @ORM\DiscriminatorMap({"abstract_discussion" = "AbstractDiscussion", "public_discussion" = "PublicDiscussion", "private_discussion" = "PrivateDiscussion"})
  * @ORM\HasLifecycleCallbacks
- * @UniqueEntity(fields="slug")
+ * @UniqueEntity(fields={"slug"})
  */
 class AbstractDiscussion
 {
@@ -32,7 +32,7 @@ class AbstractDiscussion
     protected $slug;
 
     /**
-     * @ORM\Column(type="string", unique=true)
+     * @ORM\Column(type="string")
      * @Assert\NotBlank()
      * @Assert\Length(
      *      max = 120,

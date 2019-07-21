@@ -2,21 +2,28 @@
 
 {% block content %}
     <div class="section-header row">
+        <div class="section-path row">
+            <ul>
+                <li><a href="{{ path('roots') }}">Arbre</a></li>
+                {% for parent in theme.parents %}
+                    <li>></li>
+                    <li><a href="{{ path('theme_show', {'slug': parent.slug}) }}">{{ parent.title }}</a></li>
+                {% endfor %}
+                <li>></li>
+                <li><a href="{{ path('theme_show', {'slug': theme.slug}) }}">{{ theme.title }}</a></li>
+            </ul>
+        </div>
         <div class="section-header-menu col-md-12 col-xs-12">
-            {% if is_granted('ROLE_USER') %}
+            {% if is_granted('ROLE_ADMIN') %}
                 <div class="btn-group custom-btn-group ">
                     <button class="dropdown-toggle btn btn-default" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
                     <ul class="dropdown-menu pull-right">
-                        <li><a href="{{ path('proposal_add', {'themeSlug': theme.slug}) }}">Ajouter une proposition</a></li>
-                        {% if is_granted('ROLE_ADMIN') %}
+                        <li><a href="{{ path('theme_edit', {'slug': theme.slug}) }}">Éditer cette thématique</a></li>
+                        <li><a href="{{ path('theme_move', {'slug': theme.slug}) }}">Déplacer cette thématique</a></li>
+                        <li><a href="{{ path('theme_add', {'slug': theme.slug}) }}">Ajouter une thématique fille</span></a></li>
+                        {% if theme.isEmpty %}
                             <li class="divider"></li>
-                            <li><a href="{{ path('theme_edit', {'slug': theme.slug}) }}">Éditer cette thématique</a></li>
-                            <li><a href="{{ path('theme_move', {'slug': theme.slug}) }}">Déplacer cette thématique</a></li>
-                            <li><a href="{{ path('theme_add', {'slug': theme.slug}) }}">Ajouter une thématique fille</span></a></li>
-                            {% if theme.isEmpty %}
-                                <li class="divider"></li>
-                                <li><a href="{{ path('theme_delete', {'slug': theme.slug}) }}">Supprimer cette thématique</a></li>
-                            {% endif %}
+                            <li><a href="{{ path('theme_delete', {'slug': theme.slug}) }}">Supprimer cette thématique</a></li>
                         {% endif %}
                     </ul>
                 </div>

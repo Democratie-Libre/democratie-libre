@@ -2,6 +2,7 @@
 namespace Deployer;
 
 require 'recipe/symfony3.php';
+require 'recipe/cachetool.php';
 
 inventory('hosts.yml');
 
@@ -12,6 +13,7 @@ set('shared_dirs', [
     'var/logs',
     'var/cache'
 ]);
+set('cachetool', '/var/run/php/php7.2-fpm.sock');
 set('writable_dirs', [
     'var/cache',
     'var/logs'
@@ -46,6 +48,22 @@ task('build', function () {
     run('cd {{release_path}} && build');
 });
 
+task('deploy:vendors', function () {
+    if (!commandExist('unzip')) {
+        writeln('<comment>To speed up composer installation setup "unzip" command with PHP zip extension https://goo.gl/sxzFcD</comment>');
+    }
+    $opts = '{{composer_action}} --verbose --prefer-dist --no-progress --no-dev --optimize-autoloader';
+    run('cd {{release_path}} && {{bin/composer}} '.$opts.'', ['tty' => true]);
+});
+
+task('backup:database-dump', function() {
+    run('/var/www/dump-backup.sh');
+});
+
+task('backup:database-push-dump', function() {
+    run('/var/www/push-dump.sh');
+});
+
 // [Optional] if deploy fails automatically unlock.
 after('deploy:failed', 'deploy:unlock');
 
@@ -53,6 +71,8 @@ after('deploy:failed', 'deploy:unlock');
 before('deploy:symlink', 'database:migrate');
 
 task('deploy', [
+    'backup:database-dump',
+    'backup:database-push-dump',
     'deploy:prepare',
     'deploy:lock',
     'deploy:release',
@@ -68,4 +88,5 @@ task('deploy', [
     'deploy:symlink',
     'deploy:unlock',
     'cleanup',
+    'cachetool:clear:opcache'
 ])->desc('Deploy your project');

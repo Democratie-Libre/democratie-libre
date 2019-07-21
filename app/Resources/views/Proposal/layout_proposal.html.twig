@@ -2,33 +2,39 @@
 
 {% block content %}
     <div class="section-header row">
-        <div class="section-header-menu col-md-12 col-xs-12">
-            {% if is_granted('ROLE_USER') %}
-                <div class="btn-group custom-btn-group ">
-                    <button class="dropdown-toggle btn btn-default" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
-                    <ul class="dropdown-menu pull-right">
-                        {% if is_granted('neutral', proposal) %}
-                            <li><a href="{{ path('proposal_support', {'slug': proposal.slug}) }}">Soutenir cette proposition</a></li>
-                            <li><a href="{{ path('proposal_oppose', {'slug': proposal.slug}) }}">S'opposer à cette proposition</a></li>
-                        {% elseif is_granted('supporter', proposal) %}
-                            <li><a href="{{ path('proposal_removesupport', {'slug': proposal.slug}) }}">Ne plus soutenir cette proposition</a></li>
-
-                        {% elseif is_granted('opponent', proposal) %}
-                            <li><a href="{{ path('proposal_removeoppose', {'slug': proposal.slug}) }}">Ne plus s'opposer à cette proposition</a></li>
-                        {% endif %}
-                        {% if is_granted('edit', proposal) %}
-                            <li class="divider"></li>
-                            <li><a href="{{ path('proposal_edit', {'slug': proposal.slug}) }}">Éditer</a></li>
-                            <li><a href="{{ path('article_add', {'proposalSlug': proposal.slug}) }}">Ajouter un article</a></li>
-                        {% endif %}
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <li class="divider"></li>
-                            <li><a href="{{ path('proposal_delete', {'slug': proposal.slug}) }}">Supprimer cette proposition</a></li>
-                        {% endif %}
-                    </ul>
-                </div>
-            {% endif %}
+        <div class="section-path row">
+            <ul>
+                <li><a href="{{ path('roots') }}">Arbre</a></li>
+                {% for parent in proposal.theme.parents %}
+                    <li>></li>
+                    <li><a href="{{ path('theme_show', {'slug': parent.slug}) }}">{{ parent.title }}</a></li>
+                {% endfor %}
+                <li>></li>
+                <li><a href="{{ path('theme_show', {'slug': proposal.theme.slug}) }}">{{ proposal.theme.title }}</a></li>
+                <li>>></li>
+                <li><a href="{{ path('proposal_show', {'slug': proposal.slug}) }}">{{ proposal.title }}</a></li>
+            </ul>
         </div>
+        {% if is_granted('ROLE_USER') %}
+            <div class="section-header-menu col-md-12 col-xs-12">
+                {% if is_granted('neutral', proposal) %}
+                    <div class="col-md-1 col-md-offset-10">
+                        <a href="{{ path('proposal_support', {'slug': proposal.slug}) }}" class="btn btn-default custom-btn" title="Soutenir cette proposition"><i class="icofont icofont-thumbs-up"></i></a>
+                    </div>
+                    <div class="col-md-1">
+                        <a href="{{ path('proposal_oppose', {'slug': proposal.slug}) }}" class="btn btn-default custom-btn" title="S'opposer à cette proposition"><i class="icofont icofont-thumbs-down"></i></a>
+                    </div>
+                {% elseif is_granted('supporter', proposal) %}
+                    <div class="col-md-1 col-md-offset-10">
+                        <a href="{{ path('proposal_removesupport', {'slug': proposal.slug}) }}" class="btn btn-default custom-inverse-btn" title="Ne plus soutenir cette proposition"><i class="icofont icofont-thumbs-up"></i></a>
+                    </div>
+                {% elseif is_granted('opponent', proposal) %}
+                    <div class="col-md-1 col-md-offset-10">
+                        <a href="{{ path('proposal_removeoppose', {'slug': proposal.slug}) }}" class="btn btn-default custom-inverse-btn" title="Ne plus s'opposer à cette proposition"><i class="icofont icofont-thumbs-down"></i></a>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
         <div class="proposal-header">
             <div>
                 proposition #{{ proposal.id }} | thématique <a href="{{ path('theme_show', {'slug': proposal.theme.slug}) }}">{{ proposal.theme.title }}</a><br>

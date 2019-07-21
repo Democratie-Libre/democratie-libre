@@ -2,23 +2,20 @@
 
 {% block content %}
     <div class="section-header row">
-        <div class="section-header-menu col-md-12 col-xs-12">
-            {% if is_granted('ROLE_USER') %}
-                <div class="btn-group custom-btn-group ">
-                    <button class="dropdown-toggle btn btn-default" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
-                    <ul class="dropdown-menu pull-right">
-                        <li><a href="{{ path('public_discussion_add_to_article', {'slug': article.slug}) }}">Ouvrir une discussion</a></li>
-                        {% if is_granted('edit', article) %}
-                            <li class="divider"></li>
-                            <li><a href="{{ path('article_edit', {'slug': article.slug}) }}">Éditer</a></li>
-                        {% endif %}
-                        {% if is_granted('delete', article) %}
-                            <li class="divider"></li>
-                            <li><a href="{{ path('article_delete', {'slug': article.slug}) }}">Supprimer</a></li>
-                        {% endif %}
-                    </ul>
-                </div>
-            {% endif %}
+        <div class="section-path row">
+            <ul>
+                <li><a href="{{ path('roots') }}">Arbre</a></li>
+                {% for parent in article.proposal.theme.parents %}
+                    <li>></li>
+                    <li><a href="{{ path('theme_show', {'slug': parent.slug}) }}">{{ parent.title }}</a></li>
+                {% endfor %}
+                <li>></li>
+                <li><a href="{{ path('theme_show', {'slug': article.proposal.theme.slug}) }}">{{ article.proposal.theme.title }}</a></li>
+                <li>>></li>
+                <li><a href="{{ path('proposal_show', {'slug': article.proposal.slug}) }}">{{ article.proposal.title }}</a></li>
+                <li>></li>
+                <li><a href="{{ path('article_show', {'slug': article.slug}) }}">article {{ article.number }}</a></li>
+            </ul>
         </div>
         <div class="article-header">
             <div>

@@ -76,13 +76,13 @@ class Article
     private $proposal;
 
     /**
-     * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="article")
+     * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="article", cascade={"remove"})
      * @Assert\Valid()
      */
     private $discussions;
 
     /**
-     * @ORM\OneToMany(targetEntity="ArticleVersion", mappedBy="recordedArticle", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="ArticleVersion", mappedBy="recordedArticle", cascade={"persist", "remove"})
      * @ORM\OrderBy({"versionNumber" = "DESC"})
      * @Assert\Valid()
      */

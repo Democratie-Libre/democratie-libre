@@ -44,6 +44,18 @@ body {
     background-color: #F0BD00;
 }
 
+.custom-inverse-btn {
+    display: block;
+    background-color: #333333;
+    color: white;
+}
+
+.custom-inverse-btn:hover {
+    display: block;
+    background-color: white;
+    color: black;
+}
+
 .custom-admin-btn {
     display: block;
     color: #C7000D;
@@ -191,6 +203,34 @@ body {
 .section-abstract {
     text-align: center;
     margin-bottom: 30px;
+}
+
+/******************/
+/** Section path **/
+/******************/
+
+.section-path {
+    margin-top: -20px;
+    margin-bottom: 10px;
+}
+
+.section-path > ul {
+    padding-left: 30px;
+}
+
+.section-path > ul > li {
+    display: inline-block;
+    margin-bottom: -2px;
+}
+
+.section-path > ul > li > a {
+    display: block;
+    color: #333333;
+    padding: 10px;
+}
+
+.section-path > ul > li > a:hover {
+    text-decoration: none;
 }
 
 /******************/

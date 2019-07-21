@@ -6,10 +6,18 @@
             <li class="active"><a data-toggle="tab" href="#content">Texte</a></li>
             <li><a data-toggle="tab" href="#discussions">Salon</a></li>
             <li><a data-toggle="tab" href="#versioning">Historique</a></li>
+            {% if is_granted('delete', article) %}
+                <li><a data-toggle="tab" href="#suppression">Suppression</a></li>
+            {% endif %}
         </ul>
     </div>
     <div class="tab-content">
         <div id="content" class="tab-pane fade in active">
+            {% if is_granted('edit', article) %}
+                <div class="col-md-3 col-md-offset-9">
+                    <a href="{{ path('article_edit', {'slug': article.slug}) }}" class="btn btn-default custom-btn">Modifier l'article</a>
+                </div>
+            {% endif %}
             <div class="article-content">
                 {{ article.content | markdown }}
             </div>
@@ -19,19 +27,24 @@
             </div>
         </div>
         <div id="discussions" class="tab-pane fade">
+            <div class="col-md-3 col-md-offset-9">
+                <a href="{{ path('public_discussion_add_to_article', {'slug': article.slug}) }}" class="btn btn-default custom-btn">Ouvrir une discussion</a>
+            </div>
             <table class="table">
-                <thead>
-                    <tr>
-                        <th>Discussion</th>
-                        <th>Dernier commentaire</th>
-                    </tr>
-                </thead>
+                {% if not article.discussions is empty %}
+                    <thead>
+                        <tr>
+                            <th>Discussion</th>
+                            <th>Dernier commentaire</th>
+                        </tr>
+                    </thead>
+                {% endif %}
                 <tbody>
                 {% for discussion in article.discussions %}
                     <tr>
                         <td><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="table-link">{{ discussion.title }}</a></td>
                         {% if discussion.posts is empty %}
-                            <td>Vide</td>
+                            <td></td>
                         {% else %}
                             <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
                         {% endif %}
@@ -65,5 +78,12 @@
                 Version actuelle : {{ article.versionNumber }}
             </div>
         </div>
+        {% if is_granted('delete', article) %}
+            <div id="suppression" class="tab-pane fade">
+                <div class="col-md-3 col-md-offset-9">
+                    <a href="{{ path('article_delete', {'slug': article.slug}) }}" class="btn btn-default custom-admin-btn">Supprimer l'article</a>
+                </div>
+            </div>
+        {% endif %}
     </div>
 {% endblock page_content %}

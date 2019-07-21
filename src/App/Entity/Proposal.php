@@ -11,7 +11,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * @ORM\Entity
  * @UniqueEntity(fields="slug")
- * @UniqueEntity(fields="title")
  * @ORM\HasLifecycleCallbacks
  */
 class Proposal
@@ -30,7 +29,7 @@ class Proposal
     private $slug;
 
     /**
-     * @ORM\Column(type="string", unique=true)
+     * @ORM\Column(type="string")
      * @Assert\NotBlank()
      * @Assert\Length(
      *      max = 100,
@@ -124,7 +123,7 @@ class Proposal
     private $versioning;
 
     /**
-     * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="proposal")
+     * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="proposal", cascade={"remove"})
      * @Assert\Valid()
      */
     private $discussions;
