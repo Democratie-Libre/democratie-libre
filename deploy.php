@@ -58,11 +58,11 @@ task('deploy:vendors', function () {
 
 task('backup:database-dump', function() {
     run('/var/www/dump-backup.sh');
-});
+})->onStage('prod');
 
 task('backup:database-push-dump', function() {
     run('/var/www/push-dump.sh');
-});
+})->onStage('prod');
 
 // [Optional] if deploy fails automatically unlock.
 after('deploy:failed', 'deploy:unlock');
