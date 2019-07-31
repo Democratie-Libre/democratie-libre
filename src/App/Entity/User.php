@@ -211,11 +211,6 @@ class User implements UserInterface, \Serializable, HasPassword
         return $this->password;
     }
 
-    public function setPassword(string $password): void
-    {
-        $this->password = $password;
-    }
-
     public function setBanned($banned)
     {
         $this->banned = $banned;
