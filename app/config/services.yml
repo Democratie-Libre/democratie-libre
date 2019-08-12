@@ -1,0 +1,26 @@
+# Learn more about services, parameters and containers at
+# https://symfony.com/doc/current/service_container.html
+parameters:
+    # parameter_name: value
+ 
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    # makes classes in src/App available to be used as services
+    App\:
+        resource: '../../src/App/*'
+        # you can exclude directories or files
+        # but if a service is unused, it's removed anyway
+        exclude: '../../src/App/{Entity,Repository,Tests}'
+
+    # controllers are imported separately to make sure they're public
+    # and have a tag that allows actions to type-hint services
+    App\Controller\:
+        resource: '../../src/App/Controller'
+        public: true
+        tags: ['controller.service_arguments']
+

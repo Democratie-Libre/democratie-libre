@@ -31,10 +31,3 @@ services:
 
     app.markdown:
         class: App\Utils\Markdown
-
-    app.twig.markdown_extension:
-        class: App\Twig\MarkdownExtension
-        arguments: ['@app.markdown']
-        public: false
-        tags:
-            - { name: 'twig.extension' }
