@@ -320,7 +320,7 @@ body {
 /******************/
 
 .carousel-inner {
-    height: 700px;
+    height: 400px;
 }
 
 .carousel-link {
@@ -643,6 +643,22 @@ body {
 
 .profile-subblock {
     margin-bottom: 30px;
+}
+
+/******************/
+/** Project page **/
+/******************/
+
+.project-paragraph > p {
+    font-size: 18px;
+}
+
+.project-paragraph > ul {
+    margin-left: 50px;
+}
+
+.project-paragraph > ul > li {
+    font-size: 18px;
 }
 
 /*********************/

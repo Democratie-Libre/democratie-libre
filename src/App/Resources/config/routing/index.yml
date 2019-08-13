@@ -9,3 +9,7 @@ global_room:
 roots:
     path: /roots
     defaults: { _controller: 'App:Global:roots' }
+
+project:
+    path: /project
+    defaults: { _controller: 'App:Global:project' }

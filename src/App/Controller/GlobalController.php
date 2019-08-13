@@ -25,4 +25,9 @@ class GlobalController extends Controller
 
         return $this->render('App:Global:global_room.html.twig', ['discussions' => $discussions]);
     }
+
+    public function projectAction()
+    {
+        return $this->render('App:Global:project.html.twig');
+    }
 }
