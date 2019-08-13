@@ -29,18 +29,6 @@ body {
     margin: auto;
 }
 
-p {
-    font-size: 18px;
-}
-
-ul {
-    margin-left: 50px;
-}
-
-ul > li {
-    font-size: 18px;
-}
-
 /*************/
 /** Buttons **/
 /*************/
@@ -655,6 +643,22 @@ ul > li {
 
 .profile-subblock {
     margin-bottom: 30px;
+}
+
+/******************/
+/** Project page **/
+/******************/
+
+.project-paragraph > p {
+    font-size: 18px;
+}
+
+.project-paragraph > ul {
+    margin-left: 50px;
+}
+
+.project-paragraph > ul > li {
+    font-size: 18px;
 }
 
 /*********************/
