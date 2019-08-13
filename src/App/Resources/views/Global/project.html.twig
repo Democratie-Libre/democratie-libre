@@ -1,0 +1,50 @@
+{% extends '::layout.html.twig' %}
+
+{% block content %}
+    <div class="section-header row">
+        <div class="section-header-image col-md-3 col-xs-3">
+            <img src="{{ asset('img/orion_128.png') }}">
+        </div>
+        <div class="section-header-title col-md-6 col-xs-6">
+            <div class="theme-title">Le projet</div>
+        </div>
+    </div>
+    <div class="row margin-auto">
+        <h2>Origines</h2>
+        <p>La dL - pour Démocratie libre - est un projet politique qui a été initié en 2011, et notre association a été créée en 2017. Notre inspiration vient du fonctionnement et de l’efficacité des projets de collaborations de masse sur internet tels que les logiciels libres ou Wikipedia. La question que pose notre projet est de savoir s’il est possible d’élaborer de façon collaborative des projets politiques à l’échelle d’un État. Autrement dit s’il est possible de transférer le Parlement sur internet.</p>
+    </div>
+    <div class="row margin-auto">
+        <h2>Un projet dans les civic techs</h2>
+        <p>Les civic techs représentent un ensemble d'organisations qui voient en internet un moyen de renforcer le lien démocratique entre les citoyens et leur gouvernement. Cela peut prendre plusieurs formes comme par exemple :</p>
+        <ul>
+            <li>les sites de pétitions pour s'opposer à une décision gouvernementale (<a href="https://avaaz.org/page/fr/">Avaaz</a>)</li>
+            <li>les budgets participatifs (<a href="https://budgetparticipatif.paris.fr/bp/">Budget participatif de Paris</a>)</li>
+            <li>le suivi de l'activité des parlementaires et l'ouverture des données publiques (<a href="https://www.regardscitoyens.org/">Regards citoyens</a>)</li>
+            <li>la co-production des lois par consultation citoyenne (<a href="https://parlement-et-citoyens.fr/">Parlement & Citoyens</a>)</li>
+        </ul>
+        <p>Ces démarches sont très intéressantes, cependant elles placent internet comme un outil qui vient se greffer en support de l'organisation politique en place. Ce qui fait la spécificité de notre démarche est de poser le problème à l'envers : dans le nouveau cadre technologique apparu ces dernières décennies, est-il possible de concevoir une organisation politique plus efficace ?</p> 
+        <p>On résume ici les principales caractéristiques du projet :</p>
+        <ul>
+            <li>c'est un projet open source</li>
+            <li>il invite à une réorganisation des institutions politiques centrales pour les adapter aux nouvelles technologies de communication</li>
+            <li>le système proposé cherche à se passer de représentant et d'élection</li>
+            <li>il propose un travail en continu par la société civile de toutes les thématiques politiques, et non des consultations épisodiques</li>
+        </ul>
+    </div>
+    <div class="row margin-auto">
+        <h2>Une révision constitutionnelle</h2>
+        <p>L'organisation des institutions politiques est définie dans la Constitution, la dL a donc comme objectif de proposer une révision constitutionnelle. Celle-ci concerne principalement le pouvoir législatif (le Parlement : Assemblée nationale et Sénat) et le pouvoir exécutif (le Gouvernement). Le pouvoir judiciaire n'est quasiment pas concerné. Concrètement, plus de Parlement, de Président de la République et de Premier ministre. Leurs compétences sont principalement transférées à une plateforme sur internet animée par la société civile, qu'on appelle le Forum. Ce dernier est donc chargé de la production de la loi. Toute prise de décision est effectuée par référendum.</p>
+        <p>Le détail de ce projet de révision est disponible ##ici##.</p>
+    </div>
+    <div class="row margin-auto">
+        <h2>Une simulation du système proposé</h2>
+        <p>La révision constitutionnelle qui est proposée est ambitieuse. Beaucoup de questions la concernant ne peuvent être résolues de façon théorique :</p>
+        <ul>
+            <li>peut-on espérer une production législative de qualité comparable à celle du système actuel ?</li>
+            <li>les procédures de prises de décisions proposées représentent-elles l'intérêt général ?</li>
+        </ul>
+        <p>C'est pourquoi le système proposé doit être testé. C'est l'objet du site sur lequel vous vous trouvez : il veut simuler au plus proche le fonctionnement du Forum. Vous y trouverez notamment un arbre hiérarchique, qu'on appelle <a href="{{ path('roots') }}">arbre des thématiques</a>, qui propose une partition du domaine politique. Vous pouvez y déposer vos propositions et les faire évoluer, en interaction avec les autres utilisateurs.</p>
+        <p>Vous trouverez plus de détails sur le fonctionnement du site ##ici##.</p>
+    </div>
+{% endblock content %}
+
