@@ -43,7 +43,11 @@
                                 </div>
 
                                 {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                                    <a class="col-md-1 col-md-offset-7 col-xs-1 col-xs-offset-6 navlink-top-menu" href="{{ path('profile') }}">{{ app.user.username }}</a>
+                                    {% if is_granted('ROLE_ADMIN') %}
+                                        <a class="col-md-1 col-md-offset-7 col-xs-1 col-xs-offset-6 navlink-top-menu" href="{{ path('admin_profile') }}">{{ app.user.username }}</a>
+                                    {% else %}
+                                        <a class="col-md-1 col-md-offset-7 col-xs-1 col-xs-offset-6 navlink-top-menu" href="{{ path('profile') }}">{{ app.user.username }}</a>
+                                    {% endif %}
                                     <a class="col-md-1 col-xs-1 navlink-top-menu" href="{{ path('logout') }}" title="Déconnexion"><span class="glyphicon glyphicon-off"></span></a>
                                 {% else %}
                                     <a class="col-md-1 col-md-offset-7 col-xs-1 col-xs-offset-6 navlink-top-menu" href="{{ path('register') }}" title="Inscription"><span class="glyphicon glyphicon-tasks"></span></a>

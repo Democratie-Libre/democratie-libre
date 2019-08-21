@@ -81,6 +81,25 @@ class SecurityController extends Controller
     }
 
     /**
+     * @Security("has_role('ROLE_ADMIN')")
+     */
+    public function adminProfileAction()
+    {
+        $user = $this->getUser();
+
+        $numberOfUsers     = $this->getDoctrine()->getRepository('App:User')->count([]);
+        $numberOfThemes    = $this->getDoctrine()->getRepository('App:Theme')->count([]);
+        $numberOfProposals = $this->getDoctrine()->getRepository('App:Proposal')->count([]);
+
+        return $this->render('App:Security:profile.html.twig', [
+            'user'                => $user,
+            'number_of_users'     => $numberOfUsers,
+            'number_of_themes'    => $numberOfThemes,
+            'number_of_proposals' => $numberOfProposals,
+        ]);
+    }
+
+    /**
      * @Security("has_role('ROLE_USER')")
      */
     public function emailEditAction(Request $request)

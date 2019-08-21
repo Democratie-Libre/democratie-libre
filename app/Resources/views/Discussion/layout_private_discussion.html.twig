@@ -22,7 +22,11 @@
             {% endif %}
         </div>
         <div class="section-header-title col-md-6 col-xs-6">
-            <div>discussion privée | <a href="{{ path('profile') }}" title="Messagerie"><span class="glyphicon glyphicon-envelope"></span></a></div>
+            {% if is_granted('ROLE_ADMIN') %}
+                <div>discussion privée | <a href="{{ path('admin_profile') }}" title="Messagerie"><span class="glyphicon glyphicon-envelope"></span></a></div>
+            {% else %}
+                <div>discussion privée | <a href="{{ path('profile') }}" title="Messagerie"><span class="glyphicon glyphicon-envelope"></span></a></div>
+            {% endif %}
             <h1>{{ discussion.title }}</h1>
             {% if discussion.locked %}
                 discussion fermée

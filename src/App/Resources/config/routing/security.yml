@@ -16,6 +16,10 @@ profile:
     path: /profile
     defaults: { _controller: App:Security:profile }
 
+admin_profile:
+    path: /admin_profile
+    defaults: { _controller: App:Security:adminProfile }
+
 email_edit:
     path: /email/edit
     defaults: { _controller: App:Security:emailEdit }
