@@ -3,7 +3,8 @@
 {% block page_content %}
     <div class="section-menu row">
         <ul>
-            <li class="active"><a data-toggle="tab" href="#content">Texte</a></li>
+            <li class="active"><a data-toggle="tab" href="#motivation">Motifs</a></li>
+            <li><a data-toggle="tab" href="#articles">Articles</a></li>
             <li><a data-toggle="tab" href="#discussions">Salon</a></li>
             <li><a data-toggle="tab" href="#versioning">Historique</a></li>
             {% if is_granted('ROLE_ADMIN') %}
@@ -12,16 +13,17 @@
         </ul>
     </div>
     <div class="tab-content">
-        <div id="content" class="tab-pane fade in active">
+        <div id="motivation" class="tab-pane fade in active">
             {% if is_granted('edit', proposal) %}
                 <div class="col-md-3 col-md-offset-9">
                     <a href="{{ path('proposal_edit', {'slug': proposal.slug}) }}" class="btn btn-default custom-btn">Éditer la proposition</a>
                 </div>
             {% endif %}
             <div class="proposal-motivation">
-                <h4>Motifs</h4>
                 {{ proposal.motivation | markdown }}
             </div>
+        </div>
+        <div id="articles" class="tab-pane fade">
             {% if is_granted('edit', proposal) %}
                 <div class="col-md-3 col-md-offset-9">
                     <a href="{{ path('article_add', {'proposalSlug': proposal.slug}) }}" class="btn btn-default custom-btn">Ajouter un article</a>

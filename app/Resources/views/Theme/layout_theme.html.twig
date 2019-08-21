@@ -39,9 +39,6 @@
         <div class="section-header-title col-md-6 col-xs-6">
             <div>thématique | niveau {{ theme.lvl }}</div>
             <div class="theme-title">{{ theme.title }}</div>
-            {% if theme.lvl > 0 %}
-                <div class="theme-under-title">thématique mère : <a href="{{ path('theme_show', {'slug': theme.parent.slug}) }}">{{ theme.parent.title }}</a></div>
-            {% endif %}
         </div>
     </div>
 

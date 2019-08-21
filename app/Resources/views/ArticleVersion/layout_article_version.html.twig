@@ -1,6 +1,23 @@
 {% extends '::layout.html.twig' %}
 
 {% block content %}
+    <div class="section-header row">
+        <div class="section-path row">
+            <ul>
+                <li><a href="{{ path('roots') }}">Arbre</a></li>
+                {% for parent in articleVersion.recordedArticle.proposal.theme.parents %}
+                    <li>></li>
+                    <li><a href="{{ path('theme_show', {'slug': parent.slug}) }}">{{ parent.title }}</a></li>
+                {% endfor %}
+                <li>></li>
+                <li><a href="{{ path('theme_show', {'slug': articleVersion.recordedArticle.proposal.theme.slug}) }}">{{ articleVersion.recordedArticle.proposal.theme.title }}</a></li>
+                <li>></li>
+                <li><a href="{{ path('proposal_show', {'slug': articleVersion.recordedArticle.proposal.slug}) }}">{{ articleVersion.recordedArticle.proposal.title }}</a></li>
+                <li>></li>
+                <li><a href="{{ path('article_show', {'slug': articleVersion.recordedArticle.slug}) }}">article {{ articleVersion.recordedArticle.number }}</a></li>
+            </ul>
+        </div>
+    </div>
     <div class="article-version-change-version-btn">
         {% if not articleVersion.isFirstVersion %}
             <a href="{{ path('article_version_previous_version', {'slug': articleVersion.slug}) }}" class="btn btn-default">Version précédente</a>
@@ -19,5 +36,6 @@
             </div>
         </div>
     </div>
+
     {% block page_content %}{% endblock page_content %}
 {% endblock content %}
