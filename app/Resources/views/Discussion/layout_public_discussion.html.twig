@@ -2,6 +2,57 @@
 
 {% block content %}
     <div class="section-header row">
+        <div class="section-path row">
+            {% if discussion.type == 'global_discussion' %}
+                <ul>
+                    <li><a href="{{ path('global_room') }}">Grand salon</a></li>
+                    <li>></li>
+                    <li><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}">{{ discussion.title }}</a></li>
+                </ul>
+            {% elseif discussion.type == 'theme_discussion' %}
+                <ul>
+                    <li><a href="{{ path('roots') }}">Arbre</a></li>
+                    {% for parent in discussion.theme.parents %}
+                        <li>></li>
+                        <li><a href="{{ path('theme_show', {'slug': parent.slug}) }}">{{ parent.title }}</a></li>
+                    {% endfor %}
+                    <li>></li>
+                    <li><a href="{{ path('theme_show', {'slug': discussion.theme.slug}) }}">{{ discussion.theme.title }}</a></li>
+                    <li>></li>
+                    <li><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}">{{ discussion.title }}</a></li>
+                </ul>
+            {% elseif discussion.type == 'proposal_discussion' %}
+                <ul>
+                    <li><a href="{{ path('roots') }}">Arbre</a></li>
+                    {% for parent in discussion.proposal.theme.parents %}
+                        <li>></li>
+                        <li><a href="{{ path('theme_show', {'slug': parent.slug}) }}">{{ parent.title }}</a></li>
+                    {% endfor %}
+                    <li>></li>
+                    <li><a href="{{ path('theme_show', {'slug': discussion.proposal.theme.slug}) }}">{{ discussion.proposal.theme.title }}</a></li>
+                    <li>></li>
+                    <li><a href="{{ path('proposal_show', {'slug': discussion.proposal.slug}) }}">{{ discussion.proposal.title }}</a></li>
+                    <li>></li>
+                    <li><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}">{{ discussion.title }}</a></li>
+                </ul>
+            {% elseif discussion.type == 'article_discussion' %}
+                <ul>
+                    <li><a href="{{ path('roots') }}">Arbre</a></li>
+                    {% for parent in discussion.article.proposal.theme.parents %}
+                        <li>></li>
+                        <li><a href="{{ path('theme_show', {'slug': parent.slug}) }}">{{ parent.title }}</a></li>
+                    {% endfor %}
+                    <li>></li>
+                    <li><a href="{{ path('theme_show', {'slug': discussion.article.proposal.theme.slug}) }}">{{ discussion.article.proposal.theme.title }}</a></li>
+                    <li>></li>
+                    <li><a href="{{ path('proposal_show', {'slug': discussion.article.proposal.slug}) }}">{{ discussion.article.proposal.title }}</a></li>
+                    <li>></li>
+                    <li><a href="{{ path('article_show', {'slug': discussion.article.slug}) }}">article {{ discussion.article.number }}</a></li>
+                    <li>></li>
+                    <li><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}">{{ discussion.title }}</a></li>
+                </ul>
+            {% endif %}
+        </div>
         <div class="section-header-menu col-md-12 col-xs-12">
             {% if is_granted('ROLE_USER') %}
                 <div class="btn-group custom-btn-group ">
@@ -34,15 +85,6 @@
             {% endif %}
         </div>
         <div class="section-header-title col-md-6 col-xs-6">
-            {% if discussion.type == 'global_discussion' %}
-                <div>discussion du <a href="{{ path('global_room') }}">salon général</a></div>
-            {% elseif discussion.type == 'theme_discussion' %}
-                <div>discussion | thématique <a href="{{ path('theme_show', {'slug': discussion.theme.slug}) }}">{{ discussion.theme.title }}</a></div>
-            {% elseif discussion.type == 'proposal_discussion' %}
-                <div>discussion | proposition <a href="{{ path('proposal_show', {'slug': discussion.proposal.slug}) }}">{{ discussion.proposal.title }}</a></div>
-            {% elseif discussion.type == 'article_discussion' %}
-                <div>discussion | article <a href="{{ path('article_show', {'slug': discussion.article.slug}) }}">{{ discussion.article.title }}</a></div>
-            {% endif %}
             <h1>{{ discussion.title }}</h1>
             {% if discussion.locked %}
                 discussion fermée

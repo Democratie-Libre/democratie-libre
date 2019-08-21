@@ -31,35 +31,37 @@
         </div>
     </div>
     <div class="row">
-        <div class="root-frame col-md-4 col-xs-6">
-            <a href="{{ path('project') }}" class="root-link">
-                <div class="root-title row">
-                    Le projet
-                </div>
-                <div class="row">
-                    <img src="{{ asset('img/orion_128.png') }}" class="img-responsive custom-img">
-                </div>
-            </a>
-        </div>
-        <div class="root-frame col-md-4 col-xs-6">
-            <a href="{{ path('register') }}" class="root-link">
-                <div class="root-title row">
-                    Inscription
-                </div>
-                <div class="row">
-                    <img src="{{ asset('img/defaultProfile_128.png') }}" class="img-responsive custom-img">
-                </div>
-            </a>
-        </div>
-        <div class="root-frame col-md-4 col-xs-6">
-            <a href="#" class="root-link">
-                <div class="root-title row">
-                    Nous contacter
-                </div>
-                <div class="row">
-                        <img src="{{ asset('img/contact_128.png') }}" class="img-responsive custom-img">
-                </div>
-            </a>
+        <div class="col-md-10 col-md-offset-1">
+            <div class="index-frame col-md-4 col-xs-6">
+                <a href="{{ path('project') }}" class="index-link">
+                    <div class="index-title row">
+                        Le projet
+                    </div>
+                    <div class="row">
+                        <img src="{{ asset('img/orion_128.png') }}" class="img-responsive custom-img">
+                    </div>
+                </a>
+            </div>
+            <div class="index-frame col-md-4 col-xs-6">
+                <a href="{{ path('register') }}" class="index-link">
+                    <div class="index-title row">
+                        Inscription
+                    </div>
+                    <div class="row">
+                        <img src="{{ asset('img/defaultProfile_128.png') }}" class="img-responsive custom-img">
+                    </div>
+                </a>
+            </div>
+            <div class="index-frame col-md-4 col-xs-6">
+                <a href="#" class="index-link">
+                    <div class="index-title row">
+                        Nous contacter
+                    </div>
+                    <div class="row">
+                            <img src="{{ asset('img/contact_128.png') }}" class="img-responsive custom-img">
+                    </div>
+                </a>
+            </div>
         </div>
     </div>
 {% endblock content %}

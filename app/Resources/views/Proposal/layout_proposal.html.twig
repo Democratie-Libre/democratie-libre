@@ -11,7 +11,7 @@
                 {% endfor %}
                 <li>></li>
                 <li><a href="{{ path('theme_show', {'slug': proposal.theme.slug}) }}">{{ proposal.theme.title }}</a></li>
-                <li>>></li>
+                <li>></li>
                 <li><a href="{{ path('proposal_show', {'slug': proposal.slug}) }}">{{ proposal.title }}</a></li>
             </ul>
         </div>
@@ -37,7 +37,7 @@
         {% endif %}
         <div class="proposal-header">
             <div>
-                proposition #{{ proposal.id }} | thématique <a href="{{ path('theme_show', {'slug': proposal.theme.slug}) }}">{{ proposal.theme.title }}</a><br>
+                proposition #{{ proposal.id }}<br>
             </div>
             <div class="proposal-title">
                 {{ proposal.title }}
@@ -45,8 +45,6 @@
             <div>
                 {% if proposal.isAWiki %}
                     Tout utilisateur peut éditer cette proposition
-                {% else %}
-                    auteur : {{ proposal.author }}
                 {% endif %}
             </div>
         </div>

@@ -1,10 +1,6 @@
 {% extends 'Proposal/layout_proposal.html.twig' %}
 
 {% block page_content %}
-    <div class="proposal-motivation">
-        <h4>Motifs</h4>
-        {{ proposal.motivation | markdown }}
-    </div>
     <div class="proposal-articles">
         {% for article in proposal.articles %}
             <h4><a href="{{ path('article_show', {'slug': article.slug}) }}" class="article-link">Article {{ article.number }}<br>{{ article.title }}</a></h4>
