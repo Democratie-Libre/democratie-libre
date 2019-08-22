@@ -490,7 +490,10 @@ a:hover {
 
 .proposal-motivation > p {
     font-size: 18px;
-    text-align: center;
+}
+
+.proposal-motivation > ul {
+    margin-left: 50px;
 }
 
 .proposal-motivation > ul > li {
