@@ -83,10 +83,13 @@ class ProposalVersion
     private $recordedProposal;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Theme")
-     * @Assert\Valid()
+     * @ORM\Column(type="string", length=255)
+     * @Assert\Length(
+     *      min = "2",
+     *      max = "255"
+     * )
      */
-    private $theme;
+    private $themeTitle;
 
     /**
      * @ORM\ManyToOne(targetEntity="User")
@@ -118,7 +121,7 @@ class ProposalVersion
         $this->versionNumber    = $proposal->getVersionNumber();
         $this->isAWiki          = $proposal->isAWiki();
         $this->recordedProposal = $proposal;
-        $this->theme            = $proposal->getTheme();
+        $this->themeTitle       = $proposal->getTheme()->getTitle();
         $this->author           = $proposal->getAuthor();
         $this->supporters       = $proposal->getSupporters();
         $this->opponents        = $proposal->getOpponents();
@@ -195,9 +198,9 @@ class ProposalVersion
         return $this->recordedProposal;
     }
 
-    public function getTheme()
+    public function getThemeTitle()
     {
-        return $this->theme;
+        return $this->themeTitle;
     }
 
     public function getAuthor()
