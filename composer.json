@@ -39,7 +39,7 @@
   },
   "require-dev": {
     "sensio/generator-bundle": "^3.0",
-    "symfony/phpunit-bridge": "3.0",
+    "symfony/phpunit-bridge": "3.4.26",
     "phpspec/phpspec": "^4.3",
     "phpstan/phpstan": "^0.10.7",
     "deployer/recipes": "^6.2",
