@@ -46,7 +46,10 @@
     "deployer/deployer": "^6.4"
   },
   "config": {
-    "bin-dir": "bin"
+    "bin-dir": "bin",
+    "platform": {
+        "php": "7.2.24"
+    }
   },
   "scripts": {
     "symfony-scripts": [

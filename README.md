@@ -23,15 +23,19 @@ An adminer is available on `http://localhost:9000` for debug purpose.
 
 ### Without Docker
 
+#### Prerequisites
+
 Prerequisites are php and mysql installed on your local machine.
 
-Clone the master branch of the Github repository, in a new dl directory
+#### Installation
 
-    git clone https://github.com/Democratie-Libre/democratie-libre.git dl
+Clone the master branch of the Github repository, in a new dL directory
 
-cd to the dl directory
+    git clone https://github.com/Democratie-Libre/democratie-libre.git dL
 
-    cd dl
+cd to the dL directory
+
+    cd dL
 
 Install Composer with a copy paste of the command lines in this page. This will download and launch the Composer installer
 
@@ -60,7 +64,7 @@ and follow the recommandations.
 Create the database and fill it
 
     bin/console doctrine:database:create
-    bin/console doctrine:schema:update
+    bin/console doctrine:migrations:migrate
     bin/console rad:fixture:load
 
 The application should be ready in your browser at
