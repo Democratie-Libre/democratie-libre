@@ -30,4 +30,9 @@ class GlobalController extends Controller
     {
         return $this->render('App:Global:project.html.twig');
     }
+
+    public function contactAction()
+    {
+        return $this->render('App:Global:contact.html.twig');
+    }
 }

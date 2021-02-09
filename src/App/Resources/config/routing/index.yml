@@ -13,3 +13,7 @@ roots:
 project:
     path: /project
     defaults: { _controller: 'App:Global:project' }
+
+contact:
+    path: /contact
+    defaults: { _controller: 'App:Global:contact' }
