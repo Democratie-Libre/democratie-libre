@@ -95,16 +95,16 @@ a:hover {
 
 .project-btn {
     display: block;
-    background-color: white;
-    color: #333333;
     margin-top: 10px;
     margin-bottom: 30px;
     font-size: 18px;
+    color: white;
+    background-color: #F0BD00;
 }
 
 .project-btn:hover {
-    color: white;
-    background-color: #F0BD00;
+    background-color: white;
+    color: #333333;
 }
 
 /************/
@@ -194,6 +194,11 @@ a:hover {
 .dropdown-top-menu {
     padding-left:0;
     padding-right:0;
+}
+
+.text-top-menu {
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 /*************/
@@ -386,6 +391,17 @@ a:hover {
     height: 300px;
 }
 
+.section-index {
+    margin-top: 40px;
+}
+
+.subsection-title-index {
+    font-size: 30px;
+}
+
+.subsection-abstract-index {
+    font-size: 18px;
+}
 /***********/
 /** Roots **/
 /***********/

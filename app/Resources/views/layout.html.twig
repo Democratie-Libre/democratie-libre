@@ -29,29 +29,30 @@
                         <a href="{{ path('index') }}" class="col-md-1 col-md-offset-1 col-xs-2 logo"><img src="{{ asset('img/dL_gold_40.png') }}"></a>
                         <div class="navblock-top-menu col-md-9 col-xs-10">
                             <div class="row">
-                                <a href="{{ path('roots') }}" class="navlink-top-menu col-md-1 col-xs-1" title="Arbre"><i class="icofont icofont-tree"></i></a>
+                                <a href="{{ path('roots') }}" class="navlink-top-menu col-md-2 col-xs-2" title="Arbre"><span class="icofont icofont-tree"></span><span class="text-top-menu">Arbre</span></a>
                                 <div class="dropdown dropdown-top-menu col-md-1 col-xs-1">
                                     <a href="#" class="dropdown-toggle navlink-top-menu col-md-12 col-xs-12" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></a>
                                     <ul class="dropdown-menu dropdown-menu-custom">
+                                        <li><a href="{{ path('roots') }}">Arbre</a></li>
                                         <li><a href="{{ path('project') }}">Projet</a></li>
+                                        <li><a href="{{ path('proposal_show', {'slug': 'constitution-de-la-dl'}) }}">Constitution</a></li>
                                         <li><a href="{{ path('global_room') }}">Grand salon</a></li>
-                                        <li><a href="#">Bibliothèque</a></li>
-                                        <li><a href="#">FAQ</a></li>
-                                        <li><a href="#">Contact</a></li>
-                                        <li><a href="#">Credits</a></li>
+                                        <!--<li><a href="#">Bibliothèque</a></li>-->
+                                        <!--<li><a href="#">FAQ</a></li>-->
+                                        <li><a href="{{ path('contact') }}">Contact</a></li>
+                                        <!--<li><a href="#">Credits</a></li>-->
                                     </ul>
                                 </div>
-
                                 {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
                                     {% if is_granted('ROLE_ADMIN') %}
-                                        <a class="col-md-1 col-md-offset-7 col-xs-1 col-xs-offset-6 navlink-top-menu" href="{{ path('admin_profile') }}">{{ app.user.username }}</a>
+                                        <a class="col-md-2 col-md-offset-5 col-xs-2 col-xs-offset-5 navlink-top-menu" href="{{ path('admin_profile') }}">{{ app.user.username }}</a>
                                     {% else %}
-                                        <a class="col-md-1 col-md-offset-7 col-xs-1 col-xs-offset-6 navlink-top-menu" href="{{ path('profile') }}">{{ app.user.username }}</a>
+                                        <a class="col-md-2 col-md-offset-5 col-xs-2 col-xs-offset-5 navlink-top-menu" href="{{ path('profile') }}">{{ app.user.username }}</a>
                                     {% endif %}
-                                    <a class="col-md-1 col-xs-1 navlink-top-menu" href="{{ path('logout') }}" title="Déconnexion"><span class="glyphicon glyphicon-off"></span></a>
+                                    <a class="col-md-2 col-xs-2 navlink-top-menu" href="{{ path('logout') }}" title="Déconnexion"><span class="glyphicon glyphicon-off"></span><span class="text-top-menu">Déconnexion</span></a>
                                 {% else %}
-                                    <a class="col-md-1 col-md-offset-7 col-xs-1 col-xs-offset-6 navlink-top-menu" href="{{ path('register') }}" title="Inscription"><span class="glyphicon glyphicon-tasks"></span></a>
-                                    <a class="col-md-1 col-xs-1 navlink-top-menu" href="{{ path('login') }}" title="Connexion"><span class="glyphicon glyphicon-off"></span></a>
+                                <a class="col-md-2 col-md-offset-5 col-xs-2 col-xs-offset-5 navlink-top-menu" href="{{ path('register') }}" title="Inscription"><span class="glyphicon glyphicon-tasks"></span><span class="text-top-menu">Inscription</span></a>
+                                    <a class="col-md-2 col-xs-2 navlink-top-menu" href="{{ path('login') }}" title="Connexion"><span class="glyphicon glyphicon-off"></span><span class="text-top-menu">Connexion</span></a>
                                 {% endif %}
                             </div>
                         </div>
