@@ -88,12 +88,14 @@ class SecurityController extends Controller
         $user = $this->getUser();
 
         $numberOfUsers     = $this->getDoctrine()->getRepository('App:User')->count([]);
+        $users             = $this->getDoctrine()->getRepository(User::class)->findAll();
         $numberOfThemes    = $this->getDoctrine()->getRepository('App:Theme')->count([]);
         $numberOfProposals = $this->getDoctrine()->getRepository('App:Proposal')->count([]);
 
         return $this->render('App:Security:profile.html.twig', [
             'user'                => $user,
             'number_of_users'     => $numberOfUsers,
+            'users'               => $users,
             'number_of_themes'    => $numberOfThemes,
             'number_of_proposals' => $numberOfProposals,
         ]);
