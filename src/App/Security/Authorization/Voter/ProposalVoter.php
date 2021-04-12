@@ -15,6 +15,8 @@ class ProposalVoter extends Voter
     const SUPPORTER  = 'supporter';
     const OPPONENT   = 'opponent';
     const NEUTRAL    = 'neutral';
+    const PUBLISHED  = 'published';
+    const REMOVED    = 'removed';
 
     private $decisionManager;
 
@@ -30,7 +32,9 @@ class ProposalVoter extends Voter
             self::AUTHOR,
             self::SUPPORTER,
             self::OPPONENT,
-            self::NEUTRAL
+            self::NEUTRAL,
+            self::PUBLISHED,
+            self::REMOVED
         ])) {
             return false;
         }
@@ -63,6 +67,10 @@ class ProposalVoter extends Voter
                 return $this->isOpponent($proposal, $user);
             case self::NEUTRAL:
                 return $this->isNeutral($proposal, $user);
+            case self::PUBLISHED:
+                return $this->isPublished($proposal);
+            case self::REMOVED:
+                return $this->isRemoved($proposal);
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -99,5 +107,15 @@ class ProposalVoter extends Voter
     private function isNeutral($proposal, $user)
     {
         return !$this->isSupporter($proposal, $user) and !$this->isOpponent($proposal, $user);
+    }
+
+    private function isPublished($proposal)
+    {
+        return $proposal->getStatus() == $proposal::PUBLISHED;
+    }
+
+    private function isRemoved($proposal)
+    {
+        return $proposal->getStatus() == $proposal::REMOVED;
     }
 }

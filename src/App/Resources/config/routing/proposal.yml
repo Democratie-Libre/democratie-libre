@@ -33,3 +33,7 @@ proposal_move:
 proposal_delete:
     path: /delete/{slug}
     defaults: { _controller: 'App:Proposal:delete' }
+
+proposal_remove:
+    path: /remove/{slug}
+    defaults: { _controller: 'App:Proposal:remove' }

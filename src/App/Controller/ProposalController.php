@@ -20,7 +20,13 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
-        return $this->render('App:Proposal:show_proposal.html.twig', [
+        if ($proposal->getStatus() === $proposal::PUBLISHED) {
+            return $this->render('App:Proposal:show_proposal.html.twig', [
+                'proposal' => $proposal,
+            ]);
+        }
+
+        return $this->render('App:Proposal:show_removed_proposal.html.twig', [
             'proposal' => $proposal,
         ]);
     }
@@ -74,6 +80,7 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
+        $this->denyAccessUnlessGranted('published', $proposal);
         $this->denyAccessUnlessGranted('edit', $proposal);
 
         $form = $this->createForm(EditProposalType::class, $proposal);
@@ -111,6 +118,7 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
+        $this->denyAccessUnlessGranted('published', $proposal);
         $this->denyAccessUnlessGranted('neutral', $proposal);
 
         $proposal->addSupporter($this->getUser());
@@ -135,6 +143,7 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
+        $this->denyAccessUnlessGranted('published', $proposal);
         $this->denyAccessUnlessGranted('supporter', $proposal);
 
         $proposal->removeSupporter($this->getUser());
@@ -159,6 +168,7 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
+        $this->denyAccessUnlessGranted('published', $proposal);
         $this->denyAccessUnlessGranted('neutral', $proposal);
 
         $proposal->addOpponent($this->getUser());
@@ -183,6 +193,7 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
+        $this->denyAccessUnlessGranted('published', $proposal);
         $this->denyAccessUnlessGranted('opponent', $proposal);
 
         $proposal->removeOpponent($this->getUser());
@@ -206,6 +217,8 @@ class ProposalController extends Controller
         if (null === $proposal) {
             throw $this->createNotFoundException();
         }
+
+        $this->denyAccessUnlessGranted('published', $proposal);
 
         $form = $this->createForm(SelectThemeType::class, null);
         $form->handleRequest($request);
@@ -246,8 +259,9 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $title     = $proposal->getTitle();
-        $themeSlug = $proposal->getTheme()->getSlug();
+        $this->denyAccessUnlessGranted('removed', $proposal);
+
+        $title = $proposal->getTitle();
 
         $em = $this->getDoctrine()->getManager();
         $em->remove($proposal);
@@ -255,8 +269,30 @@ class ProposalController extends Controller
 
         $this->get('session')->getFlashBag()->add('info', 'The proposal '.$title.' has been removed');
 
-        return $this->redirect($this->generateUrl('theme_show', [
-            'slug' => $themeSlug,
+        return $this->redirect($this->generateUrl('roots'));
+    }
+
+    /**
+     * @Security("has_role('ROLE_ADMIN')")
+     */
+    public function removeAction($slug)
+    {
+        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+
+        if (null === $proposal) {
+            throw $this->createNotFoundException();
+        }
+
+        $this->denyAccessUnlessGranted('published', $proposal);
+
+        $proposal->remove_from_tree();
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($proposal);
+        $em->flush();
+
+        return $this->redirect($this->generateUrl('proposal_show', [
+            'slug' => $slug,
         ]));
     }
 }

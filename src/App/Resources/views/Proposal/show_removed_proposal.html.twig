@@ -14,21 +14,11 @@
     </div>
     <div class="tab-content">
         <div id="motivation" class="tab-pane fade in active">
-            {% if is_granted('edit', proposal) %}
-                <div class="col-md-3 col-md-offset-9">
-                    <a href="{{ path('proposal_edit', {'slug': proposal.slug}) }}" class="btn btn-default custom-btn">Éditer la proposition</a>
-                </div>
-            {% endif %}
             <div class="proposal-motivation">
                 {{ proposal.motivation | markdown }}
             </div>
         </div>
         <div id="articles" class="tab-pane fade">
-            {% if is_granted('edit', proposal) %}
-                <div class="col-md-3 col-md-offset-9">
-                    <a href="{{ path('article_add', {'proposalSlug': proposal.slug}) }}" class="btn btn-default custom-btn">Ajouter un article</a>
-                </div>
-            {% endif %}
             <div class="proposal-articles">
                 {% for article in proposal.articles %}
                     <h4><a href="{{ path('article_show', {'slug': article.slug}) }}" class="article-link">Article {{ article.number }}<br>{{ article.title }}</a></h4>
@@ -43,9 +33,6 @@
             </div>
         </div>
         <div id="discussions" class="tab-pane fade">
-            <div class="col-md-3 col-md-offset-9">
-                <a href="{{ path('public_discussion_add_to_proposal', {'slug': proposal.slug}) }}" class="btn btn-default custom-btn">Ouvrir une discussion</a>
-            </div>
             <table class="table">
                 {% if not proposal.discussions is empty %}
                     <thead>
@@ -97,10 +84,7 @@
         {% if is_granted('ROLE_ADMIN') %}
             <div id="administration" class="tab-pane fade">
                 <div class="col-md-3 col-md-offset-9">
-                    <a href="{{ path('proposal_move', {'slug': proposal.slug}) }}" class="btn btn-default custom-admin-btn">Déplacer la proposition</a>
-                </div>
-                <div class="col-md-3 col-md-offset-9">
-                    <a href="{{ path('proposal_remove', {'slug': proposal.slug}) }}" class="btn btn-default custom-admin-btn">Retirer la proposition</a>
+                    <a href="{{ path('proposal_delete', {'slug': proposal.slug}) }}" class="btn btn-default custom-admin-btn">Supprimer la proposition</a>
                 </div>
             </div>
         {% endif %}

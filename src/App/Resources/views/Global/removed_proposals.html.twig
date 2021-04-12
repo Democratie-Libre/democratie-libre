@@ -1,0 +1,25 @@
+{% extends '::layout.html.twig' %}
+
+{% block content %}
+    <div class="section-header row">
+        <div class="section-header-image col-md-3 col-xs-3">
+            <img src="{{ asset('img/cloud_128.png') }}">
+        </div>
+        <div class="section-header-title col-md-6 col-xs-6">
+            <div class="project-title">Propositions retirées</div>
+        </div>
+    </div>
+    <div class="row margin-auto project-paragraph">
+        <p>Les propositions archivées ici ont été retirées de l'arbre des thématiques soit par l'administration du site, soit par l'auteur de la proposition.</p>
+    </div>
+    <div class="subsection-content col-md-10 col-xs-10">
+        {% for proposal in removed_proposals %}
+            <a href="{{ path('proposal_show', {'slug': proposal.slug}) }}" class="subsection-panel col-md-12 col-xs-12">
+                <div class="subsection-panel-heading">
+                    <div class="subsection-panel-title">{{ proposal.title }}</div>
+                </div>
+                <div class="subsection-panel-body">{{ proposal.abstract }}</div>
+            </a>
+        {% endfor %}
+    </div>
+{% endblock content %}

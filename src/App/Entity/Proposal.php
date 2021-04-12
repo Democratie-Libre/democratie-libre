@@ -15,6 +15,9 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Proposal
 {
+    const PUBLISHED = 'published';
+    const REMOVED   = 'removed';
+
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
@@ -27,6 +30,11 @@ class Proposal
      * @ORM\Column(length=128, unique=true)
      */
     private $slug;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $status;
 
     /**
      * @ORM\Column(type="string")
@@ -130,6 +138,7 @@ class Proposal
 
     public function __construct()
     {
+        $this->status        = $this::PUBLISHED;
         $this->creationDate  = new \DateTime();
         $this->articles      = new ArrayCollection();
         $this->versionNumber = 1;
@@ -148,6 +157,18 @@ class Proposal
     public function getSlug()
     {
         return $this->slug;
+    }
+
+    public function setStatus($status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getStatus()
+    {
+        return $this->status;
     }
 
     public function setTitle($title)
@@ -383,5 +404,12 @@ class Proposal
     public function getDiscussions()
     {
         return $this->discussions;
+    }
+
+    public function remove_from_tree()
+    {
+        $this->theme->removeProposal($this);
+        $this->theme = null;
+        $this->setStatus($this::REMOVED);
     }
 }
