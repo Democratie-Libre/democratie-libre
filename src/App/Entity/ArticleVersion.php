@@ -39,8 +39,7 @@ class ArticleVersion
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\Length(
-     *      min = "2",
-     *      max = "255"
+     *      max = 100,
      * )
      */
     private $title;
