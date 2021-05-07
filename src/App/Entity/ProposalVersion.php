@@ -33,7 +33,6 @@ class ProposalVersion
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
      * @Assert\Length(
      *      max = 100,
      * )
@@ -84,7 +83,6 @@ class ProposalVersion
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
      * @Assert\Length(
      *      max = 100,
      * )
