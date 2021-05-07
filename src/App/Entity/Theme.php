@@ -34,7 +34,7 @@ class Theme
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
      * @Assert\Length(
-     *      max = 40,
+     *      max = 100,
      * )
      */
     private $title;

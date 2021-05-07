@@ -35,7 +35,7 @@ class AbstractDiscussion
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
      * @Assert\Length(
-     *      max = 120,
+     *      max = 100,
      * )
      */
     protected $title;

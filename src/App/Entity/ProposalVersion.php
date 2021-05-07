@@ -33,6 +33,7 @@ class ProposalVersion
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      * @Assert\Length(
      *      max = 100,
      * )
@@ -83,9 +84,9 @@ class ProposalVersion
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      * @Assert\Length(
-     *      min = "2",
-     *      max = "255"
+     *      max = 100,
      * )
      */
     private $themeTitle;
