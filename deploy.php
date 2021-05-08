@@ -1,10 +1,14 @@
 <?php
 namespace Deployer;
 
+use Deployer\Task\Context;
+
 require 'recipe/symfony3.php';
 require 'recipe/cachetool.php';
 
 inventory('hosts.yml');
+
+set('dev', true);
 
 // Project name
 set('application', 'dL');
@@ -49,11 +53,19 @@ task('build', function () {
     run('cd {{release_path}} && build');
 });
 
-task('deploy:vendors', function () {
+set('symfony_env', get('dev') === true ? 'dev' : 'prod');
+
+set('clear_paths', get('dev') === true ? [] : ['app/cache', 'app/logs']);
+
+$additionalComposerParameters = get('dev') !== true ? ' --no-dev' : '';
+
+task('deploy:vendors', function () use ($additionalComposerParameters) {
     if (!commandExist('unzip')) {
         writeln('<comment>To speed up composer installation setup "unzip" command with PHP zip extension https://goo.gl/sxzFcD</comment>');
     }
-    $opts = '{{composer_action}} --verbose --prefer-dist --no-progress --no-dev --optimize-autoloader';
+    $opts = '{{composer_action}} --verbose --prefer-dist --no-progress --optimize-autoloader';
+    $opts .= $additionalComposerParameters;
+
     run('cd {{release_path}} && {{bin/composer}} '.$opts.'', ['tty' => true]);
 });
 
