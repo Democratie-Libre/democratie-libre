@@ -68,13 +68,11 @@ class ArticleVersion
 
     /**
      * @ORM\ManyToOne(targetEntity="Article", inversedBy="versioning")
-     * @Assert\Valid()
      */
     private $recordedArticle;
 
     /**
      * @ORM\ManyToMany(targetEntity="ProposalVersion", mappedBy="articleVersions")
-     * @Assert\Valid()
      */
     private $proposalVersions;
 

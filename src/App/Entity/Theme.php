@@ -88,20 +88,17 @@ class Theme
      * @Gedmo\TreeParent
      * @ORM\ManyToOne(targetEntity="Theme", inversedBy="children")
      * @ORM\JoinColumn(name="theme_parent_id", referencedColumnName="id", onDelete="CASCADE")
-     * @Assert\Valid()
      */
     private $parent;
 
     /**
      * @ORM\OneToMany(targetEntity="Theme", mappedBy="parent")
      * @ORM\OrderBy({"lft" = "ASC"})
-     * @Assert\Valid()
      */
     private $children;
 
     /**
      * @ORM\OneToMany(targetEntity="Proposal", mappedBy="theme")
-     * @Assert\Valid()
      */
     private $proposals;
 
@@ -131,7 +128,6 @@ class Theme
 
     /**
      * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="theme", cascade={"persist", "remove"})
-     * @Assert\Valid()
      */
     private $discussions;
 

@@ -72,20 +72,17 @@ class Article
 
     /**
      * @ORM\ManyToOne(targetEntity="Proposal", inversedBy="articles", cascade={"persist"})
-     * @Assert\Valid()
      */
     private $proposal;
 
     /**
      * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="article", cascade={"remove"})
-     * @Assert\Valid()
      */
     private $discussions;
 
     /**
      * @ORM\OneToMany(targetEntity="ArticleVersion", mappedBy="recordedArticle", cascade={"persist", "remove"})
      * @ORM\OrderBy({"versionNumber" = "DESC"})
-     * @Assert\Valid()
      */
     private $versioning;
 

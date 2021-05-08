@@ -62,14 +62,12 @@ class AbstractDiscussion
 
     /**
      * @ORM\OneToMany(targetEntity="Post", mappedBy="discussion", cascade={"persist", "remove"})
-     * @Assert\Valid()
      */
     protected $posts;
 
     /**
      * @ORM\ManyToMany(targetEntity="User", inversedBy="unreadDiscussions", cascade={"persist"})
      * @ORM\JoinTable(name="discussions_unreaders")
-     * @Assert\Valid()
      */
     protected $unreaders;
 
