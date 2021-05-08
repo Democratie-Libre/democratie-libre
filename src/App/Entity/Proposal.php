@@ -31,6 +31,7 @@ class Proposal
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
+     * @Assert\Regex("/^\w+/")
      * @Assert\Length(
      *      max = 100,
      * )

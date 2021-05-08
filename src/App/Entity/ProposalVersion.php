@@ -33,6 +33,7 @@ class ProposalVersion
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Regex("/^\w+/")
      * @Assert\Length(
      *      max = 100,
      * )
@@ -83,6 +84,7 @@ class ProposalVersion
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Regex("/^\w+/")
      * @Assert\Length(
      *      max = 100,
      * )

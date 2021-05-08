@@ -36,6 +36,7 @@ class Article
     /**
      * @ORM\Column(type="string", unique=true)
      * @Assert\NotBlank()
+     * @Assert\Regex("/^\w+/")
      * @Assert\Length(
      *      max = 100,
      * )

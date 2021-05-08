@@ -9,6 +9,8 @@
   'Titre'
 'Your title must not exceed 40 characters':
   'Votre titre ne doit pas dépacer 40 caractères'
+'Your title must not exceed 100 characters':
+  'Votre titre ne doit pas dépacer 100 caractères'
 'Your abstract must not exceed 400 characters':
   'Votre résumé ne doit pas dépacer 400 caractères'
 'Abstract':
