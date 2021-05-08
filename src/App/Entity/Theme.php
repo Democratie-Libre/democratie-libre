@@ -33,7 +33,7 @@ class Theme
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
-     * @Assert\Regex("/^\w+/")
+     * @Assert\Regex("/^[\p{L}-]+/")
      * @Assert\Length(
      *      max = 100,
      * )
