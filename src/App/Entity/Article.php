@@ -34,7 +34,7 @@ class Article
     private $number;
 
     /**
-     * @ORM\Column(type="string", unique=true)
+     * @ORM\Column(type="string")
      * @Assert\NotBlank()
      * @Assert\Regex("/^\w+/")
      * @Assert\Length(
