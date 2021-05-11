@@ -31,7 +31,7 @@ class Proposal
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
-     * @Assert\Regex("/^[\p{L}-]+/")
+     * @Assert\Regex("/[a-zA-Z0-9]+/")
      * @Assert\Length(
      *      max = 100,
      * )

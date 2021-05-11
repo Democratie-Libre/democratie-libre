@@ -33,7 +33,7 @@ class ProposalVersion
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\Regex("/^[\p{L}-]+/")
+     * @Assert\Regex("/[a-zA-Z0-9]+/")
      * @Assert\Length(
      *      max = 100,
      * )
