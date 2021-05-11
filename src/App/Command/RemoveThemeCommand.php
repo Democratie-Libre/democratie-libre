@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Theme;
 
 /**
- * A console command that removes safely a theme from the database. 
+ * A console command that removes safely a theme from the database.
  *
  * To use this command, open a terminal window, enter into your project
  * directory and execute the following:
