@@ -8,7 +8,7 @@ require 'recipe/cachetool.php';
 
 inventory('hosts.yml');
 
-set('dev', true);
+set('dev', false);
 
 // Project name
 set('application', 'dL');
