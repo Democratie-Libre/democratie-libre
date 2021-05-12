@@ -34,8 +34,9 @@ class AbstractDiscussion
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
+     * @Assert\Regex("/[a-zA-Z0-9]+/")
      * @Assert\Length(
-     *      max = 120,
+     *      max = 100,
      * )
      */
     protected $title;
@@ -61,14 +62,12 @@ class AbstractDiscussion
 
     /**
      * @ORM\OneToMany(targetEntity="Post", mappedBy="discussion", cascade={"persist", "remove"})
-     * @Assert\Valid()
      */
     protected $posts;
 
     /**
      * @ORM\ManyToMany(targetEntity="User", inversedBy="unreadDiscussions", cascade={"persist"})
      * @ORM\JoinTable(name="discussions_unreaders")
-     * @Assert\Valid()
      */
     protected $unreaders;
 
