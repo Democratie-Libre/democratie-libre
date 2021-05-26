@@ -13,14 +13,12 @@ class PrivateDiscussion extends AbstractDiscussion
 {
     /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="adminDiscussions", cascade={"persist"})
-     * @Assert\Valid()
      */
     private $admin;
 
     /**
      * @ORM\ManyToMany(targetEntity="User", inversedBy="privateDiscussions", cascade={"persist"})
      * @ORM\JoinTable(name="private_discussions_members")
-     * @Assert\Valid()
      */
     private $members;
 
