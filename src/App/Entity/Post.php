@@ -31,13 +31,11 @@ class Post
 
     /**
      * @ORM\ManyToOne(targetEntity="AbstractDiscussion", inversedBy="posts")
-     * @Assert\Valid()
      */
     private $discussion;
 
     /**
      * @ORM\ManyToOne(targetEntity="User")
-     * @Assert\Valid()
      */
     private $author;
 

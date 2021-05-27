@@ -24,26 +24,22 @@ class PublicDiscussion extends AbstractDiscussion
 
     /**
      * @ORM\ManyToOne(targetEntity="Theme", inversedBy="discussions", cascade={"persist"})
-     * @Assert\Valid()
      */
     private $theme;
 
     /**
      * @ORM\ManyToOne(targetEntity="Proposal", inversedBy="discussions", cascade={"persist"})
-     * @Assert\Valid()
      */
     private $proposal;
 
     /**
      * @ORM\ManyToOne(targetEntity="Article", inversedBy="discussions", cascade={"persist"})
-     * @Assert\Valid()
      */
     private $article;
 
     /**
      * @ORM\ManyToMany(targetEntity="User", inversedBy="followedDiscussions", cascade={"persist"})
      * @ORM\JoinTable(name="public_discussions_followers")
-     * @Assert\Valid()
      */
     private $followers;
 

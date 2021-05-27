@@ -33,9 +33,9 @@ class ProposalVersion
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Regex("/[a-zA-Z0-9]+/")
      * @Assert\Length(
-     *      min = "2",
-     *      max = "255"
+     *      max = 100,
      * )
      */
     private $title;
@@ -62,7 +62,6 @@ class ProposalVersion
 
     /**
      * @ORM\ManyToMany(targetEntity="ArticleVersion", inversedBy="proposalVersions")
-     * @Assert\Valid()
      */
     private $articleVersions;
 
@@ -78,36 +77,31 @@ class ProposalVersion
 
     /**
      * @ORM\ManyToOne(targetEntity="Proposal", inversedBy="versioning")
-     * @Assert\Valid()
      */
     private $recordedProposal;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\Length(
-     *      min = "2",
-     *      max = "255"
+     *      max = 100,
      * )
      */
     private $themeTitle;
 
     /**
      * @ORM\ManyToOne(targetEntity="User")
-     * @Assert\Valid()
      */
     private $author;
 
     /**
      * @ORM\ManyToMany(targetEntity="User")
      * @ORM\JoinTable(name="proposalVersions_supporters")
-     * @Assert\Valid()
      */
     private $supporters;
 
     /**
      * @ORM\ManyToMany(targetEntity="User")
      * @ORM\JoinTable(name="proposalVersions_opponents")
-     * @Assert\Valid()
      */
     private $opponents;
 

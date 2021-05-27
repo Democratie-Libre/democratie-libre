@@ -38,9 +38,9 @@ class ArticleVersion
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Regex("/[a-zA-Z0-9]+/")
      * @Assert\Length(
-     *      min = "2",
-     *      max = "255"
+     *      max = 100,
      * )
      */
     private $title;
@@ -68,13 +68,11 @@ class ArticleVersion
 
     /**
      * @ORM\ManyToOne(targetEntity="Article", inversedBy="versioning")
-     * @Assert\Valid()
      */
     private $recordedArticle;
 
     /**
      * @ORM\ManyToMany(targetEntity="ProposalVersion", mappedBy="articleVersions")
-     * @Assert\Valid()
      */
     private $proposalVersions;
 

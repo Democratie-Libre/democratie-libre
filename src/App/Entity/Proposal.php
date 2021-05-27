@@ -49,6 +49,7 @@ class Proposal
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
+     * @Assert\Regex("/[a-zA-Z0-9]+/")
      * @Assert\Length(
      *      max = 100,
      * )
@@ -84,7 +85,6 @@ class Proposal
     /**
      * @ORM\OneToMany(targetEntity="Article", mappedBy="proposal", cascade={"persist", "remove"})
      * @ORM\OrderBy({"number" = "ASC"})
-     * @Assert\Valid()
      */
     private $articles;
 
@@ -103,7 +103,6 @@ class Proposal
 
     /**
      * @ORM\ManyToOne(targetEntity="Theme", inversedBy="proposals", cascade={"persist"})
-     * @Assert\Valid()
      */
     private $theme;
 
@@ -111,7 +110,6 @@ class Proposal
      * The author is initially the creator of the proposal.
      *
      * @ORM\ManyToOne(targetEntity="User", inversedBy="proposals", cascade={"persist"})
-     * @Assert\Valid()
      */
     private $author;
 
@@ -120,7 +118,6 @@ class Proposal
      *
      * @ORM\ManyToMany(targetEntity="User", inversedBy="supportedProposals", cascade={"persist"})
      * @ORM\JoinTable(name="proposals_supporters")
-     * @Assert\Valid()
      */
     private $supporters;
 
@@ -129,20 +126,17 @@ class Proposal
      *
      * @ORM\ManyToMany(targetEntity="User", inversedBy="opposedProposals", cascade={"persist"})
      * @ORM\JoinTable(name="proposals_opposents")
-     * @Assert\Valid()
      */
     private $opponents;
 
     /**
      * @ORM\OneToMany(targetEntity="ProposalVersion", mappedBy="recordedProposal", cascade={"persist", "remove"})
      * @ORM\OrderBy({"versionNumber" = "DESC"})
-     * @Assert\Valid()
      */
     private $versioning;
 
     /**
      * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="proposal", cascade={"persist", "remove"})
-     * @Assert\Valid()
      */
     private $discussions;
 

@@ -84,7 +84,6 @@ class User implements UserInterface, \Serializable, HasPassword
 
     /**
      * @ORM\OneToMany(targetEntity="Proposal", mappedBy="author")
-     * @Assert\Valid()
      */
     private $proposals;
 
@@ -92,7 +91,6 @@ class User implements UserInterface, \Serializable, HasPassword
      * The user claims his support to these proposals.
      *
      * @ORM\ManyToMany(targetEntity="Proposal", mappedBy="supporters", cascade={"persist"})
-     * @Assert\Valid()
      */
     private $supportedProposals;
 
@@ -100,31 +98,26 @@ class User implements UserInterface, \Serializable, HasPassword
      * The user claims his opposition to these proposals.
      *
      * @ORM\ManyToMany(targetEntity="Proposal", mappedBy="opponents", cascade={"persist"})
-     * @Assert\Valid()
      */
     private $opposedProposals;
 
     /**
      * @ORM\OneToMany(targetEntity="PrivateDiscussion", mappedBy="admin")
-     * @Assert\Valid()
      */
     private $adminDiscussions;
 
     /**
      * @ORM\ManyToMany(targetEntity="PrivateDiscussion", mappedBy="members", cascade={"persist"})
-     * @Assert\Valid()
      */
     private $privateDiscussions;
 
     /**
      * @ORM\ManyToMany(targetEntity="PublicDiscussion", mappedBy="followers", cascade={"persist"})
-     * @Assert\Valid()
      */
     private $followedDiscussions;
 
     /**
      * @ORM\ManyToMany(targetEntity="AbstractDiscussion", mappedBy="unreaders", cascade={"persist"})
-     * @Assert\Valid()
      */
     private $unreadDiscussions;
 
