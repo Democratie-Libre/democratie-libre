@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use App\Entity\Proposal;
 use App\Form\Proposal\EditProposalType;
+use App\Form\Proposal\LockProposalType;
 use App\Form\SelectThemeType;
 
 class ProposalController extends Controller
@@ -26,7 +27,7 @@ class ProposalController extends Controller
             ]);
         }
 
-        return $this->render('App:Proposal:show_removed_proposal.html.twig', [
+        return $this->render('App:Proposal:show_locked_proposal.html.twig', [
             'proposal' => $proposal,
         ]);
     }
@@ -275,7 +276,7 @@ class ProposalController extends Controller
     /**
      * @Security("has_role('ROLE_ADMIN')")
      */
-    public function removeAction($slug)
+    public function lockAction(Request $request, $slug)
     {
         $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
 
@@ -285,14 +286,24 @@ class ProposalController extends Controller
 
         $this->denyAccessUnlessGranted('published', $proposal);
 
-        $proposal->remove_from_tree();
+        $form = $this->createForm(LockProposalType::class, $proposal);
+        $form->handleRequest($request);
 
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($proposal);
-        $em->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $proposal->setStatus($proposal::LOCKED);
 
-        return $this->redirect($this->generateUrl('proposal_show', [
-            'slug' => $slug,
-        ]));
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($proposal);
+            $em->flush();
+
+            return $this->redirect($this->generateUrl('proposal_show', [
+                'slug' => $slug,
+            ]));
+        }
+
+        return $this->render('App:Proposal:lock_proposal.html.twig', [
+            'proposal' => $proposal,
+            'form'     => $form->createView(),
+        ]);
     }
 }

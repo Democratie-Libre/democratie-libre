@@ -50,6 +50,7 @@ class PublicDiscussion extends AbstractDiscussion
     protected function __construct()
     {
         parent::__construct();
+        $this->status    = $this::PUBLISHED;
         $this->followers = new ArrayCollection();
     }
 

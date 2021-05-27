@@ -2,21 +2,19 @@
 
 {% block content %}
     <div class="section-header row">
-        {% if is_granted('published', proposal) %}
-            <div class="section-path row">
-                <ul>
-                    <li><a href="{{ path('roots') }}">Arbre</a></li>
-                    {% for parent in proposal.theme.parents %}
-                        <li>></li>
-                        <li><a href="{{ path('theme_show', {'slug': parent.slug}) }}">{{ parent.title }}</a></li>
-                    {% endfor %}
+        <div class="section-path row">
+            <ul>
+                <li><a href="{{ path('roots') }}">Arbre</a></li>
+                {% for parent in proposal.theme.parents %}
                     <li>></li>
-                    <li><a href="{{ path('theme_show', {'slug': proposal.theme.slug}) }}">{{ proposal.theme.title }}</a></li>
-                    <li>></li>
-                    <li><a href="{{ path('proposal_show', {'slug': proposal.slug}) }}">{{ proposal.title }}</a></li>
-                </ul>
-            </div>
-        {% endif %}
+                    <li><a href="{{ path('theme_show', {'slug': parent.slug}) }}">{{ parent.title }}</a></li>
+                {% endfor %}
+                <li>></li>
+                <li><a href="{{ path('theme_show', {'slug': proposal.theme.slug}) }}">{{ proposal.theme.title }}</a></li>
+                <li>></li>
+                <li><a href="{{ path('proposal_show', {'slug': proposal.slug}) }}">{{ proposal.title }}</a></li>
+            </ul>
+        </div>
         {% if is_granted('ROLE_USER') and is_granted('published', proposal) %}
             <div class="section-header-menu col-md-12 col-xs-12">
                 {% if is_granted('neutral', proposal) %}
@@ -44,9 +42,10 @@
             <div class="proposal-title">
                 {{ proposal.title }}
             </div>
-            {% if is_granted('removed', proposal) %}
+            {% if is_granted('locked', proposal) %}
                 <div>
-                    CETTE PROPOSITION A ÉTÉ RETIRÉE DE L'ARBRE
+                    CETTE PROPOSITION EST VÉROUILLÉE
+                    {{ proposal.lockingExplanation }}
                 </div>
             {% endif %}
             <div>

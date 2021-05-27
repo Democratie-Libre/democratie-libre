@@ -19,7 +19,13 @@ class ArticleController extends Controller
             throw $this->createNotFoundException();
         }
 
-        return $this->render('App:Article:show_article.html.twig', [
+        if ($article->getStatus() === $article::PUBLISHED) {
+            return $this->render('App:Article:show_article.html.twig', [
+                'article' => $article,
+            ]);
+        }
+
+        return $this->render('App:Article:show_removed_article.html.twig', [
             'article' => $article,
         ]);
     }
@@ -72,6 +78,7 @@ class ArticleController extends Controller
             throw $this->createNotFoundException();
         }
 
+        $this->denyAccessUnlessGranted('published', $article);
         $this->denyAccessUnlessGranted('edit', $article);
 
         $form = $this->createForm(EditArticleType::class, $article);
@@ -116,6 +123,7 @@ class ArticleController extends Controller
             throw $this->createNotFoundException();
         }
 
+        $this->denyAccessUnlessGranted('published', $article);
         $this->denyAccessUnlessGranted('delete', $article);
 
         $proposal = $article->getProposal();

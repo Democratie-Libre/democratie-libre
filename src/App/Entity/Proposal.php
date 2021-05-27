@@ -16,7 +16,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Proposal
 {
     const PUBLISHED = 'published';
-    const REMOVED   = 'removed';
+    const LOCKED    = 'locked';
 
     /**
      * @ORM\Column(type="integer")
@@ -35,6 +35,16 @@ class Proposal
      * @ORM\Column(type="string", length=255)
      */
     private $status;
+
+    /**
+     * If the proposal has been locked, it should be justified here.
+     *
+     * @ORM\Column(type="text", nullable=true)
+     * @Assert\Length(
+     *      max = 400,
+     * )
+     */
+    private $lockingExplanation;
 
     /**
      * @ORM\Column(type="string")
@@ -72,7 +82,7 @@ class Proposal
     private $motivation;
 
     /**
-     * @ORM\OneToMany(targetEntity="Article", mappedBy="proposal", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="Article", mappedBy="proposal", cascade={"persist", "remove"})
      * @ORM\OrderBy({"number" = "ASC"})
      * @Assert\Valid()
      */
@@ -131,22 +141,23 @@ class Proposal
     private $versioning;
 
     /**
-     * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="proposal", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="proposal", cascade={"persist", "remove"})
      * @Assert\Valid()
      */
     private $discussions;
 
     public function __construct()
     {
-        $this->status        = $this::PUBLISHED;
-        $this->creationDate  = new \DateTime();
-        $this->articles      = new ArrayCollection();
-        $this->versionNumber = 1;
-        $this->isAWiki       = false;
-        $this->supporters    = new ArrayCollection();
-        $this->opponents     = new ArrayCollection();
-        $this->versioning    = new ArrayCollection();
-        $this->discussions   = new ArrayCollection();
+        $this->status              = $this::PUBLISHED;
+        $this->lockingExplanation  = null;
+        $this->creationDate        = new \DateTime();
+        $this->articles            = new ArrayCollection();
+        $this->versionNumber       = 1;
+        $this->isAWiki             = false;
+        $this->supporters          = new ArrayCollection();
+        $this->opponents           = new ArrayCollection();
+        $this->versioning          = new ArrayCollection();
+        $this->discussions         = new ArrayCollection();
     }
 
     public function getId()
@@ -169,6 +180,18 @@ class Proposal
     public function getStatus()
     {
         return $this->status;
+    }
+
+    public function setLockingExplanation($lockingExplanation)
+    {
+        $this->lockingExplanation = $lockingExplanation;
+
+        return $this;
+    }
+
+    public function getLockingExplanation()
+    {
+        return $this->lockingExplanation;
     }
 
     public function setTitle($title)
@@ -404,12 +427,5 @@ class Proposal
     public function getDiscussions()
     {
         return $this->discussions;
-    }
-
-    public function remove_from_tree()
-    {
-        $this->theme->removeProposal($this);
-        $this->theme = null;
-        $this->setStatus($this::REMOVED);
     }
 }

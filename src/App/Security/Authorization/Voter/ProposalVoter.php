@@ -16,7 +16,7 @@ class ProposalVoter extends Voter
     const OPPONENT   = 'opponent';
     const NEUTRAL    = 'neutral';
     const PUBLISHED  = 'published';
-    const REMOVED    = 'removed';
+    const LOCKED     = 'locked';
 
     private $decisionManager;
 
@@ -34,7 +34,7 @@ class ProposalVoter extends Voter
             self::OPPONENT,
             self::NEUTRAL,
             self::PUBLISHED,
-            self::REMOVED
+            self::LOCKED
         ])) {
             return false;
         }
@@ -69,8 +69,8 @@ class ProposalVoter extends Voter
                 return $this->isNeutral($proposal, $user);
             case self::PUBLISHED:
                 return $this->isPublished($proposal);
-            case self::REMOVED:
-                return $this->isRemoved($proposal);
+            case self::LOCKED:
+                return $this->isLocked($proposal);
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -114,8 +114,8 @@ class ProposalVoter extends Voter
         return $proposal->getStatus() == $proposal::PUBLISHED;
     }
 
-    private function isRemoved($proposal)
+    private function isLocked($proposal)
     {
-        return $proposal->getStatus() == $proposal::REMOVED;
+        return $proposal->getStatus() == $proposal::LOCKED;
     }
 }

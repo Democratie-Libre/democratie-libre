@@ -90,6 +90,7 @@ class Article
 
     public function __construct()
     {
+        $this->status        = $this::PUBLISHED;
         $this->creationDate  = new \DateTime();
         $this->versionNumber = 1;
         $this->discussions   = new ArrayCollection();

@@ -1,0 +1,21 @@
+{% extends 'Discussion/layout_public_discussion.html.twig' %}
+
+{% block page_content %}
+    <div class="section-content">
+        {% for post in discussion.posts %}
+            <div class="post">
+                <div class="post-header row">
+                    <span class="post-author col-md-2 col-md-offset-1 col-xs-2 col-xs-offset-1">{{ post.author }}</span>
+                    <span class="col-md-2 col-md-offset-6 col-xs-2 col-xs-offset-6">{{ post.date|date('d/m/Y H:i') }}</span>
+                </div>
+                <div class="post-content">
+                    {{ post.content | markdown }}
+                </div>
+            </div>
+        {% else %}
+            <div>
+                La discussion n'a pas encore débuté !
+            </div>
+        {% endfor %}
+    </div>
+{% endblock page_content %}

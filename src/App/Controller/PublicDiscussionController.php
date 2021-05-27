@@ -24,6 +24,12 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
+        if ($discussion->getStatus() === $discussion::REMOVED) {
+            return $this->render('App:Discussion:show_removed_public_discussion.html.twig', [
+                'discussion' => $discussion,
+            ]);
+        }
+
         $user = $this->getUser();
 
         if (!$user instanceof UserInterface) {
@@ -204,6 +210,8 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
+        $this->denyAccessUnlessGranted('published', $discussion);
+
         $form = $this->createForm(EditDiscussionType::class, $discussion);
         $form->handleRequest($request);
 
@@ -233,6 +241,8 @@ class PublicDiscussionController extends Controller
         if (null === $discussion) {
             throw $this->createNotFoundException();
         }
+
+        $this->denyAccessUnlessGranted('published', $discussion);
 
         $em = $this->getDoctrine()->getManager();
 
@@ -287,6 +297,8 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
+        $this->denyAccessUnlessGranted('published', $discussion);
+
         $discussion->moveAs(PublicDiscussion::GLOBAL_DISCUSSION);
         $em = $this->getDoctrine()->getManager();
         $em->persist($discussion);
@@ -309,6 +321,8 @@ class PublicDiscussionController extends Controller
         if (null === $discussion) {
             throw $this->createNotFoundException();
         }
+
+        $this->denyAccessUnlessGranted('published', $discussion);
 
         $form = $this->createForm(SelectThemeType::class, null);
         $form->handleRequest($request);
@@ -344,11 +358,14 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
+        $this->denyAccessUnlessGranted('published', $discussion);
+
         $form = $this->createForm(SelectProposalType::class, null);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $hostProposal = $form->get('proposal')->getData();
+            $this->denyAccessUnlessGranted('published', $hostProposal);
             $discussion->moveAs(PublicDiscussion::PROPOSAL_DISCUSSION, $hostProposal);
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
@@ -378,11 +395,14 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
+        $this->denyAccessUnlessGranted('published', $discussion);
+
         $form = $this->createForm(SelectArticleType::class, null);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $hostArticle = $form->get('article')->getData();
+            $this->denyAccessUnlessGranted('published', $hostArticle);
             $discussion->moveAs(PublicDiscussion::ARTICLE_DISCUSSION, $hostArticle);
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
@@ -412,6 +432,8 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
+        $this->denyAccessUnlessGranted('published', $discussion);
+
         $discussion->setLocked(true);
         $em = $this->getDoctrine()->getManager();
         $em->persist($discussion);
@@ -434,6 +456,8 @@ class PublicDiscussionController extends Controller
         if (null === $discussion) {
             throw $this->createNotFoundException();
         }
+
+        $this->denyAccessUnlessGranted('published', $discussion);
 
         $discussion->setLocked(false);
         $em = $this->getDoctrine()->getManager();
@@ -458,6 +482,8 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
+        $this->denyAccessUnlessGranted('published', $discussion);
+
         $discussion->addFollower($this->getUser());
         $em = $this->getDoctrine()->getManager();
         $em->persist($discussion);
@@ -480,6 +506,8 @@ class PublicDiscussionController extends Controller
         if (null === $discussion) {
             throw $this->createNotFoundException();
         }
+
+        $this->denyAccessUnlessGranted('published', $discussion);
 
         $discussion->removeFollower($this->getUser());
         $em = $this->getDoctrine()->getManager();

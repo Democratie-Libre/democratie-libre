@@ -22,72 +22,81 @@
                     <li><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}">{{ discussion.title }}</a></li>
                 </ul>
             {% elseif discussion.type == 'proposal_discussion' %}
-                <ul>
-                    <li><a href="{{ path('roots') }}">Arbre</a></li>
-                    {% for parent in discussion.proposal.theme.parents %}
+                {% if is_granted('published', discussion) %}
+                    <ul>
+                        <li><a href="{{ path('roots') }}">Arbre</a></li>
+                        {% for parent in discussion.proposal.theme.parents %}
+                            <li>></li>
+                            <li><a href="{{ path('theme_show', {'slug': parent.slug}) }}">{{ parent.title }}</a></li>
+                        {% endfor %}
                         <li>></li>
-                        <li><a href="{{ path('theme_show', {'slug': parent.slug}) }}">{{ parent.title }}</a></li>
-                    {% endfor %}
-                    <li>></li>
-                    <li><a href="{{ path('theme_show', {'slug': discussion.proposal.theme.slug}) }}">{{ discussion.proposal.theme.title }}</a></li>
-                    <li>></li>
-                    <li><a href="{{ path('proposal_show', {'slug': discussion.proposal.slug}) }}">{{ discussion.proposal.title }}</a></li>
-                    <li>></li>
-                    <li><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}">{{ discussion.title }}</a></li>
-                </ul>
-            {% elseif discussion.type == 'article_discussion' %}
-                <ul>
-                    <li><a href="{{ path('roots') }}">Arbre</a></li>
-                    {% for parent in discussion.article.proposal.theme.parents %}
+                        <li><a href="{{ path('theme_show', {'slug': discussion.proposal.theme.slug}) }}">{{ discussion.proposal.theme.title }}</a></li>
                         <li>></li>
-                        <li><a href="{{ path('theme_show', {'slug': parent.slug}) }}">{{ parent.title }}</a></li>
-                    {% endfor %}
-                    <li>></li>
-                    <li><a href="{{ path('theme_show', {'slug': discussion.article.proposal.theme.slug}) }}">{{ discussion.article.proposal.theme.title }}</a></li>
-                    <li>></li>
-                    <li><a href="{{ path('proposal_show', {'slug': discussion.article.proposal.slug}) }}">{{ discussion.article.proposal.title }}</a></li>
-                    <li>></li>
-                    <li><a href="{{ path('article_show', {'slug': discussion.article.slug}) }}">article {{ discussion.article.number }}</a></li>
-                    <li>></li>
-                    <li><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}">{{ discussion.title }}</a></li>
-                </ul>
-            {% endif %}
-        </div>
-        <div class="section-header-menu col-md-12 col-xs-12">
-            {% if is_granted('ROLE_USER') %}
-                <div class="btn-group custom-btn-group ">
-                    <button class="dropdown-toggle btn btn-default" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
-                    <ul class="dropdown-menu pull-right">
-                        {% if is_granted('follow', discussion) %}
-                            <li><a href="{{ path('public_discussion_stop_following', {'slug': discussion.slug}) }}">Ne plus suivre cette discussion</a></li>
-                        {% else %}
-                            <li><a href="{{ path('public_discussion_follow', {'slug': discussion.slug}) }}">Suivre cette discussion</a></li>
-                        {% endif %}
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <li class="divider"></li>
-                            <li><a href="{{ path('public_discussion_edit', {'slug': discussion.slug}) }}">Éditer la discussion</a></li>
-                            {% if not discussion.globalDiscussion %}
-                                <li><a href="{{ path('public_discussion_move_to_global', {'slug': discussion.slug}) }}">Déplacer vers les discussions globales</a></li>
-                            {% endif %}
-                            <li><a href="{{ path('public_discussion_move_to_theme', {'slug': discussion.slug}) }}">Déplacer vers une thématique</a></li>
-                            <li><a href="{{ path('public_discussion_move_to_proposal', {'slug': discussion.slug}) }}">Déplacer vers une proposition</a></li>
-                            <li><a href="{{ path('public_discussion_move_to_article', {'slug': discussion.slug}) }}">Déplacer vers un article</a></li>
-                            <li class="divider"></li>
-                            {% if discussion.locked %}
-                                <li><a href="{{ path('public_discussion_unlock', {'slug': discussion.slug}) }}">Dévérouiller la discussion</a></li>
-                            {% else %}
-                                <li><a href="{{ path('public_discussion_lock', {'slug': discussion.slug}) }}">Vérouiller la discussion</a></li>
-                            {% endif %}
-                            <li><a href="{{ path('public_discussion_delete', {'slug': discussion.slug}) }}">Supprimer la discussion</a></li>
-                        {% endif %}
+                        <li><a href="{{ path('proposal_show', {'slug': discussion.proposal.slug}) }}">{{ discussion.proposal.title }}</a></li>
+                        <li>></li>
+                        <li><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}">{{ discussion.title }}</a></li>
                     </ul>
-                </div>
+                {% endif %}
+            {% elseif discussion.type == 'article_discussion' %}
+                {% if is_granted('published', discussion) %}
+                    <ul>
+                        <li><a href="{{ path('roots') }}">Arbre</a></li>
+                        {% for parent in discussion.article.proposal.theme.parents %}
+                            <li>></li>
+                            <li><a href="{{ path('theme_show', {'slug': parent.slug}) }}">{{ parent.title }}</a></li>
+                        {% endfor %}
+                        <li>></li>
+                        <li><a href="{{ path('theme_show', {'slug': discussion.article.proposal.theme.slug}) }}">{{ discussion.article.proposal.theme.title }}</a></li>
+                        <li>></li>
+                        <li><a href="{{ path('proposal_show', {'slug': discussion.article.proposal.slug}) }}">{{ discussion.article.proposal.title }}</a></li>
+                        <li>></li>
+                        <li><a href="{{ path('article_show', {'slug': discussion.article.slug}) }}">article {{ discussion.article.number }}</a></li>
+                        <li>></li>
+                        <li><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}">{{ discussion.title }}</a></li>
+                    </ul>
+                {% endif %}
             {% endif %}
         </div>
+        {% if is_granted('published', discussion) %}
+            <div class="section-header-menu col-md-12 col-xs-12">
+                {% if is_granted('ROLE_USER') %}
+                    <div class="btn-group custom-btn-group ">
+                        <button class="dropdown-toggle btn btn-default" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
+                        <ul class="dropdown-menu pull-right">
+                            {% if is_granted('follow', discussion) %}
+                                <li><a href="{{ path('public_discussion_stop_following', {'slug': discussion.slug}) }}">Ne plus suivre cette discussion</a></li>
+                            {% else %}
+                                <li><a href="{{ path('public_discussion_follow', {'slug': discussion.slug}) }}">Suivre cette discussion</a></li>
+                            {% endif %}
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <li class="divider"></li>
+                                <li><a href="{{ path('public_discussion_edit', {'slug': discussion.slug}) }}">Éditer la discussion</a></li>
+                                {% if not discussion.globalDiscussion %}
+                                    <li><a href="{{ path('public_discussion_move_to_global', {'slug': discussion.slug}) }}">Déplacer vers les discussions globales</a></li>
+                                {% endif %}
+                                <li><a href="{{ path('public_discussion_move_to_theme', {'slug': discussion.slug}) }}">Déplacer vers une thématique</a></li>
+                                <li><a href="{{ path('public_discussion_move_to_proposal', {'slug': discussion.slug}) }}">Déplacer vers une proposition</a></li>
+                                <li><a href="{{ path('public_discussion_move_to_article', {'slug': discussion.slug}) }}">Déplacer vers un article</a></li>
+                                <li class="divider"></li>
+                                {% if discussion.locked %}
+                                    <li><a href="{{ path('public_discussion_unlock', {'slug': discussion.slug}) }}">Dévérouiller la discussion</a></li>
+                                {% else %}
+                                    <li><a href="{{ path('public_discussion_lock', {'slug': discussion.slug}) }}">Vérouiller la discussion</a></li>
+                                {% endif %}
+                                <li><a href="{{ path('public_discussion_delete', {'slug': discussion.slug}) }}">Supprimer la discussion</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
         <div class="section-header-title col-md-6 col-xs-6">
             <h1>{{ discussion.title }}</h1>
             {% if discussion.locked %}
                 discussion fermée
+            {% endif %}
+            {% if is_granted('removed', discussion) %}
+                CETTE DISCUSSION A ÉTÉ RETIRÉE DE L'ARBRE 
             {% endif %}
         </div>
     </div>

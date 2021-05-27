@@ -100,7 +100,7 @@
                     <a href="{{ path('proposal_move', {'slug': proposal.slug}) }}" class="btn btn-default custom-admin-btn">Déplacer la proposition</a>
                 </div>
                 <div class="col-md-3 col-md-offset-9">
-                    <a href="{{ path('proposal_remove', {'slug': proposal.slug}) }}" class="btn btn-default custom-admin-btn">Retirer la proposition</a>
+                    <a href="{{ path('proposal_lock', {'slug': proposal.slug}) }}" class="btn btn-default custom-admin-btn">Vérouiller la proposition</a>
                 </div>
             </div>
         {% endif %}

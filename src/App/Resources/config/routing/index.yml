@@ -17,7 +17,3 @@ project:
 contact:
     path: /contact
     defaults: { _controller: 'App:Global:contact' }
-
-removed_proposals:
-    path: /removed_proposals
-    defaults: { _controller: 'App:Global:removedProposals' }
