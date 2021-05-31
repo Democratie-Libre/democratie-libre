@@ -7,10 +7,10 @@
                 <li><a href="{{ path('roots') }}">Arbre</a></li>
                 {% for parent in articleVersion.recordedArticle.proposal.theme.parents %}
                     <li>></li>
-                    <li><a href="{{ path('theme_show', {'slug': parent.slug}) }}">{{ parent.title }}</a></li>
+                    <li><a href="{{ path('theme_show_proposals', {'slug': parent.slug}) }}">{{ parent.title }}</a></li>
                 {% endfor %}
                 <li>></li>
-                <li><a href="{{ path('theme_show', {'slug': articleVersion.recordedArticle.proposal.theme.slug}) }}">{{ articleVersion.recordedArticle.proposal.theme.title }}</a></li>
+                <li><a href="{{ path('theme_show_proposals', {'slug': articleVersion.recordedArticle.proposal.theme.slug}) }}">{{ articleVersion.recordedArticle.proposal.theme.title }}</a></li>
                 <li>></li>
                 <li><a href="{{ path('proposal_show', {'slug': articleVersion.recordedArticle.proposal.slug}) }}">{{ articleVersion.recordedArticle.proposal.title }}</a></li>
                 <li>></li>

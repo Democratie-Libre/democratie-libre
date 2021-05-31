@@ -7,21 +7,77 @@ use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use App\Entity\Theme;
+use App\Entity\Proposal;
 use App\Form\Theme\EditThemeType;
 use App\Form\Theme\MoveThemeType;
 
 class ThemeController extends Controller
 {
-    public function showAction($slug)
+    public function showProposalsAction($slug)
     {
         $theme = $this->getDoctrine()->getRepository('App:Theme')->findOneBySlug($slug);
-        $user  = $this->getUser();
 
         if (null ===  $theme) {
             throw $this->createNotFoundException();
         }
 
-        return $this->render('App:Theme:show_theme.html.twig', [
+        return $this->render('App:Theme:show_theme_proposals.html.twig', [
+            'theme'            => $theme,
+            'locked_proposals' => False,
+        ]);
+    }
+
+    public function showLockedProposalsAction($slug)
+    {
+        $theme = $this->getDoctrine()->getRepository('App:Theme')->findOneBySlug($slug);
+
+        if (null ===  $theme) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->render('App:Theme:show_theme_proposals.html.twig', [
+            'theme'            => $theme,
+            'locked_proposals' => True,
+        ]);
+    }
+
+    public function showDiscussionsAction($slug)
+    {
+        $theme = $this->getDoctrine()->getRepository('App:Theme')->findOneBySlug($slug);
+
+        if (null ===  $theme) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->render('App:Theme:show_theme_discussions.html.twig', [
+            'theme'              => $theme,
+            'locked_discussions' => False,
+        ]);
+    }
+
+    public function showLockedDiscussionsAction($slug)
+    {
+        $theme = $this->getDoctrine()->getRepository('App:Theme')->findOneBySlug($slug);
+
+        if (null ===  $theme) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->render('App:Theme:show_theme_discussions.html.twig', [
+            'theme'              => $theme,
+            'locked_discussions' => True,
+        ]);
+    }
+
+    public function showChildrenAction($slug)
+    {
+        $theme = $this->getDoctrine()->getRepository('App:Theme')->findOneBySlug($slug);
+
+        if (null ===  $theme) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->render('App:Theme:show_theme_children.html.twig', [
             'theme' => $theme,
         ]);
     }
@@ -44,7 +100,7 @@ class ThemeController extends Controller
             $em->persist($theme);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('theme_show', [
+            return $this->redirect($this->generateUrl('theme_show_proposals', [
                 'slug' => $theme->getSlug(),
             ]));
         }
@@ -75,7 +131,7 @@ class ThemeController extends Controller
             $em->persist($theme);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('theme_show', [
+            return $this->redirect($this->generateUrl('theme_show_proposals', [
                 'slug' => $theme->getSlug(),
             ]));
         }
@@ -106,7 +162,7 @@ class ThemeController extends Controller
             $em->persist($theme);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('theme_show', [
+            return $this->redirect($this->generateUrl('theme_show_proposals', [
                 'slug' => $theme->getSlug(),
             ]));
         }
@@ -148,7 +204,7 @@ class ThemeController extends Controller
             $em->persist($theme);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('theme_show', [
+            return $this->redirect($this->generateUrl('theme_show_proposals', [
                 'slug' => $theme->getSlug(),
             ]));
         }
@@ -174,7 +230,7 @@ class ThemeController extends Controller
         if (false === $theme->isEmpty()) {
             $this->addFlash('info', 'Une thématique ne peut pas être supprimée si elle contient des propositions !');
 
-            return $this->redirect($this->generateUrl('theme_show', [
+            return $this->redirect($this->generateUrl('theme_show_proposals', [
                 'slug' => $theme->getSlug(),
             ]));
         }
@@ -199,7 +255,7 @@ class ThemeController extends Controller
         $this->addFlash('info', 'La thématique '.$theme->getTitle().' a été supprimée !');
 
         if ($parent instanceof Theme) {
-            return $this->redirect($this->generateUrl('theme_show', [
+            return $this->redirect($this->generateUrl('theme_show_proposals', [
                 'slug' => $parent->getSlug(),
             ]));
         }

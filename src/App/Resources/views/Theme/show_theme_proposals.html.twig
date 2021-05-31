@@ -1,0 +1,55 @@
+{% extends 'Theme/layout_theme.html.twig' %}
+
+{% block page_content %}
+    <div class="section-menu row">
+        <ul>
+            <li class="active"><a data-toggle="tab" href="{{ path('theme_show_proposals', {'slug': theme.slug}) }}">Propositions</a></li>
+            <li><a href="{{ path('theme_show_discussions', {'slug': theme.slug}) }}">Salon</a></li>
+            <!--
+            <li><a data-toggle="tab" href="#">Bibliothèque</a></li>
+            <li><a data-toggle="tab" href="#">Débats</a></li>
+            -->
+            {% if not theme.children is empty %}
+                <li><a href="{{ path('theme_show_children', {'slug': theme.slug}) }}">Thématiques filles</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="tab-content">
+        <div class="col-md-3 col-md-offset-7">
+            <a href="{{ path('proposal_add', {'themeSlug': theme.slug}) }}" class="btn btn-default custom-btn">Ajouter une proposition</a>
+        </div>
+        <div class="btn-group custom-btn-group ">
+            <button class="dropdown-toggle btn btn-default" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
+            <ul class="dropdown-menu pull-right">
+                {% if locked_proposals %}
+                    <li><a href="{{ path('theme_show_proposals', {'slug': theme.slug}) }}">Voir les propositions publiées</a></li>
+                {% else %}
+                    <li><a href="{{ path('theme_show_locked_proposals', {'slug': theme.slug}) }}">Voir les propositions fermées</a></li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="subsection-content col-md-10 col-xs-10">
+            {% for proposal in theme.proposals %}
+                {% if locked_proposals %}
+                    {% if is_granted('locked', proposal) %}
+                        <a href="{{ path('proposal_show', {'slug': proposal.slug}) }}" class="subsection-panel col-md-12 col-xs-12">
+                            <div class="subsection-panel-heading">
+                                <div class="subsection-panel-title">{{ proposal.title }}</div>
+                            </div>
+                            <div class="subsection-panel-body">{{ proposal.abstract }}</div>
+                        </a>
+                    {% endif %}
+                {% else %}
+                    {% if is_granted('published', proposal) %}
+                        <a href="{{ path('proposal_show', {'slug': proposal.slug}) }}" class="subsection-panel col-md-12 col-xs-12">
+                            <div class="subsection-panel-heading">
+                                <div class="subsection-panel-title">{{ proposal.title }}</div>
+                            </div>
+                            <div class="subsection-panel-body">{{ proposal.abstract }}</div>
+                        </a>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock page_content %}

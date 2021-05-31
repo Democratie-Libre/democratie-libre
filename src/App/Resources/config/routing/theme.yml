@@ -1,6 +1,22 @@
-theme_show:
-    path: /show/{slug}
-    defaults: { _controller: 'App:Theme:show'}
+theme_show_proposals:
+    path: /show_proposals/{slug}
+    defaults: { _controller: 'App:Theme:showProposals'}
+
+theme_show_locked_proposals:
+    path: /show_locked_proposals/{slug}
+    defaults: { _controller: 'App:Theme:showLockedProposals'}
+
+theme_show_discussions:
+    path: /show_discussions/{slug}
+    defaults: { _controller: 'App:Theme:showDiscussions'}
+
+theme_show_locked_discussions:
+    path: /show_locked_discussions/{slug}
+    defaults: { _controller: 'App:Theme:showLockedDiscussions'}
+
+theme_show_children:
+    path: /show_children/{slug}
+    defaults: { _controller: 'App:Theme:showChildren'}
 
 theme_addroot:
     path: /addroot

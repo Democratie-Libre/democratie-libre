@@ -13,7 +13,7 @@ class ArticleVoter extends Voter
     const EDIT       = 'edit';
     const DELETE     = 'delete';
     const PUBLISHED  = 'published';
-    const REMOVED    = 'removed';
+    const LOCKED     = 'locked';
 
     private $decisionManager;
 
@@ -28,7 +28,7 @@ class ArticleVoter extends Voter
             self::EDIT,
             self::DELETE,
             self::PUBLISHED,
-            self::REMOVED
+            self::LOCKED
         ])) {
             return false;
         }
@@ -57,8 +57,8 @@ class ArticleVoter extends Voter
                 return $this->canDelete($article, $user, $token);
             case self::PUBLISHED:
                 return $this->isPublished($article);
-            case self::REMOVED:
-                return $this->isRemoved($article);
+            case self::LOCKED:
+                return $this->isLocked($article);
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -86,10 +86,10 @@ class ArticleVoter extends Voter
         return $proposal->getStatus() == $proposal::PUBLISHED;
     }
 
-    private function isRemoved($article)
+    private function isLocked($article)
     {
         $proposal = $article->getProposal();
 
-        return $proposal->getStatus() == $proposal::REMOVED;
+        return $proposal->getStatus() == $proposal::LOCKED;
     }
 }

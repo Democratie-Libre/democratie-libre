@@ -19,13 +19,13 @@ class ArticleController extends Controller
             throw $this->createNotFoundException();
         }
 
-        if ($article->getStatus() === $article::PUBLISHED) {
-            return $this->render('App:Article:show_article.html.twig', [
+        if ($this->isGranted('locked', $article)) {
+            return $this->render('App:Article:show_locked_article.html.twig', [
                 'article' => $article,
             ]);
         }
 
-        return $this->render('App:Article:show_removed_article.html.twig', [
+        return $this->render('App:Article:show_article.html.twig', [
             'article' => $article,
         ]);
     }

@@ -76,7 +76,7 @@ class Article
     private $proposal;
 
     /**
-     * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="article", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="article", cascade={"persist", "remove"})
      */
     private $discussions;
 
@@ -88,7 +88,6 @@ class Article
 
     public function __construct()
     {
-        $this->status        = $this::PUBLISHED;
         $this->creationDate  = new \DateTime();
         $this->versionNumber = 1;
         $this->discussions   = new ArrayCollection();
@@ -266,5 +265,12 @@ class Article
         $this->addToVersioning($articleVersion);
 
         return $this;
+    }
+
+    public function lockDiscussions()
+    {
+        foreach ($this->discussions as $discussion) {
+            $discussion->setLocked(True);
+        }
     }
 }

@@ -12,7 +12,7 @@ class PublicDiscussionVoter extends Voter
     const FOLLOW     = 'follow';
     const UNREADER   = 'unreader';
     const PUBLISHED  = 'published';
-    const REMOVED    = 'removed';
+    const LOCKED     = 'locked';
 
     protected function supports($attribute, $subject)
     {
@@ -20,7 +20,7 @@ class PublicDiscussionVoter extends Voter
             self::FOLLOW,
             self::UNREADER,
             self::PUBLISHED,
-            self::REMOVED
+            self::LOCKED
         ])) {
             return false;
         }
@@ -49,8 +49,8 @@ class PublicDiscussionVoter extends Voter
                 return $this->isUnreader($publicDiscussion, $user);
             case self::PUBLISHED:
                 return $this->isPublished($publicDiscussion);
-            case self::REMOVED:
-                return $this->isRemoved($publicDiscussion);
+            case self::LOCKED:
+                return $this->isLocked($publicDiscussion);
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -68,11 +68,11 @@ class PublicDiscussionVoter extends Voter
 
     private function isPublished($publicDiscussion)
     {
-        return $publicDiscussion->getStatus() == $publicDiscussion::PUBLISHED;
+        return !$publicDiscussion->isLocked();
     }
 
-    private function isRemoved($publicDiscussion)
+    private function isLocked($publicDiscussion)
     {
-        return $publicDiscussion->getStatus() == $publicDiscussion::REMOVED;
+        return $publicDiscussion->isLocked();
     }
 }

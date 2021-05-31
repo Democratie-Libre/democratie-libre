@@ -290,7 +290,7 @@ class ProposalController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $proposal->setStatus($proposal::LOCKED);
+            $proposal->lock();
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($proposal);

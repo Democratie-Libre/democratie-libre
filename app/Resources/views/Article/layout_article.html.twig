@@ -2,23 +2,21 @@
 
 {% block content %}
     <div class="section-header row">
-        {% if is_granted('published', article) %}
-            <div class="section-path row">
-                <ul>
-                    <li><a href="{{ path('roots') }}">Arbre</a></li>
-                    {% for parent in article.proposal.theme.parents %}
-                        <li>></li>
-                        <li><a href="{{ path('theme_show', {'slug': parent.slug}) }}">{{ parent.title }}</a></li>
-                    {% endfor %}
+        <div class="section-path row">
+            <ul>
+                <li><a href="{{ path('roots') }}">Arbre</a></li>
+                {% for parent in article.proposal.theme.parents %}
                     <li>></li>
-                    <li><a href="{{ path('theme_show', {'slug': article.proposal.theme.slug}) }}">{{ article.proposal.theme.title }}</a></li>
-                    <li>></li>
-                    <li><a href="{{ path('proposal_show', {'slug': article.proposal.slug}) }}">{{ article.proposal.title }}</a></li>
-                    <li>></li>
-                    <li><a href="{{ path('article_show', {'slug': article.slug}) }}">article {{ article.number }}</a></li>
-                </ul>
-            </div>
-        {% endif %}
+                    <li><a href="{{ path('theme_show_proposals', {'slug': parent.slug}) }}">{{ parent.title }}</a></li>
+                {% endfor %}
+                <li>></li>
+                <li><a href="{{ path('theme_show_proposals', {'slug': article.proposal.theme.slug}) }}">{{ article.proposal.theme.title }}</a></li>
+                <li>></li>
+                <li><a href="{{ path('proposal_show', {'slug': article.proposal.slug}) }}">{{ article.proposal.title }}</a></li>
+                <li>></li>
+                <li><a href="{{ path('article_show', {'slug': article.slug}) }}">article {{ article.number }}</a></li>
+            </ul>
+        </div>
         <div class="article-header">
             <div>
                 proposition #{{ article.proposal.id }} <a href="{{ path('proposal_show', {'slug': article.proposal.slug}) }}">{{ article.proposal.title }}</a><br>
@@ -27,11 +25,6 @@
                 Article {{ article.number }}<br>
                 {{ article.title }}
             </div>
-            {% if is_granted('removed', article) %}
-                <div>
-                    CET ARTICLE A ÉTÉ RETIRÉ DE L'ARBRE
-                </div>
-            {% endif %}
         </div>
     </div>
 

@@ -32,9 +32,9 @@ class Proposal
     private $slug;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, options={"default" : "published"})
      */
-    private $status;
+    private $status = 'published';
 
     /**
      * If the proposal has been locked, it should be justified here.
@@ -421,5 +421,20 @@ class Proposal
     public function getDiscussions()
     {
         return $this->discussions;
+    }
+
+    public function lock()
+    {
+        $this->setStatus($this::LOCKED);
+
+        foreach ($this->discussions as $discussion) {
+            $discussion->setLocked(True);
+        }
+
+        foreach ($this->articles as $article) {
+            $article->lockDiscussions();
+        }
+
+        return $this;
     }
 }

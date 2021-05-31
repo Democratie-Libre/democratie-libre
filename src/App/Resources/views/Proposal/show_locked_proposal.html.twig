@@ -1,25 +1,14 @@
 {% extends 'Proposal/layout_proposal.html.twig' %}
 
 {% block page_content %}
-    <div class="proposal-header">
-        <div>
-            proposition #{{ proposal.id }}<br>
-        </div>
-        <div class="proposal-title">
-            {{ proposal.title }}
-        </div>
-        {% if is_granted('locked', proposal) %}
-            <div>
-                CETTE PROPOSITION EST VÉROUILLÉE
-                {{ proposal.lockingExplanation }}
-            </div>
-        {% endif %}
-        <div>
-            {% if proposal.isAWiki %}
-                Tout utilisateur peut éditer cette proposition
-            {% endif %}
-        </div>
+    <div class="center">
+        CETTE PROPOSITION A ÉTÉ FERMÉE PAR L'ADMINISTRATION
     </div>
+    <hr>
+    <div class="center">
+        {{ proposal.lockingExplanation }}
+    </div>
+    <hr>
     <div class="section-menu row">
         <ul>
             <li class="active"><a data-toggle="tab" href="#motivation">Motifs</a></li>
