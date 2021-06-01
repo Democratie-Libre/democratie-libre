@@ -48,13 +48,20 @@ class ProposalVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
+        $proposal = $subject;
+
+        switch ($attribute) {
+            case self::PUBLISHED:
+                return $this->isPublished($proposal);
+            case self::LOCKED:
+                return $this->isLocked($proposal);
+        }
+
         $user = $token->getUser();
 
         if (!$user instanceof User) {
             return false;
         }
-
-        $proposal = $subject;
 
         switch ($attribute) {
             case self::EDIT:
@@ -67,10 +74,6 @@ class ProposalVoter extends Voter
                 return $this->isOpponent($proposal, $user);
             case self::NEUTRAL:
                 return $this->isNeutral($proposal, $user);
-            case self::PUBLISHED:
-                return $this->isPublished($proposal);
-            case self::LOCKED:
-                return $this->isLocked($proposal);
         }
 
         throw new \LogicException('This code should not be reached!');
