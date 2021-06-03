@@ -23,9 +23,11 @@
         </ul>
     </div>
     <div class="tab-content">
-        <div class="col-md-3 col-md-offset-9">
-            <a href="{{ path('public_discussion_add_to_proposal', {'slug': proposal.slug}) }}" class="btn btn-default custom-btn">Ouvrir une discussion</a>
-        </div>
+        {% if is_granted('published', proposal) %}
+            <div class="col-md-3 col-md-offset-9">
+                <a href="{{ path('public_discussion_add_to_proposal', {'slug': proposal.slug}) }}" class="btn btn-default custom-btn">Ouvrir une discussion</a>
+            </div>
+        {% endif %}
         <table class="table">
             {% if not proposal.discussions is empty %}
                 <thead>

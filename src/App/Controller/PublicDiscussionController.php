@@ -138,6 +138,8 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
+        $this->denyAccessUnlessGranted('published', $proposal);
+
         $discussion = PublicDiscussion::createProposalDiscussion($proposal);
         $form       = $this->createForm(EditDiscussionType::class, $discussion);
         $form->handleRequest($request);
@@ -170,6 +172,9 @@ class PublicDiscussionController extends Controller
         if (null === $article) {
             throw $this->createNotFoundException();
         }
+
+        $proposal = $article->getProposal();
+        $this->denyAccessUnlessGranted('published', $proposal);
 
         $discussion = PublicDiscussion::createArticleDiscussion($article);
         $form       = $this->createForm(EditDiscussionType::class, $discussion);
