@@ -24,8 +24,18 @@
     </div>
     <div class="tab-content">
         {% if is_granted('published', proposal) %}
-            <div class="col-md-3 col-md-offset-9">
+            <div class="col-md-3 col-md-offset-7">
                 <a href="{{ path('public_discussion_add_to_proposal', {'slug': proposal.slug}) }}" class="btn btn-default custom-btn">Ouvrir une discussion</a>
+            </div>
+            <div class="btn-group custom-btn-group ">
+                <button class="dropdown-toggle btn btn-default" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
+                <ul class="dropdown-menu pull-right">
+                    {% if locked_discussions %}
+                        <li><a href="{{ path('proposal_show_discussions', {'slug': proposal.slug}) }}">Voir les discussions ouvertes</a></li>
+                    {% else %}
+                        <li><a href="{{ path('proposal_show_locked_discussions', {'slug': proposal.slug}) }}">Voir les discussions fermées</a></li>
+                    {% endif %}
+                </ul>
             </div>
         {% endif %}
         <table class="table">
@@ -38,16 +48,46 @@
                 </thead>
             {% endif %}
             <tbody>
-                {% for discussion in proposal.discussions %}
-                    <tr>
-                        <td><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="table-link">{{ discussion.title }}</a></td>
-                        {% if discussion.posts is empty %}
-                            <td>Vide</td>
+                <!-- If the proposal is published we can have both closed and opened discussions -->
+                {% if is_granted('published', proposal) %}
+                    {% for discussion in proposal.discussions %}
+                        {% if locked_discussions %}
+                            {% if is_granted('locked', discussion) %}
+                                <tr>
+                                    <td><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="table-link">{{ discussion.title }}</a></td>
+                                    {% if discussion.posts is empty %}
+                                        <td>Vide</td>
+                                    {% else %}
+                                        <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
+                                    {% endif %}
+                                </tr>
+                            {% endif %}
                         {% else %}
-                            <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
+                            {% if is_granted('published', discussion) %}
+                                <tr>
+                                    <td><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="table-link">{{ discussion.title }}</a></td>
+                                    {% if discussion.posts is empty %}
+                                        <td>Vide</td>
+                                    {% else %}
+                                        <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
+                                    {% endif %}
+                                </tr>
+                            {% endif %}
                         {% endif %}
-                    </tr>
-                {% endfor %}
+                    {% endfor %}
+                <!-- If the proposal is locked then we have only closed discussions -->
+                {% else %}
+                    {% for discussion in proposal.discussions %}
+                        <tr>
+                            <td><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="table-link">{{ discussion.title }}</a></td>
+                            {% if discussion.posts is empty %}
+                                <td>Vide</td>
+                            {% else %}
+                                <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                {% endif %}
             </tbody>
         </table>
     </div>

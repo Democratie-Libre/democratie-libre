@@ -48,7 +48,22 @@ class ProposalController extends Controller
         }
 
         return $this->render('App:Proposal:show_proposal_discussions.html.twig', [
-            'proposal' => $proposal,
+            'proposal'           => $proposal,
+            'locked_discussions' => False,
+        ]);
+    }
+
+    public function showLockedDiscussionsAction($slug)
+    {
+        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+
+        if (null === $proposal) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->render('App:Proposal:show_proposal_discussions.html.twig', [
+            'proposal'           => $proposal,
+            'locked_discussions' => True,
         ]);
     }
 

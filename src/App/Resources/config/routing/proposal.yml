@@ -10,6 +10,10 @@ proposal_show_discussions:
     path: /show_discussions/{slug}
     defaults: { _controller: 'App:Proposal:showDiscussions'}
 
+proposal_show_locked_discussions:
+    path: /show_locked_discussions/{slug}
+    defaults: { _controller: 'App:Proposal:showLockedDiscussions'}
+
 proposal_show_versioning:
     path: /show_versioning/{slug}
     defaults: { _controller: 'App:Proposal:showVersioning'}
