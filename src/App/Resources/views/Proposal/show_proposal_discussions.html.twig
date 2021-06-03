@@ -1,0 +1,52 @@
+{% extends 'Proposal/layout_proposal.html.twig' %}
+
+{% block page_content %}
+    {% if is_granted('locked', proposal) %}
+        <div class="center">
+            CETTE PROPOSITION A ÉTÉ FERMÉE PAR L'ADMINISTRATION
+        </div>
+        <hr>
+        <div class="center">
+            {{ proposal.lockingExplanation }}
+        </div>
+        <hr>
+    {% endif %}
+    <div class="section-menu row">
+        <ul>
+            <li><a href="{{ path('proposal_show_motivation', {'slug': proposal.slug}) }}">Motifs</a></li>
+            <li><a href="{{ path('proposal_show_articles', {'slug': proposal.slug}) }}">Articles</a></li>
+            <li class="active"><a href="{{ path('proposal_show_discussions', {'slug': proposal.slug}) }}">Salon</a></li>
+            <li><a href="{{ path('proposal_show_versioning', {'slug': proposal.slug}) }}">Historique</a></li>
+            {% if is_granted('ROLE_ADMIN') %}
+                <li><a href="{{ path('proposal_show_administration', {'slug': proposal.slug}) }}">Administration</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="tab-content">
+        <div class="col-md-3 col-md-offset-9">
+            <a href="{{ path('public_discussion_add_to_proposal', {'slug': proposal.slug}) }}" class="btn btn-default custom-btn">Ouvrir une discussion</a>
+        </div>
+        <table class="table">
+            {% if not proposal.discussions is empty %}
+                <thead>
+                    <tr>
+                        <th>Discussion</th>
+                        <th>Dernier commentaire</th>
+                    </tr>
+                </thead>
+            {% endif %}
+            <tbody>
+                {% for discussion in proposal.discussions %}
+                    <tr>
+                        <td><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="table-link">{{ discussion.title }}</a></td>
+                        {% if discussion.posts is empty %}
+                            <td>Vide</td>
+                        {% else %}
+                            <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock page_content %}

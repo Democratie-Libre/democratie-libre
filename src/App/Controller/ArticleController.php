@@ -139,7 +139,7 @@ class ArticleController extends Controller
 
         $this->get('session')->getFlashBag()->add('info', 'The article '.$article->getTitle().' has been suppressed');
 
-        return $this->redirect($this->generateUrl('proposal_show', [
+        return $this->redirect($this->generateUrl('proposal_show_articles', [
             'slug' => $proposal->getSlug(),
         ]));
     }

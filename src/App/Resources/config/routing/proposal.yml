@@ -1,6 +1,22 @@
-proposal_show:
-    path: /show/{slug}
-    defaults: { _controller: 'App:Proposal:show'}
+proposal_show_motivation:
+    path: /show_motivation/{slug}
+    defaults: { _controller: 'App:Proposal:showMotivation'}
+
+proposal_show_articles:
+    path: /show_articles/{slug}
+    defaults: { _controller: 'App:Proposal:showArticles'}
+
+proposal_show_discussions:
+    path: /show_discussions/{slug}
+    defaults: { _controller: 'App:Proposal:showDiscussions'}
+
+proposal_show_versioning:
+    path: /show_versioning/{slug}
+    defaults: { _controller: 'App:Proposal:showVersioning'}
+
+proposal_show_administration:
+    path: /show_administration/{slug}
+    defaults: { _controller: 'App:Proposal:showAdministration'}
 
 proposal_add:
     path: /add/{themeSlug}

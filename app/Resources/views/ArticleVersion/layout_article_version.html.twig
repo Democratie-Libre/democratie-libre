@@ -12,7 +12,7 @@
                 <li>></li>
                 <li><a href="{{ path('theme_show_proposals', {'slug': articleVersion.recordedArticle.proposal.theme.slug}) }}">{{ articleVersion.recordedArticle.proposal.theme.title }}</a></li>
                 <li>></li>
-                <li><a href="{{ path('proposal_show', {'slug': articleVersion.recordedArticle.proposal.slug}) }}">{{ articleVersion.recordedArticle.proposal.title }}</a></li>
+                <li><a href="{{ path('proposal_show_motivation', {'slug': articleVersion.recordedArticle.proposal.slug}) }}">{{ articleVersion.recordedArticle.proposal.title }}</a></li>
                 <li>></li>
                 <li><a href="{{ path('article_show', {'slug': articleVersion.recordedArticle.slug}) }}">article {{ articleVersion.recordedArticle.number }}</a></li>
             </ul>

@@ -13,7 +13,7 @@
         <div class="proposal-header">
             <div>
                 thématique {{ proposalVersion.themeTitle }}<br>
-                proposition #{{ proposalVersion.recordedProposal.id }} <a href="{{ path('proposal_show', {'slug': proposalVersion.recordedProposal.slug}) }}">{{ proposalVersion.recordedProposal.title }}</a><br>
+                proposition #{{ proposalVersion.recordedProposal.id }} <a href="{{ path('proposal_show_motivation', {'slug': proposalVersion.recordedProposal.slug}) }}">{{ proposalVersion.recordedProposal.title }}</a><br>
                 <h3>Version {{ proposalVersion.versionNumber }}</h3> archivée le {{ proposalVersion.snapDate|date('d/m/Y') }}
             </div>
             <div class="proposal-title">
