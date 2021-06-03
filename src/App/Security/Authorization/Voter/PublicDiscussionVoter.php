@@ -34,23 +34,26 @@ class PublicDiscussionVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
+        $publicDiscussion = $subject;
+
+        switch ($attribute) {
+            case self::PUBLISHED:
+                return $this->isPublished($publicDiscussion);
+            case self::LOCKED:
+                return $this->isLocked($publicDiscussion);
+        }
+
         $user = $token->getUser();
 
         if (!$user instanceof User) {
             return false;
         }
 
-        $publicDiscussion = $subject;
-
         switch ($attribute) {
             case self::FOLLOW:
                 return $this->isFollowing($publicDiscussion, $user);
             case self::UNREADER:
                 return $this->isUnreader($publicDiscussion, $user);
-            case self::PUBLISHED:
-                return $this->isPublished($publicDiscussion);
-            case self::LOCKED:
-                return $this->isLocked($publicDiscussion);
         }
 
         throw new \LogicException('This code should not be reached!');
