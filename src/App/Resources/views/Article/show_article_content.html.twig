@@ -3,7 +3,7 @@
 {% block page_content %}
     {% if is_granted('locked', article) %}
         <div class="center">
-            CET ARTICLE A ÉTÉ FERMÉ PAR L'ADMINISTRATION
+            CET ARTICLE EST FERMÉ
         </div>
     {% endif %}
     <div class="section-menu row">
@@ -17,7 +17,7 @@
         </ul>
     </div>
     <div class="tab-content">
-        {% if is_granted('edit', article) %}
+        {% if is_granted('published', article) and is_granted('edit', article) %}
             <div class="col-md-3 col-md-offset-9">
                 <a href="{{ path('article_edit', {'slug': article.slug}) }}" class="btn btn-default custom-btn">Modifier l'article</a>
             </div>
