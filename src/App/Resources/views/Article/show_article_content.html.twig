@@ -1,0 +1,33 @@
+{% extends 'Article/layout_article.html.twig' %}
+
+{% block page_content %}
+    {% if is_granted('locked', article) %}
+        <div class="center">
+            CET ARTICLE A ÉTÉ FERMÉ PAR L'ADMINISTRATION
+        </div>
+    {% endif %}
+    <div class="section-menu row">
+        <ul>
+            <li class="active"><a href="{{ path('article_show', {'slug': article.slug}) }}">Texte</a></li>
+            <li><a href="{{ path('article_show_discussions', {'slug': article.slug}) }}">Salon</a></li>
+            <li><a href="{{ path('article_show_versioning', {'slug': article.slug}) }}">Historique</a></li>
+            {% if is_granted('delete', article) %}
+                <li><a href="{{ path('article_show_administration', {'slug': article.slug}) }}">Suppression</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="tab-content">
+        {% if is_granted('edit', article) %}
+            <div class="col-md-3 col-md-offset-9">
+                <a href="{{ path('article_edit', {'slug': article.slug}) }}" class="btn btn-default custom-btn">Modifier l'article</a>
+            </div>
+        {% endif %}
+        <div class="article-content">
+            {{ article.content | markdown }}
+        </div>
+        <div class="article-motivation">
+            <h4>Motifs</h4>
+            {{ article.motivation | markdown }}
+        </div>
+    </div>
+{% endblock page_content %}

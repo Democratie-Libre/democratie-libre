@@ -1,6 +1,22 @@
 article_show:
     path: /show/{slug}
-    defaults: { _controller: 'App:Article:show'}
+    defaults: { _controller: 'App:Article:showContent'}
+
+article_show_discussions:
+    path: /show_discussions/{slug}
+    defaults: { _controller: 'App:Article:showDiscussions'}
+
+article_show_locked_discussions:
+    path: /show_locked_discussions/{slug}
+    defaults: { _controller: 'App:Article:showLockedDiscussions'}
+
+article_show_versioning:
+    path: /show_versioning/{slug}
+    defaults: { _controller: 'App:Article:showVersioning'}
+
+article_show_administration:
+    path: /show_administration/{slug}
+    defaults: { _controller: 'App:Article:showAdministration'}
 
 article_add:
     path: /add/{proposalSlug}

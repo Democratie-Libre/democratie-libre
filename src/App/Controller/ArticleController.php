@@ -11,7 +11,7 @@ use App\Form\Article\EditArticleType;
 
 class ArticleController extends Controller
 {
-    public function showAction($slug)
+    public function showContentAction($slug)
     {
         $article = $this->getDoctrine()->getRepository('App:Article')->findOneBySlug($slug);
 
@@ -19,13 +19,64 @@ class ArticleController extends Controller
             throw $this->createNotFoundException();
         }
 
-        if ($this->isGranted('locked', $article)) {
-            return $this->render('App:Article:show_locked_article.html.twig', [
-                'article' => $article,
-            ]);
+        return $this->render('App:Article:show_article_content.html.twig', [
+            'article' => $article,
+        ]);
+    }
+
+    public function showDiscussionsAction($slug)
+    {
+        $article = $this->getDoctrine()->getRepository('App:Article')->findOneBySlug($slug);
+
+        if (null === $article) {
+            throw $this->createNotFoundException();
         }
 
-        return $this->render('App:Article:show_article.html.twig', [
+        return $this->render('App:Article:show_article_discussions.html.twig', [
+            'article'            => $article,
+            'locked_discussions' => False,
+        ]);
+    }
+
+    public function showLockedDiscussionsAction($slug)
+    {
+        $article = $this->getDoctrine()->getRepository('App:Article')->findOneBySlug($slug);
+
+        if (null === $article) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->render('App:Article:show_article_discussions.html.twig', [
+            'article'            => $article,
+            'locked_discussions' => True,
+        ]);
+    }
+
+    public function showVersioningAction($slug)
+    {
+        $article = $this->getDoctrine()->getRepository('App:Article')->findOneBySlug($slug);
+
+        if (null === $article) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->render('App:Article:show_article_versioning.html.twig', [
+            'article' => $article,
+        ]);
+    }
+
+    /**
+     * @Security("has_role('ROLE_ADMIN')")
+     */
+    public function showAdministrationAction($slug)
+    {
+        $article = $this->getDoctrine()->getRepository('App:Article')->findOneBySlug($slug);
+
+        if (null === $article) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->render('App:Article:show_article_administration.html.twig', [
             'article' => $article,
         ]);
     }
