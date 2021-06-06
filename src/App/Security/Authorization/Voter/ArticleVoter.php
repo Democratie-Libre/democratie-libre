@@ -42,23 +42,26 @@ class ArticleVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
+        $article = $subject;
+
+        switch ($attribute) {
+            case self::PUBLISHED:
+                return $this->isPublished($article);
+            case self::LOCKED:
+                return $this->isLocked($article);
+        }
+
         $user = $token->getUser();
 
         if (!$user instanceof User) {
             return false;
         }
 
-        $article = $subject;
-
         switch ($attribute) {
             case self::EDIT:
                 return $this->canEdit($article, $user);
             case self::DELETE:
                 return $this->canDelete($article, $user, $token);
-            case self::PUBLISHED:
-                return $this->isPublished($article);
-            case self::LOCKED:
-                return $this->isLocked($article);
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -66,7 +69,6 @@ class ArticleVoter extends Voter
 
     private function canEdit($article, $user)
     {
-        // We should have the case of a wiki here
         return $user === $article->getProposal()->getAuthor();
     }
 

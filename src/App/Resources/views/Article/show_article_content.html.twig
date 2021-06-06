@@ -12,7 +12,7 @@
             <li><a href="{{ path('article_show_discussions', {'slug': article.slug}) }}">Salon</a></li>
             <li><a href="{{ path('article_show_versioning', {'slug': article.slug}) }}">Historique</a></li>
             {% if is_granted('delete', article) %}
-                <li><a href="{{ path('article_show_administration', {'slug': article.slug}) }}">Suppression</a></li>
+                <li><a href="{{ path('article_show_administration', {'slug': article.slug}) }}">Administration</a></li>
             {% endif %}
         </ul>
     </div>

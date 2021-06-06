@@ -66,7 +66,7 @@ class ArticleController extends Controller
     }
 
     /**
-     * @Security("has_role('ROLE_ADMIN')")
+     * @Security("has_role('ROLE_USER')")
      */
     public function showAdministrationAction($slug)
     {
@@ -75,6 +75,9 @@ class ArticleController extends Controller
         if (null === $article) {
             throw $this->createNotFoundException();
         }
+
+        $proposal = $article->getProposal();
+        $this->denyAccessUnlessGranted('edit', $proposal);
 
         return $this->render('App:Article:show_article_administration.html.twig', [
             'article' => $article,
