@@ -252,22 +252,23 @@ class Proposal
         return $this;
     }
 
-    public function removeArticle(Article $article)
-    {
-        $this->articles->removeElement($article);
-        $article->removeProposal($this);
-
-        return $this;
-    }
-
     public function getArticles()
     {
         return $this->articles;
     }
 
-    public function getNumberOfArticles()
+    public function getNumberOfPublishedArticles()
     {
-        return $this->articles->count();
+        $articles                  = $this->getArticles();
+        $numberOfPublishedArticles = 0;
+
+        foreach ($articles as $article) {
+            if ($article->getStatus() == $article::PUBLISHED) {
+                $numberOfPublishedArticles += 1;
+            }
+        }
+
+        return $numberOfPublishedArticles;
     }
 
     public function setVersionNumber($number)
@@ -432,7 +433,7 @@ class Proposal
         }
 
         foreach ($this->articles as $article) {
-            $article->lockDiscussions();
+            $article->lock();
         }
 
         return $this;

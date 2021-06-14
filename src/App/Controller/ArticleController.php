@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use App\Entity\Article;
 use App\Entity\ArticleVersion;
 use App\Form\Article\EditArticleType;
+use App\Form\Article\LockArticleType;
 
 class ArticleController extends Controller
 {
@@ -117,7 +118,7 @@ class ArticleController extends Controller
             'form'          => $form->createView(),
             'article'       => $article,
             'proposal'      => $proposal,
-            'articleNumber' => $proposal->getNumberOfArticles() + 1,
+            'articleNumber' => $proposal->getNumberOfPublishedArticles() + 1,
         ]);
     }
 
@@ -169,32 +170,36 @@ class ArticleController extends Controller
     /**
      * @Security("has_role('ROLE_USER')")
      */
-    public function deleteAction($slug)
+    public function lockAction(Request $request, $slug)
     {
         $article = $this->getDoctrine()->getRepository('App:Article')->findOneBySlug($slug);
 
-        if (null ===  $article) {
+        if (null === $article) {
             throw $this->createNotFoundException();
         }
 
-        $this->denyAccessUnlessGranted('published', $article);
-        $this->denyAccessUnlessGranted('delete', $article);
+        $this->denyAccessUnlessGranted('user_can_lock', $article);
 
-        $proposal = $article->getProposal();
-        $proposal
-            ->removeArticle($article)
-            ->incrementVersionNumber()
-            ->snapshot()
-        ;
+        $form = $this->createForm(LockArticleType::class, $article);
+        $form->handleRequest($request);
 
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($article);
-        $em->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $article->lock();
 
-        $this->get('session')->getFlashBag()->add('info', 'The article '.$article->getTitle().' has been suppressed');
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($article);
+            $em->flush();
 
-        return $this->redirect($this->generateUrl('proposal_show_articles', [
-            'slug' => $proposal->getSlug(),
-        ]));
+        $this->get('session')->getFlashBag()->add('info', 'The article '.$article->getTitle().' has been removed from the proposal.');
+
+            return $this->redirect($this->generateUrl('article_show', [
+                'slug' => $slug,
+            ]));
+        }
+
+        return $this->render('App:Article:lock_article.html.twig', [
+            'article' => $article,
+            'form'    => $form->createView(),
+        ]);
     }
 }

@@ -11,15 +11,15 @@
             <li><a href="{{ path('article_show', {'slug': article.slug}) }}">Texte</a></li>
             <li><a href="{{ path('article_show_discussions', {'slug': article.slug}) }}">Salon</a></li>
             <li><a href="{{ path('article_show_versioning', {'slug': article.slug}) }}">Historique</a></li>
-            {% if is_granted('delete', article) %}
+            {% if is_granted('published', article) and is_granted('user_can_lock', article) %}
                 <li class="active"><a href="{{ path('article_show_administration', {'slug': article.slug}) }}">Administration</a></li>
             {% endif %}
         </ul>
     </div>
     <div class="tab-content">
-        {% if is_granted('delete', article) %}
+        {% if is_granted('published', article) and is_granted('user_can_lock', article) %}
             <div class="col-md-3 col-md-offset-9">
-                <a href="{{ path('article_delete', {'slug': article.slug}) }}" class="btn btn-default custom-admin-btn">Supprimer l'article</a>
+                <a href="{{ path('article_lock', {'slug': article.slug}) }}" class="btn btn-default custom-admin-btn">Retirer l'article</a>
             </div>
         {% endif %}
     </div>

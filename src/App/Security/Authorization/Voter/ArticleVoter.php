@@ -10,10 +10,10 @@ use App\Entity\User;
 
 class ArticleVoter extends Voter
 {
-    const EDIT       = 'edit';
-    const DELETE     = 'delete';
-    const PUBLISHED  = 'published';
-    const LOCKED     = 'locked';
+    const EDIT          = 'edit';
+    const USER_CAN_LOCK = 'user_can_lock';
+    const PUBLISHED     = 'published';
+    const LOCKED        = 'locked';
 
     private $decisionManager;
 
@@ -26,7 +26,7 @@ class ArticleVoter extends Voter
     {
         if (!in_array($attribute, [
             self::EDIT,
-            self::DELETE,
+            self::USER_CAN_LOCK,
             self::PUBLISHED,
             self::LOCKED
         ])) {
@@ -60,8 +60,8 @@ class ArticleVoter extends Voter
         switch ($attribute) {
             case self::EDIT:
                 return $this->canEdit($article, $user);
-            case self::DELETE:
-                return $this->canDelete($article, $user, $token);
+            case self::USER_CAN_LOCK:
+                return $this->userCanLock($article, $user);
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -72,26 +72,18 @@ class ArticleVoter extends Voter
         return $user === $article->getProposal()->getAuthor();
     }
 
-    private function canDelete($article, $user, $token)
+    private function userCanLock($article, $user)
     {
-        if ($this->decisionManager->decide($token, ['ROLE_ADMIN'])) {
-            return true;
-        }
-
         return $user === $article->getProposal()->getAuthor();
     }
 
     private function isPublished($article)
     {
-        $proposal = $article->getProposal();
-
-        return $proposal->getStatus() == $proposal::PUBLISHED;
+        return $article->getStatus() == $article::PUBLISHED;
     }
 
     private function isLocked($article)
     {
-        $proposal = $article->getProposal();
-
-        return $proposal->getStatus() == $proposal::LOCKED;
+        return $article->getStatus() == $article::LOCKED;
     }
 }

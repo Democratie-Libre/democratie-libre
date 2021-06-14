@@ -15,6 +15,9 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Article
 {
+    const PUBLISHED = 'published';
+    const LOCKED    = 'locked';
+
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
@@ -29,6 +32,23 @@ class Article
     private $slug;
 
     /**
+     * @ORM\Column(type="string", length=255, options={"default" : "published"})
+     */
+    private $status = 'published';
+
+    /**
+     * If the article has been closed, it should be justified here.
+     *
+     * @ORM\Column(type="text", nullable=true)
+     * @Assert\Length(
+     *      max = 400,
+     * )
+     */
+    private $lockingExplanation;
+
+    /**
+     * If the article is locked, its number will be zero.
+     *
      * @ORM\Column(type="integer")
      */
     private $number;
@@ -88,10 +108,12 @@ class Article
 
     public function __construct()
     {
-        $this->creationDate  = new \DateTime();
-        $this->versionNumber = 1;
-        $this->discussions   = new ArrayCollection();
-        $this->versioning    = new ArrayCollection();
+        $this->status              = $this::PUBLISHED;
+        $this->lockingExplanation  = null;
+        $this->creationDate        = new \DateTime();
+        $this->versionNumber       = 1;
+        $this->discussions         = new ArrayCollection();
+        $this->versioning          = new ArrayCollection();
     }
 
     public function getId()
@@ -104,6 +126,35 @@ class Article
         return $this->slug;
     }
 
+    public function setStatus($status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    public function isPublished()
+    {
+        return $this->getStatus() == 'published';
+    }
+
+    public function setLockingExplanation($lockingExplanation)
+    {
+        $this->lockingExplanation = $lockingExplanation;
+
+        return $this;
+    }
+
+    public function getLockingExplanation()
+    {
+        return $this->lockingExplanation;
+    }
+
     public function setNumber($number)
     {
         $this->number = $number;
@@ -114,6 +165,13 @@ class Article
     public function getNumber()
     {
         return $this->number;
+    }
+
+    public function decreaseNumber()
+    {
+        $this->number -= 1;
+
+        return $this;
     }
 
     public function setTitle($title)
@@ -200,7 +258,7 @@ class Article
 
         $this->proposal = $proposal;
         $this
-            ->setNumber($proposal->getNumberOfArticles() + 1)
+            ->setNumber($proposal->getNumberOfPublishedArticles() + 1)
             ->snapshot()
         ;
 
@@ -267,10 +325,34 @@ class Article
         return $this;
     }
 
-    public function lockDiscussions()
+    public function lock()
     {
+        $this->setStatus($this::LOCKED);
+
         foreach ($this->discussions as $discussion) {
             $discussion->setLocked(True);
         }
+
+        $lockedArticleNumber = $this->getNumber();
+        $proposal            = $this->getProposal();
+
+        foreach ($proposal->getArticles() as $article) {
+            if ($article->getNumber() > $lockedArticleNumber) {
+                $article
+                    ->decreaseNumber()
+                    ->incrementVersionNumber()
+                    ->snapshot()
+                ;
+            }
+        }
+
+        $proposal
+            ->incrementVersionNumber()
+            ->snapshot()
+        ;
+
+        $this->setNumber(0);
+
+        return $this;
     }
 }

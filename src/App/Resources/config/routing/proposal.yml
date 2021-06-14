@@ -6,6 +6,10 @@ proposal_show_articles:
     path: /show_articles/{slug}
     defaults: { _controller: 'App:Proposal:showArticles'}
 
+proposal_show_locked_articles:
+    path: /show_locked_articles/{slug}
+    defaults: { _controller: 'App:Proposal:showLockedArticles'}
+
 proposal_show_discussions:
     path: /show_discussions/{slug}
     defaults: { _controller: 'App:Proposal:showDiscussions'}

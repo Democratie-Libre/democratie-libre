@@ -43,6 +43,16 @@
                 {{ proposal.title }}
             </div>
         </div>
+        {% if is_granted('locked', proposal) %}
+            <div class="center">
+                CETTE PROPOSITION A ÉTÉ FERMÉE PAR LA MODÉRATION
+            </div>
+            <hr>
+            <div class="center">
+                {{ proposal.lockingExplanation }}
+            </div>
+            <hr>
+        {% endif %}
     </div>
 
     {% block page_content %}{% endblock page_content %}
