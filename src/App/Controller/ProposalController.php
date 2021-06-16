@@ -96,7 +96,7 @@ class ProposalController extends Controller
     }
 
     /**
-     * @Security("has_role('ROLE_ADMIN')")
+     * @Security("has_role('ROLE_USER')")
      */
     public function showAdministrationAction($slug)
     {
@@ -105,6 +105,8 @@ class ProposalController extends Controller
         if (null === $proposal) {
             throw $this->createNotFoundException();
         }
+
+        $this->denyAccessUnlessGranted('show_admin_panel', $proposal);
 
         return $this->render('App:Proposal:show_proposal_administration.html.twig', [
             'proposal' => $proposal,
@@ -298,7 +300,7 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $this->denyAccessUnlessGranted('published', $proposal);
+        $this->denyAccessUnlessGranted('can_be_moved', $proposal);
 
         $form = $this->createForm(SelectThemeType::class, null);
         $form->handleRequest($request);
@@ -353,7 +355,7 @@ class ProposalController extends Controller
     }
 
     /**
-     * @Security("has_role('ROLE_ADMIN')")
+     * @Security("has_role('ROLE_USER')")
      */
     public function lockAction(Request $request, $slug)
     {
@@ -363,7 +365,7 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $this->denyAccessUnlessGranted('published', $proposal);
+        $this->denyAccessUnlessGranted('can_be_locked', $proposal);
 
         $form = $this->createForm(LockProposalType::class, $proposal);
         $form->handleRequest($request);

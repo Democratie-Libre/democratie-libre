@@ -7,7 +7,7 @@
             <li><a href="{{ path('proposal_show_articles', {'slug': proposal.slug}) }}">Articles</a></li>
             <li><a href="{{ path('proposal_show_discussions', {'slug': proposal.slug}) }}">Salon</a></li>
             <li class="active"><a href="{{ path('proposal_show_versioning', {'slug': proposal.slug}) }}">Historique</a></li>
-            {% if is_granted('ROLE_ADMIN') %}
+            {% if is_granted('show_admin_panel', proposal) %}
                 <li><a href="{{ path('proposal_show_administration', {'slug': proposal.slug}) }}">Administration</a></li>
             {% endif %}
         </ul>
