@@ -16,6 +16,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Article
 {
     const PUBLISHED = 'published';
+    const REMOVED   = 'removed';
     const LOCKED    = 'locked';
 
     /**
@@ -37,14 +38,15 @@ class Article
     private $status = 'published';
 
     /**
-     * If the article has been closed, it should be justified here.
+     * If the article has been removed by the author of the proposal, it should
+     * be justified here.
      *
      * @ORM\Column(type="text", nullable=true)
      * @Assert\Length(
      *      max = 400,
      * )
      */
-    private $lockingExplanation;
+    private $removingExplanation;
 
     /**
      * If the article is locked, its number will be zero.
@@ -108,12 +110,12 @@ class Article
 
     public function __construct()
     {
-        $this->status              = $this::PUBLISHED;
-        $this->lockingExplanation  = null;
-        $this->creationDate        = new \DateTime();
-        $this->versionNumber       = 1;
-        $this->discussions         = new ArrayCollection();
-        $this->versioning          = new ArrayCollection();
+        $this->status               = $this::PUBLISHED;
+        $this->removingExplanation  = null;
+        $this->creationDate         = new \DateTime();
+        $this->versionNumber        = 1;
+        $this->discussions          = new ArrayCollection();
+        $this->versioning           = new ArrayCollection();
     }
 
     public function getId()
@@ -143,16 +145,16 @@ class Article
         return $this->getStatus() == 'published';
     }
 
-    public function setLockingExplanation($lockingExplanation)
+    public function setRemovingExplanation($removingExplanation)
     {
-        $this->lockingExplanation = $lockingExplanation;
+        $this->removingExplanation = $removingExplanation;
 
         return $this;
     }
 
-    public function getLockingExplanation()
+    public function getRemovingExplanation()
     {
-        return $this->lockingExplanation;
+        return $this->removingExplanation;
     }
 
     public function setNumber($number)
@@ -325,6 +327,10 @@ class Article
         return $this;
     }
 
+    /**
+     * This method is called on each published article of a proposal when the
+     * author or the moderation decide to lock the proposal.
+     */
     public function lock()
     {
         $this->setStatus($this::LOCKED);
@@ -333,11 +339,27 @@ class Article
             $discussion->setLocked(True);
         }
 
-        $lockedArticleNumber = $this->getNumber();
-        $proposal            = $this->getProposal();
+        return $this;
+    }
+
+    /**
+     * This method is called when the author of a proposal decides to remove
+     * this article from the proposal.
+     */
+    public function remove()
+    {
+        $this->setStatus($this::REMOVED);
+
+        foreach ($this->discussions as $discussion) {
+            $discussion->setLocked(True);
+        }
+
+        $removedArticleNumber = $this->getNumber();
+        $proposal             = $this->getProposal();
 
         foreach ($proposal->getArticles() as $article) {
-            if ($article->getNumber() > $lockedArticleNumber) {
+            if ($article->isPublished() and
+                $article->getNumber() > $removedArticleNumber) {
                 $article
                     ->decreaseNumber()
                     ->incrementVersionNumber()
@@ -350,8 +372,6 @@ class Article
             ->incrementVersionNumber()
             ->snapshot()
         ;
-
-        $this->setNumber(0);
 
         return $this;
     }

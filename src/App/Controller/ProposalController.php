@@ -40,7 +40,7 @@ class ProposalController extends Controller
         ]);
     }
 
-    public function showLockedArticlesAction($slug)
+    public function showRemovedArticlesAction($slug)
     {
         $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
 
@@ -48,9 +48,8 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
-        return $this->render('App:Proposal:show_proposal_articles.html.twig', [
-            'proposal'        => $proposal,
-            'locked_articles' => True,
+        return $this->render('App:Proposal:show_proposal_removed_articles.html.twig', [
+            'proposal' => $proposal,
         ]);
     }
 

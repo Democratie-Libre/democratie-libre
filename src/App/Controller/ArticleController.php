@@ -8,7 +8,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use App\Entity\Article;
 use App\Entity\ArticleVersion;
 use App\Form\Article\EditArticleType;
-use App\Form\Article\LockArticleType;
+use App\Form\Article\RemoveArticleType;
+use App\Security\Authorization\Voter\ArticleVoter;
 
 class ArticleController extends Controller
 {
@@ -133,8 +134,7 @@ class ArticleController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $this->denyAccessUnlessGranted('published', $article);
-        $this->denyAccessUnlessGranted('edit', $article);
+        $this->denyAccessUnlessGranted(ArticleVoter::CAN_BE_EDITED, $article);
 
         $form = $this->createForm(EditArticleType::class, $article);
         $form->handleRequest($request);
@@ -170,7 +170,7 @@ class ArticleController extends Controller
     /**
      * @Security("has_role('ROLE_USER')")
      */
-    public function lockAction(Request $request, $slug)
+    public function removeAction(Request $request, $slug)
     {
         $article = $this->getDoctrine()->getRepository('App:Article')->findOneBySlug($slug);
 
@@ -178,26 +178,26 @@ class ArticleController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $this->denyAccessUnlessGranted('user_can_lock', $article);
+        $this->denyAccessUnlessGranted('can_be_removed', $article);
 
-        $form = $this->createForm(LockArticleType::class, $article);
+        $form = $this->createForm(RemoveArticleType::class, $article);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $article->lock();
+            $article->remove();
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($article);
             $em->flush();
 
-        $this->get('session')->getFlashBag()->add('info', 'The article '.$article->getTitle().' has been removed from the proposal.');
+            $this->get('session')->getFlashBag()->add('info', 'The article '.$article->getTitle().' has been removed from the proposal.');
 
             return $this->redirect($this->generateUrl('article_show', [
                 'slug' => $slug,
             ]));
         }
 
-        return $this->render('App:Article:lock_article.html.twig', [
+        return $this->render('App:Article:remove_article.html.twig', [
             'article' => $article,
             'form'    => $form->createView(),
         ]);

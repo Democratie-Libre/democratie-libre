@@ -11,7 +11,7 @@
             <li><a href="{{ path('article_show', {'slug': article.slug}) }}">Texte</a></li>
             <li class="active"><a href="{{ path('article_show_discussions', {'slug': article.slug}) }}">Salon</a></li>
             <li><a href="{{ path('article_show_versioning', {'slug': article.slug}) }}">Historique</a></li>
-            {% if is_granted('published', article) and is_granted('user_can_lock', article) %}
+            {% if is_granted('show_admin_panel', article) %}
                 <li><a href="{{ path('article_show_administration', {'slug': article.slug}) }}">Administration</a></li>
             {% endif %}
         </ul>

@@ -30,6 +30,6 @@ article_delete:
     path: /delete/{slug}
     defaults: { _controller: 'App:Article:delete' }
 
-article_lock:
-    path: /lock/{slug}
-    defaults: { _controller: 'App:Article:lock' }
+article_remove:
+    path: /remove/{slug}
+    defaults: { _controller: 'App:Article:remove' }

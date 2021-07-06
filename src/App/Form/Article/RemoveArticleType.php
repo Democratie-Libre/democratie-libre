@@ -10,12 +10,12 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\Article;
 
-class LockArticleType extends AbstractType
+class RemoveArticleType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('locking_explanation', TextareaType::class, [
+            ->add('removing_explanation', TextareaType::class, [
                 'required' => false,
             ])
             ->add('save', SubmitType::class)

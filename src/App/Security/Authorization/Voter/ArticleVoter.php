@@ -10,10 +10,12 @@ use App\Entity\User;
 
 class ArticleVoter extends Voter
 {
-    const EDIT          = 'edit';
-    const USER_CAN_LOCK = 'user_can_lock';
-    const PUBLISHED     = 'published';
-    const LOCKED        = 'locked';
+    const CAN_BE_EDITED    = 'can_be_edited';
+    const CAN_BE_REMOVED   = 'can_be_removed';
+    const PUBLISHED        = 'published';
+    const LOCKED           = 'locked';
+    const REMOVED          = 'removed';
+    const SHOW_ADMIN_PANEL = 'show_admin_panel';
 
     private $decisionManager;
 
@@ -25,10 +27,12 @@ class ArticleVoter extends Voter
     protected function supports($attribute, $subject)
     {
         if (!in_array($attribute, [
-            self::EDIT,
-            self::USER_CAN_LOCK,
+            self::CAN_BE_EDITED,
+            self::CAN_BE_REMOVED,
             self::PUBLISHED,
-            self::LOCKED
+            self::LOCKED,
+            self::REMOVED,
+            self::SHOW_ADMIN_PANEL
         ])) {
             return false;
         }
@@ -49,6 +53,8 @@ class ArticleVoter extends Voter
                 return $this->isPublished($article);
             case self::LOCKED:
                 return $this->isLocked($article);
+            case self::REMOVED:
+                return $this->isRemoved($article);
         }
 
         $user = $token->getUser();
@@ -58,22 +64,32 @@ class ArticleVoter extends Voter
         }
 
         switch ($attribute) {
-            case self::EDIT:
-                return $this->canEdit($article, $user);
-            case self::USER_CAN_LOCK:
-                return $this->userCanLock($article, $user);
+            case self::CAN_BE_EDITED:
+                return $this->canBeEdited($article, $user);
+            case self::CAN_BE_REMOVED:
+                return $this->canBeRemoved($article, $user);
+            case self::SHOW_ADMIN_PANEL:
+                return $this->showAdminPanel($article, $user);
         }
 
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canEdit($article, $user)
+    private function canBeEdited($article, $user)
     {
+        if (!$this->isPublished($article)) {
+            return false;
+        }
+
         return $user === $article->getProposal()->getAuthor();
     }
 
-    private function userCanLock($article, $user)
+    private function canBeRemoved($article, $user)
     {
+        if (!$article->isPublished()) {
+            return false;
+        }
+
         return $user === $article->getProposal()->getAuthor();
     }
 
@@ -85,5 +101,19 @@ class ArticleVoter extends Voter
     private function isLocked($article)
     {
         return $article->getStatus() == $article::LOCKED;
+    }
+
+    private function isRemoved($article)
+    {
+        return $article->getStatus() == $article::REMOVED;
+    }
+
+    private function showAdminPanel($article, $user)
+    {
+        if (!$this->isPublished($article)) {
+            return false;
+        }
+
+        return $user === $article->getProposal()->getAuthor();
     }
 }

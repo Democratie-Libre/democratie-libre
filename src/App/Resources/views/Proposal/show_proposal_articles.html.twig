@@ -12,66 +12,58 @@
             {% endif %}
         </ul>
     </div>
-    <div class="tab-content">
-        <div class="row">
-            {% if is_granted('published', proposal) and is_granted('edit', proposal) %}
-                <div class="col-md-3 col-md-offset-7">
-                    <a href="{{ path('article_add', {'proposalSlug': proposal.slug}) }}" class="btn btn-default custom-btn">Ajouter un article</a>
-                </div>
-            {% endif %}
-            {% if is_granted('published', proposal) %}
+    <div class="row">
+        {% if is_granted('published', proposal) and is_granted('edit', proposal) %}
+            <div class="col-md-3 col-md-offset-7">
+                <a href="{{ path('article_add', {'proposalSlug': proposal.slug}) }}" class="btn btn-default custom-btn">Ajouter un article</a>
+            </div>
+            <div class="col-md-1">
                 <div class="btn-group custom-btn-group">
                     <button class="dropdown-toggle btn btn-default" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
                     <ul class="dropdown-menu pull-right">
-                        {% if locked_articles %}
-                            <li><a href="{{ path('proposal_show_articles', {'slug': proposal.slug}) }}">Voir les articles publiés</a></li>
-                        {% else %}
-                            <li><a href="{{ path('proposal_show_locked_articles', {'slug': proposal.slug}) }}">Voir les articles fermés</a></li>
-                        {% endif %}
+                        <li><a href="{{ path('proposal_show_removed_articles', {'slug': proposal.slug}) }}">Voir les articles retirés</a></li>
                     </ul>
                 </div>
-            {% endif %}
-        </div>
-        <div class="proposal-articles">
-            {% if is_granted('published', proposal) %}
-                {% for article in proposal.articles %}
-                    {% if locked_articles %}
-                        {% if is_granted('locked', article) %}
-                            <h4><a href="{{ path('article_show', {'slug': article.slug}) }}" class="article-link">Article<br>{{ article.title }}</a></h4>
-                            <p>{{ article.content | markdown }}</p>
-                            <div class="article-motivation">
-                                {% if article.motivation %}
-                                    <h4>Motifs</h4>
-                                    {{ article.motivation | markdown }}
-                                {% endif %}
-                            </div>
+            </div>
+        {% elseif is_granted('published', proposal) %}
+            <div class="col-md-1 col-md-offset-10">
+                <div class="btn-group custom-btn-group">
+                    <button class="dropdown-toggle btn btn-default" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
+                    <ul class="dropdown-menu pull-right">
+                        <li><a href="{{ path('proposal_show_removed_articles', {'slug': proposal.slug}) }}">Voir les articles retirés</a></li>
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    <div class="proposal-articles">
+        {% if is_granted('published', proposal) %}
+            {% for article in proposal.articles %}
+                {% if is_granted('published', article) %}
+                    <h4><a href="{{ path('article_show', {'slug': article.slug}) }}" class="article-link">Article {{ article.number }}<br>{{ article.title }}</a></h4>
+                    <p>{{ article.content | markdown }}</p>
+                    <div class="article-motivation">
+                        {% if article.motivation %}
+                            <h4>Motifs</h4>
+                            {{ article.motivation | markdown }}
                         {% endif %}
-                    {% else %}
-                        {% if is_granted('published', article) %}
-                            <h4><a href="{{ path('article_show', {'slug': article.slug}) }}" class="article-link">Article {{ article.number }}<br>{{ article.title }}</a></h4>
-                            <p>{{ article.content | markdown }}</p>
-                            <div class="article-motivation">
-                                {% if article.motivation %}
-                                    <h4>Motifs</h4>
-                                    {{ article.motivation | markdown }}
-                                {% endif %}
-                            </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% if is_granted('locked', proposal) %}
+            {% for article in proposal.articles %}
+                {% if is_granted('locked', article) %}
+                    <h4><a href="{{ path('article_show', {'slug': article.slug}) }}" class="article-link">Article {{ article.number }}<br>{{ article.title }}</a></h4>
+                    <p>{{ article.content | markdown }}</p>
+                    <div class="article-motivation">
+                        {% if article.motivation %}
+                            <h4>Motifs</h4>
+                            {{ article.motivation | markdown }}
                         {% endif %}
-                    {% endif %}
-                {% endfor %}
-            {% else %}
-            <!-- If the proposal is locked there is only locked articles -->
-                {% for article in proposal.articles %}
-                            <h4><a href="{{ path('article_show', {'slug': article.slug}) }}" class="article-link">Article<br>{{ article.title }}</a></h4>
-                            <p>{{ article.content | markdown }}</p>
-                            <div class="article-motivation">
-                                {% if article.motivation %}
-                                    <h4>Motifs</h4>
-                                    {{ article.motivation | markdown }}
-                                {% endif %}
-                            </div>
-                {% endfor %}
-            {% endif %}
-        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
     </div>
 {% endblock page_content %}

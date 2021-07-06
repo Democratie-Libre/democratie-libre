@@ -433,7 +433,9 @@ class Proposal
         }
 
         foreach ($this->articles as $article) {
-            $article->lock();
+            if ($article->isPublished()) {
+                $article->lock();
+            }
         }
 
         return $this;
