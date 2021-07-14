@@ -1,7 +1,7 @@
 {% extends 'Article/layout_article.html.twig' %}
 
 {% block page_content %}
-    {% if is_granted('locked', article) %}
+    {% if is_granted('locked', article) or is_granted('removed', article) %}
         <div class="center">
             CET ARTICLE EST FERMÉ
         </div>
