@@ -1,18 +1,6 @@
 {% extends 'Proposal/layout_proposal.html.twig' %}
 
 {% block page_content %}
-    <div class="proposal-articles">
-        {% for article in proposal.articles %}
-            <h4><a href="{{ path('article_show', {'slug': article.slug}) }}" class="article-link">Article {{ article.number }}<br>{{ article.title }}</a></h4>
-            <p>{{ article.content | markdown }}</p>
-            <div class="article-motivation">
-                {% if article.motivation %}
-                    <h5>Motifs</h5>
-                    {{ article.motivation | markdown }}
-                {% endif %}
-            </div>
-        {% endfor %}
-    </div>
     <div class="row">
         <div class="add-article-title">
             <h4>Article {{ articleNumber }}</h4>

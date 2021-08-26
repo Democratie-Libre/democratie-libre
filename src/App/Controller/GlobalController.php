@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use App\Entity\PublicDiscussion;
+use App\Entity\Proposal;
 
 class GlobalController extends Controller
 {
@@ -34,5 +35,12 @@ class GlobalController extends Controller
     public function contactAction()
     {
         return $this->render('App:Global:contact.html.twig');
+    }
+
+    public function removedProposalsAction()
+    {
+        $removed_proposals = $this->getDoctrine()->getRepository('App:Proposal')->findByStatus(Proposal::REMOVED);
+
+        return $this->render('App:Global:removed_proposals.html.twig', ['removed_proposals' => $removed_proposals]);
     }
 }

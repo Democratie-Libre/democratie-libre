@@ -7,24 +7,28 @@
                 <li><a href="{{ path('roots') }}">Arbre</a></li>
                 {% for parent in article.proposal.theme.parents %}
                     <li>></li>
-                    <li><a href="{{ path('theme_show', {'slug': parent.slug}) }}">{{ parent.title }}</a></li>
+                    <li><a href="{{ path('theme_show_proposals', {'slug': parent.slug}) }}">{{ parent.title }}</a></li>
                 {% endfor %}
                 <li>></li>
-                <li><a href="{{ path('theme_show', {'slug': article.proposal.theme.slug}) }}">{{ article.proposal.theme.title }}</a></li>
+                <li><a href="{{ path('theme_show_proposals', {'slug': article.proposal.theme.slug}) }}">{{ article.proposal.theme.title }}</a></li>
                 <li>></li>
-                <li><a href="{{ path('proposal_show', {'slug': article.proposal.slug}) }}">{{ article.proposal.title }}</a></li>
+                <li><a href="{{ path('proposal_show_motivation', {'slug': article.proposal.slug}) }}">{{ article.proposal.title }}</a></li>
                 <li>></li>
-                <li><a href="{{ path('article_show', {'slug': article.slug}) }}">article {{ article.number }}</a></li>
+                <li><a href="{{ path('article_show', {'slug': article.slug}) }}">{{ article.title }}</a></li>
             </ul>
         </div>
         <div class="article-header">
-            <div>
-                proposition #{{ article.proposal.id }} <a href="{{ path('proposal_show', {'slug': article.proposal.slug}) }}">{{ article.proposal.title }}</a><br>
-            </div>
-            <div class="article-title">
-                Article {{ article.number }}<br>
-                {{ article.title }}
-            </div>
+            {% if is_granted('published', article) %}
+                <div class="article-title">
+                    Article {{ article.number }}<br>
+                    {{ article.title }}
+                </div>
+            {% else %}
+                <div class="article-title">
+                    Article<br>
+                    {{ article.title }}
+                </div>
+            {% endif %}
         </div>
     </div>
 

@@ -1,0 +1,40 @@
+{% extends 'Proposal/layout_proposal.html.twig' %}
+
+{% block page_content %}
+    <div class="section-menu row">
+        <ul>
+            <li><a href="{{ path('proposal_show_motivation', {'slug': proposal.slug}) }}">Motifs</a></li>
+            <li><a href="{{ path('proposal_show_articles', {'slug': proposal.slug}) }}">Articles</a></li>
+            <li><a href="{{ path('proposal_show_discussions', {'slug': proposal.slug}) }}">Salon</a></li>
+            <li class="active"><a href="{{ path('proposal_show_versioning', {'slug': proposal.slug}) }}">Historique</a></li>
+            {% if is_granted('show_admin_panel', proposal) %}
+                <li><a href="{{ path('proposal_show_administration', {'slug': proposal.slug}) }}">Administration</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="tab-content">
+        <div class="subsection-content col-md-10 col-xs-10">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Version</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for proposalVersion in proposal.versioning %}
+                        <tr>
+                            <td><a href="{{ path('proposal_version_show', {'slug': proposalVersion.slug}) }}" class="table-link">Version {{ proposalVersion.versionNumber }}</a></td>
+                            <td>{{ proposalVersion.snapDate|date('d/m/Y à  H:i')}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-2 col-xs-2">
+            Date de création : {{ proposal.creationDate|date('d/m/Y') }}<br><br>
+            Date de dernière modification : {{ proposal.lastEditDate|date('d/m/Y') }}<br><br>
+            Version actuelle : {{ proposal.versionNumber }}
+        </div>
+    </div>
+{% endblock page_content %}

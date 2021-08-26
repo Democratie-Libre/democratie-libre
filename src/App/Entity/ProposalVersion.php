@@ -121,9 +121,11 @@ class ProposalVersion
         $this->opponents        = $proposal->getOpponents();
 
         foreach ($proposal->getArticles() as $article) {
-            $articleLastVersion = $article->getLastVersion();
-            $this->articleVersions->add($articleLastVersion);
-            $articleLastVersion->addProposalVersion($this);
+            if ($article->isPublished()) {
+                $articleLastVersion = $article->getLastVersion();
+                $this->articleVersions->add($articleLastVersion);
+                $articleLastVersion->addProposalVersion($this);
+            }
         }
     }
 

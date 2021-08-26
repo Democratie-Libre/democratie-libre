@@ -1,0 +1,41 @@
+{% extends 'Proposal/layout_proposal.html.twig' %}
+
+{% block page_content %}
+    <div class="section-menu row">
+        <ul>
+            <li><a href="{{ path('proposal_show_motivation', {'slug': proposal.slug}) }}">Motifs</a></li>
+            <li class="active"><a href="{{ path('proposal_show_articles', {'slug': proposal.slug}) }}">Articles</a></li>
+            <li><a href="{{ path('proposal_show_discussions', {'slug': proposal.slug}) }}">Salon</a></li>
+            <li><a href="{{ path('proposal_show_versioning', {'slug': proposal.slug}) }}">Historique</a></li>
+            {% if is_granted('show_admin_panel', proposal) %}
+                <li><a href="{{ path('proposal_show_administration', {'slug': proposal.slug}) }}">Administration</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="tab-content">
+        <div class="row">
+            <div class="col-md-1 col-md-offset-10">
+                <div class="btn-group custom-btn-group">
+                    <button class="dropdown-toggle btn btn-default" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
+                    <ul class="dropdown-menu pull-right">
+                        <li><a href="{{ path('proposal_show_articles', {'slug': proposal.slug}) }}">Voir les articles publiés</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="proposal-articles">
+            {% for article in proposal.articles %}
+                {% if is_granted('removed', article) %}
+                    <h4><a href="{{ path('article_show', {'slug': article.slug}) }}" class="article-link">Article<br>{{ article.title }}</a></h4>
+                    <p>{{ article.content | markdown }}</p>
+                    <div class="article-motivation">
+                        {% if article.motivation %}
+                            <h4>Motifs</h4>
+                            {{ article.motivation | markdown }}
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock page_content %}

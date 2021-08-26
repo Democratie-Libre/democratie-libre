@@ -7,10 +7,10 @@
                 <li><a href="{{ path('roots') }}">Arbre</a></li>
                 {% for parent in theme.parents %}
                     <li>></li>
-                    <li><a href="{{ path('theme_show', {'slug': parent.slug}) }}">{{ parent.title }}</a></li>
+                    <li><a href="{{ path('theme_show_proposals', {'slug': parent.slug}) }}">{{ parent.title }}</a></li>
                 {% endfor %}
                 <li>></li>
-                <li><a href="{{ path('theme_show', {'slug': theme.slug}) }}">{{ theme.title }}</a></li>
+                <li><a href="{{ path('theme_show_proposals', {'slug': theme.slug}) }}">{{ theme.title }}</a></li>
             </ul>
         </div>
         <div class="section-header-menu col-md-12 col-xs-12">

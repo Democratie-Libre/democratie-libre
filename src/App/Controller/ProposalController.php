@@ -8,11 +8,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use App\Entity\Proposal;
 use App\Form\Proposal\EditProposalType;
+use App\Form\Proposal\LockProposalType;
 use App\Form\SelectThemeType;
 
 class ProposalController extends Controller
 {
-    public function showAction($slug)
+    public function showMotivationAction($slug)
     {
         $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
 
@@ -20,7 +21,93 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
-        return $this->render('App:Proposal:show_proposal.html.twig', [
+        return $this->render('App:Proposal:show_proposal_motivation.html.twig', [
+            'proposal' => $proposal,
+        ]);
+    }
+
+    public function showArticlesAction($slug)
+    {
+        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+
+        if (null === $proposal) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->render('App:Proposal:show_proposal_articles.html.twig', [
+            'proposal'        => $proposal,
+            'locked_articles' => False,
+        ]);
+    }
+
+    public function showRemovedArticlesAction($slug)
+    {
+        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+
+        if (null === $proposal) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->render('App:Proposal:show_proposal_removed_articles.html.twig', [
+            'proposal' => $proposal,
+        ]);
+    }
+
+    public function showDiscussionsAction($slug)
+    {
+        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+
+        if (null === $proposal) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->render('App:Proposal:show_proposal_discussions.html.twig', [
+            'proposal'           => $proposal,
+            'locked_discussions' => False,
+        ]);
+    }
+
+    public function showLockedDiscussionsAction($slug)
+    {
+        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+
+        if (null === $proposal) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->render('App:Proposal:show_proposal_discussions.html.twig', [
+            'proposal'           => $proposal,
+            'locked_discussions' => True,
+        ]);
+    }
+
+    public function showVersioningAction($slug)
+    {
+        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+
+        if (null === $proposal) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->render('App:Proposal:show_proposal_versioning.html.twig', [
+            'proposal' => $proposal,
+        ]);
+    }
+
+    /**
+     * @Security("has_role('ROLE_USER')")
+     */
+    public function showAdministrationAction($slug)
+    {
+        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+
+        if (null === $proposal) {
+            throw $this->createNotFoundException();
+        }
+
+        $this->denyAccessUnlessGranted('show_admin_panel', $proposal);
+
+        return $this->render('App:Proposal:show_proposal_administration.html.twig', [
             'proposal' => $proposal,
         ]);
     }
@@ -51,7 +138,7 @@ class ProposalController extends Controller
             $em->persist($proposal);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('proposal_show', [
+            return $this->redirect($this->generateUrl('proposal_show_motivation', [
                 'slug' => $proposal->getSlug(),
             ]));
         }
@@ -74,6 +161,7 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
+        $this->denyAccessUnlessGranted('published', $proposal);
         $this->denyAccessUnlessGranted('edit', $proposal);
 
         $form = $this->createForm(EditProposalType::class, $proposal);
@@ -89,7 +177,7 @@ class ProposalController extends Controller
             $em->persist($proposal);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('proposal_show', [
+            return $this->redirect($this->generateUrl('proposal_show_motivation', [
                 'slug' => $proposal->getSlug(),
              ]));
         }
@@ -111,6 +199,7 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
+        $this->denyAccessUnlessGranted('published', $proposal);
         $this->denyAccessUnlessGranted('neutral', $proposal);
 
         $proposal->addSupporter($this->getUser());
@@ -119,7 +208,7 @@ class ProposalController extends Controller
         $em->flush();
         $this->get('session')->getFlashBag()->add('info', 'Vous soutenez cette proposition');
 
-        return $this->redirect($this->generateUrl('proposal_show', [
+        return $this->redirect($this->generateUrl('proposal_show_motivation', [
             'slug' => $proposal->getSlug(),
         ]));
     }
@@ -135,6 +224,7 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
+        $this->denyAccessUnlessGranted('published', $proposal);
         $this->denyAccessUnlessGranted('supporter', $proposal);
 
         $proposal->removeSupporter($this->getUser());
@@ -143,7 +233,7 @@ class ProposalController extends Controller
         $em->flush();
         $this->get('session')->getFlashBag()->add('info', 'Vous ne soutenez plus cette proposition');
 
-        return $this->redirect($this->generateUrl('proposal_show', [
+        return $this->redirect($this->generateUrl('proposal_show_motivation', [
             'slug' => $proposal->getSlug(),
         ]));
     }
@@ -159,6 +249,7 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
+        $this->denyAccessUnlessGranted('published', $proposal);
         $this->denyAccessUnlessGranted('neutral', $proposal);
 
         $proposal->addOpponent($this->getUser());
@@ -167,7 +258,7 @@ class ProposalController extends Controller
         $em->flush();
         $this->get('session')->getFlashBag()->add('info', 'Vous contestez cette proposition');
 
-        return $this->redirect($this->generateUrl('proposal_show', [
+        return $this->redirect($this->generateUrl('proposal_show_motivation', [
             'slug' => $proposal->getSlug(),
         ]));
     }
@@ -183,6 +274,7 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
+        $this->denyAccessUnlessGranted('published', $proposal);
         $this->denyAccessUnlessGranted('opponent', $proposal);
 
         $proposal->removeOpponent($this->getUser());
@@ -191,7 +283,7 @@ class ProposalController extends Controller
         $em->flush();
         $this->get('session')->getFlashBag()->add('info', 'Vous ne contestez plus cette proposition');
 
-        return $this->redirect($this->generateUrl('proposal_show', [
+        return $this->redirect($this->generateUrl('proposal_show_motivation', [
             'slug' => $proposal->getSlug(),
         ]));
     }
@@ -206,6 +298,8 @@ class ProposalController extends Controller
         if (null === $proposal) {
             throw $this->createNotFoundException();
         }
+
+        $this->denyAccessUnlessGranted('can_be_moved', $proposal);
 
         $form = $this->createForm(SelectThemeType::class, null);
         $form->handleRequest($request);
@@ -224,7 +318,7 @@ class ProposalController extends Controller
 
             $this->get('session')->getFlashBag()->add('info', 'The proposal has been moved in the theme '.$hostTheme->getTitle());
 
-            return $this->redirect($this->generateUrl('proposal_show', [
+            return $this->redirect($this->generateUrl('proposal_show_motivation', [
                 'slug' => $proposal->getSlug(),
              ]));
         }
@@ -246,8 +340,9 @@ class ProposalController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $title     = $proposal->getTitle();
-        $themeSlug = $proposal->getTheme()->getSlug();
+        $this->denyAccessUnlessGranted('locked', $proposal);
+
+        $title = $proposal->getTitle();
 
         $em = $this->getDoctrine()->getManager();
         $em->remove($proposal);
@@ -255,8 +350,40 @@ class ProposalController extends Controller
 
         $this->get('session')->getFlashBag()->add('info', 'The proposal '.$title.' has been removed');
 
-        return $this->redirect($this->generateUrl('theme_show', [
-            'slug' => $themeSlug,
-        ]));
+        return $this->redirect($this->generateUrl('roots'));
+    }
+
+    /**
+     * @Security("has_role('ROLE_USER')")
+     */
+    public function lockAction(Request $request, $slug)
+    {
+        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+
+        if (null === $proposal) {
+            throw $this->createNotFoundException();
+        }
+
+        $this->denyAccessUnlessGranted('can_be_locked', $proposal);
+
+        $form = $this->createForm(LockProposalType::class, $proposal);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $proposal->lock();
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($proposal);
+            $em->flush();
+
+            return $this->redirect($this->generateUrl('proposal_show_motivation', [
+                'slug' => $slug,
+            ]));
+        }
+
+        return $this->render('App:Proposal:lock_proposal.html.twig', [
+            'proposal' => $proposal,
+            'form'     => $form->createView(),
+        ]);
     }
 }

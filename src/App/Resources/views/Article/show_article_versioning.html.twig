@@ -1,0 +1,44 @@
+{% extends 'Article/layout_article.html.twig' %}
+
+{% block page_content %}
+    {% if is_granted('locked', article) or is_granted('removed', article) %}
+        <div class="center">
+            CET ARTICLE EST FERMÉ
+        </div>
+    {% endif %}
+    <div class="section-menu row">
+        <ul>
+            <li><a href="{{ path('article_show', {'slug': article.slug}) }}">Texte</a></li>
+            <li><a href="{{ path('article_show_discussions', {'slug': article.slug}) }}">Salon</a></li>
+            <li class="active"><a href="{{ path('article_show_versioning', {'slug': article.slug}) }}">Historique</a></li>
+            {% if is_granted('show_admin_panel', article) %}
+                <li><a href="{{ path('article_show_administration', {'slug': article.slug}) }}">Administration</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="tab-content">
+        <div class="subsection-content col-md-10 col-xs-10">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Version</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for articleVersion in article.versioning %}
+                        <tr>
+                            <td><a href="{{ path('article_version_show', {'slug': articleVersion.slug}) }}" class="table-link">Version {{ articleVersion.versionNumber }}</a></td>
+                            <td>{{ articleVersion.snapDate|date('d/m/Y à  H:i')}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-2 col-xs-2">
+            Date de création : {{ article.creationDate|date('d/m/Y') }}<br><br>
+            Date de dernière modification : {{ article.lastEditDate|date('d/m/Y') }}<br><br>
+            Version actuelle : {{ article.versionNumber }}
+        </div>
+    </div>
+{% endblock page_content %}

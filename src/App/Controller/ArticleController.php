@@ -8,10 +8,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use App\Entity\Article;
 use App\Entity\ArticleVersion;
 use App\Form\Article\EditArticleType;
+use App\Form\Article\RemoveArticleType;
+use App\Security\Authorization\Voter\ArticleVoter;
 
 class ArticleController extends Controller
 {
-    public function showAction($slug)
+    public function showContentAction($slug)
     {
         $article = $this->getDoctrine()->getRepository('App:Article')->findOneBySlug($slug);
 
@@ -19,7 +21,67 @@ class ArticleController extends Controller
             throw $this->createNotFoundException();
         }
 
-        return $this->render('App:Article:show_article.html.twig', [
+        return $this->render('App:Article:show_article_content.html.twig', [
+            'article' => $article,
+        ]);
+    }
+
+    public function showDiscussionsAction($slug)
+    {
+        $article = $this->getDoctrine()->getRepository('App:Article')->findOneBySlug($slug);
+
+        if (null === $article) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->render('App:Article:show_article_discussions.html.twig', [
+            'article'            => $article,
+            'locked_discussions' => False,
+        ]);
+    }
+
+    public function showLockedDiscussionsAction($slug)
+    {
+        $article = $this->getDoctrine()->getRepository('App:Article')->findOneBySlug($slug);
+
+        if (null === $article) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->render('App:Article:show_article_discussions.html.twig', [
+            'article'            => $article,
+            'locked_discussions' => True,
+        ]);
+    }
+
+    public function showVersioningAction($slug)
+    {
+        $article = $this->getDoctrine()->getRepository('App:Article')->findOneBySlug($slug);
+
+        if (null === $article) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->render('App:Article:show_article_versioning.html.twig', [
+            'article' => $article,
+        ]);
+    }
+
+    /**
+     * @Security("has_role('ROLE_USER')")
+     */
+    public function showAdministrationAction($slug)
+    {
+        $article = $this->getDoctrine()->getRepository('App:Article')->findOneBySlug($slug);
+
+        if (null === $article) {
+            throw $this->createNotFoundException();
+        }
+
+        $proposal = $article->getProposal();
+        $this->denyAccessUnlessGranted('edit', $proposal);
+
+        return $this->render('App:Article:show_article_administration.html.twig', [
             'article' => $article,
         ]);
     }
@@ -57,7 +119,7 @@ class ArticleController extends Controller
             'form'          => $form->createView(),
             'article'       => $article,
             'proposal'      => $proposal,
-            'articleNumber' => $proposal->getNumberOfArticles() + 1,
+            'articleNumber' => $proposal->getNumberOfPublishedArticles() + 1,
         ]);
     }
 
@@ -72,7 +134,7 @@ class ArticleController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $this->denyAccessUnlessGranted('edit', $article);
+        $this->denyAccessUnlessGranted(ArticleVoter::CAN_BE_EDITED, $article);
 
         $form = $this->createForm(EditArticleType::class, $article);
         $form->handleRequest($request);
@@ -108,31 +170,36 @@ class ArticleController extends Controller
     /**
      * @Security("has_role('ROLE_USER')")
      */
-    public function deleteAction($slug)
+    public function removeAction(Request $request, $slug)
     {
         $article = $this->getDoctrine()->getRepository('App:Article')->findOneBySlug($slug);
 
-        if (null ===  $article) {
+        if (null === $article) {
             throw $this->createNotFoundException();
         }
 
-        $this->denyAccessUnlessGranted('delete', $article);
+        $this->denyAccessUnlessGranted('can_be_removed', $article);
 
-        $proposal = $article->getProposal();
-        $proposal
-            ->removeArticle($article)
-            ->incrementVersionNumber()
-            ->snapshot()
-        ;
+        $form = $this->createForm(RemoveArticleType::class, $article);
+        $form->handleRequest($request);
 
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($article);
-        $em->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $article->remove();
 
-        $this->get('session')->getFlashBag()->add('info', 'The article '.$article->getTitle().' has been suppressed');
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($article);
+            $em->flush();
 
-        return $this->redirect($this->generateUrl('proposal_show', [
-            'slug' => $proposal->getSlug(),
-        ]));
+            $this->get('session')->getFlashBag()->add('info', 'The article '.$article->getTitle().' has been removed from the proposal.');
+
+            return $this->redirect($this->generateUrl('article_show', [
+                'slug' => $slug,
+            ]));
+        }
+
+        return $this->render('App:Article:remove_article.html.twig', [
+            'article' => $article,
+            'form'    => $form->createView(),
+        ]);
     }
 }

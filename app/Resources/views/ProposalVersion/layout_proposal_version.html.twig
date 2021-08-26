@@ -1,6 +1,21 @@
 {% extends '::layout.html.twig' %}
 
 {% block content %}
+    <div class="section-header row">
+        <div class="section-path row">
+            <ul>
+                <li><a href="{{ path('roots') }}">Arbre</a></li>
+                {% for parent in proposalVersion.recordedProposal.theme.parents %}
+                    <li>></li>
+                    <li><a href="{{ path('theme_show_proposals', {'slug': parent.slug}) }}">{{ parent.title }}</a></li>
+                {% endfor %}
+                <li>></li>
+                <li><a href="{{ path('theme_show_proposals', {'slug': proposalVersion.recordedProposal.theme.slug}) }}">{{ proposalVersion.recordedProposal.theme.title }}</a></li>
+                <li>></li>
+                <li><a href="{{ path('proposal_show_motivation', {'slug': proposalVersion.recordedProposal.slug}) }}">{{ proposalVersion.recordedProposal.title }}</a></li>
+            </ul>
+        </div>
+    </div>
     <div class="proposal-version-change-version-btn">
         {% if not proposalVersion.isFirstVersion %}
             <a href="{{ path('proposal_version_previous_version', {'slug': proposalVersion.slug}) }}" class="btn btn-default">Version précédente</a>
@@ -12,8 +27,7 @@
     <div class="section-header row">
         <div class="proposal-header">
             <div>
-                thématique {{ proposalVersion.themeTitle }}<br>
-                proposition #{{ proposalVersion.recordedProposal.id }} <a href="{{ path('proposal_show', {'slug': proposalVersion.recordedProposal.slug}) }}">{{ proposalVersion.recordedProposal.title }}</a><br>
+                classée dans la thématique {{ proposalVersion.themeTitle }}<br>
                 <h3>Version {{ proposalVersion.versionNumber }}</h3> archivée le {{ proposalVersion.snapDate|date('d/m/Y') }}
             </div>
             <div class="proposal-title">

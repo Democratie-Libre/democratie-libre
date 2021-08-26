@@ -32,7 +32,7 @@ class PublicDiscussionController extends Controller
             ]);
         }
 
-        if ($this->get('security.authorization_checker')->isGranted('follow', $discussion)) {
+        if ($this->isGranted('follow', $discussion)) {
             $discussion->removeUnreader($user);
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
@@ -40,7 +40,7 @@ class PublicDiscussionController extends Controller
         }
 
         if ($discussion->isLocked()) {
-            return $this->render('App:Discussion:show_public_discussion.html.twig', [
+            return $this->render('App:Discussion:show_locked_public_discussion.html.twig', [
                 'discussion' => $discussion,
             ]);
         }
@@ -138,6 +138,8 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
+        $this->denyAccessUnlessGranted('published', $proposal);
+
         $discussion = PublicDiscussion::createProposalDiscussion($proposal);
         $form       = $this->createForm(EditDiscussionType::class, $discussion);
         $form->handleRequest($request);
@@ -170,6 +172,9 @@ class PublicDiscussionController extends Controller
         if (null === $article) {
             throw $this->createNotFoundException();
         }
+
+        $proposal = $article->getProposal();
+        $this->denyAccessUnlessGranted('published', $proposal);
 
         $discussion = PublicDiscussion::createArticleDiscussion($article);
         $form       = $this->createForm(EditDiscussionType::class, $discussion);
@@ -204,6 +209,8 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
+        $this->denyAccessUnlessGranted('published', $discussion);
+
         $form = $this->createForm(EditDiscussionType::class, $discussion);
         $form->handleRequest($request);
 
@@ -234,6 +241,8 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
+        $this->denyAccessUnlessGranted('published', $discussion);
+
         $em = $this->getDoctrine()->getManager();
 
         if ($discussion->isGlobalDiscussion()) {
@@ -248,7 +257,7 @@ class PublicDiscussionController extends Controller
             $em->remove($discussion);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('theme_show', [
+            return $this->redirect($this->generateUrl('theme_show_proposals', [
                 'slug' => $themeSlug,
             ]));
         }
@@ -349,6 +358,7 @@ class PublicDiscussionController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $hostProposal = $form->get('proposal')->getData();
+            $this->denyAccessUnlessGranted('published', $hostProposal);
             $discussion->moveAs(PublicDiscussion::PROPOSAL_DISCUSSION, $hostProposal);
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
@@ -383,6 +393,7 @@ class PublicDiscussionController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $hostArticle = $form->get('article')->getData();
+            $this->denyAccessUnlessGranted('published', $hostArticle);
             $discussion->moveAs(PublicDiscussion::ARTICLE_DISCUSSION, $hostArticle);
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
@@ -412,6 +423,8 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
+        $this->denyAccessUnlessGranted('published', $discussion);
+
         $discussion->setLocked(true);
         $em = $this->getDoctrine()->getManager();
         $em->persist($discussion);
@@ -434,6 +447,8 @@ class PublicDiscussionController extends Controller
         if (null === $discussion) {
             throw $this->createNotFoundException();
         }
+
+        $this->denyAccessUnlessGranted('locked', $discussion);
 
         $discussion->setLocked(false);
         $em = $this->getDoctrine()->getManager();
