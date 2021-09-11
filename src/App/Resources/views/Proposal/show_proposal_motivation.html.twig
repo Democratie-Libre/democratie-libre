@@ -13,7 +13,7 @@
         </ul>
     </div>
     <div class="tab-content">
-        {% if is_granted('edit', proposal) and is_granted('published', proposal) %}
+        {% if is_granted('can_be_edited', proposal) and is_granted('published', proposal) %}
             <div class="col-md-3 col-md-offset-9">
                 <a href="{{ path('proposal_edit', {'slug': proposal.slug}) }}" class="btn btn-default custom-btn">Éditer la proposition</a>
             </div>

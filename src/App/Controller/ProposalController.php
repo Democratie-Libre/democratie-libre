@@ -10,16 +10,13 @@ use App\Entity\Proposal;
 use App\Form\Proposal\EditProposalType;
 use App\Form\Proposal\LockProposalType;
 use App\Form\SelectThemeType;
+use App\Security\Authorization\Voter\ProposalVoter;
 
 class ProposalController extends Controller
 {
     public function showMotivationAction($slug)
     {
-        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
-
-        if (null === $proposal) {
-            throw $this->createNotFoundException();
-        }
+        $proposal = $this->getProposalBySlug($slug);
 
         return $this->render('App:Proposal:show_proposal_motivation.html.twig', [
             'proposal' => $proposal,
@@ -28,25 +25,17 @@ class ProposalController extends Controller
 
     public function showArticlesAction($slug)
     {
-        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
-
-        if (null === $proposal) {
-            throw $this->createNotFoundException();
-        }
+        $proposal = $this->getProposalBySlug($slug);
 
         return $this->render('App:Proposal:show_proposal_articles.html.twig', [
             'proposal'        => $proposal,
-            'locked_articles' => False,
+            'locked_articles' => false,
         ]);
     }
 
     public function showRemovedArticlesAction($slug)
     {
-        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
-
-        if (null === $proposal) {
-            throw $this->createNotFoundException();
-        }
+        $proposal = $this->getProposalBySlug($slug);
 
         return $this->render('App:Proposal:show_proposal_removed_articles.html.twig', [
             'proposal' => $proposal,
@@ -55,11 +44,7 @@ class ProposalController extends Controller
 
     public function showDiscussionsAction($slug)
     {
-        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
-
-        if (null === $proposal) {
-            throw $this->createNotFoundException();
-        }
+        $proposal = $this->getProposalBySlug($slug);
 
         return $this->render('App:Proposal:show_proposal_discussions.html.twig', [
             'proposal'           => $proposal,
@@ -69,11 +54,7 @@ class ProposalController extends Controller
 
     public function showLockedDiscussionsAction($slug)
     {
-        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
-
-        if (null === $proposal) {
-            throw $this->createNotFoundException();
-        }
+        $proposal = $this->getProposalBySlug($slug);
 
         return $this->render('App:Proposal:show_proposal_discussions.html.twig', [
             'proposal'           => $proposal,
@@ -83,11 +64,7 @@ class ProposalController extends Controller
 
     public function showVersioningAction($slug)
     {
-        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
-
-        if (null === $proposal) {
-            throw $this->createNotFoundException();
-        }
+        $proposal = $this->getProposalBySlug($slug);
 
         return $this->render('App:Proposal:show_proposal_versioning.html.twig', [
             'proposal' => $proposal,
@@ -99,13 +76,9 @@ class ProposalController extends Controller
      */
     public function showAdministrationAction($slug)
     {
-        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+        $proposal = $this->getProposalBySlug($slug);
 
-        if (null === $proposal) {
-            throw $this->createNotFoundException();
-        }
-
-        $this->denyAccessUnlessGranted('show_admin_panel', $proposal);
+        $this->denyAccessUnlessGranted(ProposalVoter::SHOW_ADMIN_PANEL, $proposal);
 
         return $this->render('App:Proposal:show_proposal_administration.html.twig', [
             'proposal' => $proposal,
@@ -155,14 +128,10 @@ class ProposalController extends Controller
      */
     public function editAction(Request $request, $slug)
     {
-        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+        $proposal = $this->getProposalBySlug($slug);
 
-        if (null ===  $proposal) {
-            throw $this->createNotFoundException();
-        }
-
-        $this->denyAccessUnlessGranted('published', $proposal);
-        $this->denyAccessUnlessGranted('edit', $proposal);
+        $this->denyAccessUnlessGranted(ProposalVoter::PUBLISHED, $proposal);
+        $this->denyAccessUnlessGranted(ProposalVoter::CAN_BE_EDITED, $proposal);
 
         $form = $this->createForm(EditProposalType::class, $proposal);
         $form->handleRequest($request);
@@ -193,14 +162,10 @@ class ProposalController extends Controller
      */
     public function supportAction($slug)
     {
-        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+        $proposal = $this->getProposalBySlug($slug);
 
-        if (null === $proposal) {
-            throw $this->createNotFoundException();
-        }
-
-        $this->denyAccessUnlessGranted('published', $proposal);
-        $this->denyAccessUnlessGranted('neutral', $proposal);
+        $this->denyAccessUnlessGranted(ProposalVoter::PUBLISHED, $proposal);
+        $this->denyAccessUnlessGranted(ProposalVoter::NEUTRAL, $proposal);
 
         $proposal->addSupporter($this->getUser());
         $em = $this->getDoctrine()->getManager();
@@ -218,14 +183,10 @@ class ProposalController extends Controller
      */
     public function removeSupportAction($slug)
     {
-        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+        $proposal = $this->getProposalBySlug($slug);
 
-        if (null === $proposal) {
-            throw $this->createNotFoundException();
-        }
-
-        $this->denyAccessUnlessGranted('published', $proposal);
-        $this->denyAccessUnlessGranted('supporter', $proposal);
+        $this->denyAccessUnlessGranted(ProposalVoter::PUBLISHED, $proposal);
+        $this->denyAccessUnlessGranted(ProposalVoter::SUPPORTER, $proposal);
 
         $proposal->removeSupporter($this->getUser());
         $em = $this->getDoctrine()->getManager();
@@ -243,14 +204,10 @@ class ProposalController extends Controller
      */
     public function opposeAction($slug)
     {
-        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+        $proposal = $this->getProposalBySlug($slug);
 
-        if (null === $proposal) {
-            throw $this->createNotFoundException();
-        }
-
-        $this->denyAccessUnlessGranted('published', $proposal);
-        $this->denyAccessUnlessGranted('neutral', $proposal);
+        $this->denyAccessUnlessGranted(ProposalVoter::PUBLISHED, $proposal);
+        $this->denyAccessUnlessGranted(ProposalVoter::NEUTRAL, $proposal);
 
         $proposal->addOpponent($this->getUser());
         $em = $this->getDoctrine()->getManager();
@@ -268,14 +225,10 @@ class ProposalController extends Controller
      */
     public function removeOpposeAction($slug)
     {
-        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+        $proposal = $this->getProposalBySlug($slug);
 
-        if (null === $proposal) {
-            throw $this->createNotFoundException();
-        }
-
-        $this->denyAccessUnlessGranted('published', $proposal);
-        $this->denyAccessUnlessGranted('opponent', $proposal);
+        $this->denyAccessUnlessGranted(ProposalVoter::PUBLISHED, $proposal);
+        $this->denyAccessUnlessGranted(ProposalVoter::OPPONENT, $proposal);
 
         $proposal->removeOpponent($this->getUser());
         $em = $this->getDoctrine()->getManager();
@@ -293,13 +246,9 @@ class ProposalController extends Controller
      */
     public function moveAction(Request $request, $slug)
     {
-        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+        $proposal = $this->getProposalBySlug($slug);
 
-        if (null === $proposal) {
-            throw $this->createNotFoundException();
-        }
-
-        $this->denyAccessUnlessGranted('can_be_moved', $proposal);
+        $this->denyAccessUnlessGranted(ProposalVoter::CAN_BE_MOVED, $proposal);
 
         $form = $this->createForm(SelectThemeType::class, null);
         $form->handleRequest($request);
@@ -334,13 +283,9 @@ class ProposalController extends Controller
      */
     public function deleteAction($slug)
     {
-        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+        $proposal = $this->getProposalBySlug($slug);
 
-        if (null === $proposal) {
-            throw $this->createNotFoundException();
-        }
-
-        $this->denyAccessUnlessGranted('locked', $proposal);
+        $this->denyAccessUnlessGranted(ProposalVoter::LOCKED, $proposal);
 
         $title = $proposal->getTitle();
 
@@ -358,13 +303,9 @@ class ProposalController extends Controller
      */
     public function lockAction(Request $request, $slug)
     {
-        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+        $proposal = $this->getProposalBySlug($slug);
 
-        if (null === $proposal) {
-            throw $this->createNotFoundException();
-        }
-
-        $this->denyAccessUnlessGranted('can_be_locked', $proposal);
+        $this->denyAccessUnlessGranted(ProposalVoter::CAN_BE_LOCKED, $proposal);
 
         $form = $this->createForm(LockProposalType::class, $proposal);
         $form->handleRequest($request);
@@ -385,5 +326,16 @@ class ProposalController extends Controller
             'proposal' => $proposal,
             'form'     => $form->createView(),
         ]);
+    }
+
+    private function getProposalBySlug($slug)
+    {
+        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+
+        if (null === $proposal) {
+            throw $this->createNotFoundException();
+        }
+
+        return $proposal;
     }
 }

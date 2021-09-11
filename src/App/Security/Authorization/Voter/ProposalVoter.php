@@ -10,7 +10,7 @@ use App\Entity\User;
 
 class ProposalVoter extends Voter
 {
-    const EDIT             = 'edit';
+    const CAN_BE_EDITED    = 'can_be_edited';
     const AUTHOR           = 'author';
     const SUPPORTER        = 'supporter';
     const OPPONENT         = 'opponent';
@@ -31,7 +31,7 @@ class ProposalVoter extends Voter
     protected function supports($attribute, $subject)
     {
         if (!in_array($attribute, [
-            self::EDIT,
+            self::CAN_BE_EDITED,
             self::AUTHOR,
             self::SUPPORTER,
             self::OPPONENT,
@@ -70,8 +70,8 @@ class ProposalVoter extends Voter
         }
 
         switch ($attribute) {
-            case self::EDIT:
-                return $this->canEdit($proposal, $user, $token);
+            case self::CAN_BE_EDITED:
+                return $this->canBeEdited($proposal, $user, $token);
             case self::AUTHOR:
                 return $this->isAuthor($proposal, $user);
             case self::SUPPORTER:
@@ -91,7 +91,7 @@ class ProposalVoter extends Voter
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canEdit($proposal, $user, $token)
+    private function canBeEdited($proposal, $user, $token)
     {
         if ($this->decisionManager->decide($token, ['ROLE_ADMIN'])) {
             return true;

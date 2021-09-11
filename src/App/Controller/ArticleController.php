@@ -10,6 +10,7 @@ use App\Entity\ArticleVersion;
 use App\Form\Article\EditArticleType;
 use App\Form\Article\RemoveArticleType;
 use App\Security\Authorization\Voter\ArticleVoter;
+use App\Security\Authorization\Voter\ProposalVoter;
 
 class ArticleController extends Controller
 {
@@ -36,7 +37,7 @@ class ArticleController extends Controller
 
         return $this->render('App:Article:show_article_discussions.html.twig', [
             'article'            => $article,
-            'locked_discussions' => False,
+            'locked_discussions' => false,
         ]);
     }
 
@@ -50,7 +51,7 @@ class ArticleController extends Controller
 
         return $this->render('App:Article:show_article_discussions.html.twig', [
             'article'            => $article,
-            'locked_discussions' => True,
+            'locked_discussions' => true,
         ]);
     }
 
@@ -79,7 +80,7 @@ class ArticleController extends Controller
         }
 
         $proposal = $article->getProposal();
-        $this->denyAccessUnlessGranted('edit', $proposal);
+        $this->denyAccessUnlessGranted(ProposalVoter::CAN_BE_EDITED, $proposal);
 
         return $this->render('App:Article:show_article_administration.html.twig', [
             'article' => $article,
@@ -97,7 +98,7 @@ class ArticleController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $this->denyAccessUnlessGranted('edit', $proposal);
+        $this->denyAccessUnlessGranted(ProposalVoter::CAN_BE_EDITED, $proposal);
 
         $article = new Article();
         $form    = $this->createForm(EditArticleType::class, $article);
@@ -178,7 +179,7 @@ class ArticleController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $this->denyAccessUnlessGranted('can_be_removed', $article);
+        $this->denyAccessUnlessGranted(ArticleVoter::CAN_BE_REMOVED, $article);
 
         $form = $this->createForm(RemoveArticleType::class, $article);
         $form->handleRequest($request);

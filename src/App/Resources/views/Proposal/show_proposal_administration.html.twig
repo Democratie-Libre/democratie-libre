@@ -18,7 +18,7 @@
         {% endif %}
         {% if is_granted('can_be_locked', proposal) %}
             <div class="col-md-3 col-md-offset-9">
-                <a href="{{ path('proposal_lock', {'slug': proposal.slug}) }}" class="btn btn-default custom-admin-btn">Vérouiller la proposition</a>
+                <a href="{{ path('proposal_lock', {'slug': proposal.slug}) }}" class="btn btn-default custom-admin-btn">Verrouiller la proposition</a>
             </div>
         {% endif %}
     </div>

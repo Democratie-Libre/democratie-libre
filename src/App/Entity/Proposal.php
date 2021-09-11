@@ -32,9 +32,9 @@ class Proposal
     private $slug;
 
     /**
-     * @ORM\Column(type="string", length=255, options={"default" : "published"})
+     * @ORM\Column(type="string", length=255, options={"default" : Proposal::PUBLISHED})
      */
-    private $status = 'published';
+    private $status = self::PUBLISHED;
 
     /**
      * If the proposal has been locked, it should be justified here.
@@ -142,7 +142,7 @@ class Proposal
 
     public function __construct()
     {
-        $this->status              = $this::PUBLISHED;
+        $this->status              = self::PUBLISHED;
         $this->lockingExplanation  = null;
         $this->creationDate        = new \DateTime();
         $this->articles            = new ArrayCollection();
@@ -259,11 +259,10 @@ class Proposal
 
     public function getNumberOfPublishedArticles()
     {
-        $articles                  = $this->getArticles();
         $numberOfPublishedArticles = 0;
 
-        foreach ($articles as $article) {
-            if ($article->getStatus() == $article::PUBLISHED) {
+        foreach ($this->getArticles() as $article) {
+            if ($article->getStatus() === $article::PUBLISHED) {
                 $numberOfPublishedArticles += 1;
             }
         }

@@ -95,17 +95,17 @@ class ArticleVoter extends Voter
 
     private function isPublished($article)
     {
-        return $article->getStatus() == $article::PUBLISHED;
+        return $article->getStatus() === $article::PUBLISHED;
     }
 
     private function isLocked($article)
     {
-        return $article->getStatus() == $article::LOCKED;
+        return $article->getStatus() === $article::LOCKED;
     }
 
     private function isRemoved($article)
     {
-        return $article->getStatus() == $article::REMOVED;
+        return $article->getStatus() === $article::REMOVED;
     }
 
     private function showAdminPanel($article, $user)

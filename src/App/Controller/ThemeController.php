@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Security\Authorization\Voter\ProposalVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -15,25 +16,17 @@ class ThemeController extends Controller
 {
     public function showProposalsAction($slug)
     {
-        $theme = $this->getDoctrine()->getRepository('App:Theme')->findOneBySlug($slug);
-
-        if (null ===  $theme) {
-            throw $this->createNotFoundException();
-        }
+        $theme = $this->getThemeBySlug($slug);
 
         return $this->render('App:Theme:show_theme_proposals.html.twig', [
             'theme'            => $theme,
-            'locked_proposals' => False,
+            'locked_proposals' => false,
         ]);
     }
 
     public function showLockedProposalsAction($slug)
     {
-        $theme = $this->getDoctrine()->getRepository('App:Theme')->findOneBySlug($slug);
-
-        if (null ===  $theme) {
-            throw $this->createNotFoundException();
-        }
+        $theme = $this->getThemeBySlug($slug);
 
         return $this->render('App:Theme:show_theme_proposals.html.twig', [
             'theme'            => $theme,
@@ -43,11 +36,7 @@ class ThemeController extends Controller
 
     public function showDiscussionsAction($slug)
     {
-        $theme = $this->getDoctrine()->getRepository('App:Theme')->findOneBySlug($slug);
-
-        if (null ===  $theme) {
-            throw $this->createNotFoundException();
-        }
+        $theme = $this->getThemeBySlug($slug);
 
         return $this->render('App:Theme:show_theme_discussions.html.twig', [
             'theme'              => $theme,
@@ -57,11 +46,7 @@ class ThemeController extends Controller
 
     public function showLockedDiscussionsAction($slug)
     {
-        $theme = $this->getDoctrine()->getRepository('App:Theme')->findOneBySlug($slug);
-
-        if (null ===  $theme) {
-            throw $this->createNotFoundException();
-        }
+        $theme = $this->getThemeBySlug($slug);
 
         return $this->render('App:Theme:show_theme_discussions.html.twig', [
             'theme'              => $theme,
@@ -71,11 +56,7 @@ class ThemeController extends Controller
 
     public function showChildrenAction($slug)
     {
-        $theme = $this->getDoctrine()->getRepository('App:Theme')->findOneBySlug($slug);
-
-        if (null ===  $theme) {
-            throw $this->createNotFoundException();
-        }
+        $theme = $this->getThemeBySlug($slug);
 
         return $this->render('App:Theme:show_theme_children.html.twig', [
             'theme' => $theme,
@@ -137,7 +118,7 @@ class ThemeController extends Controller
         }
 
         return $this->render('App:Theme:add_theme.html.twig', [
-            'form'   => $form->createView(),
+            'form'  => $form->createView(),
             'theme' => $parent,
         ]);
     }
@@ -147,12 +128,8 @@ class ThemeController extends Controller
      */
     public function editAction(Request $request, $slug)
     {
+        $theme      = $this->getThemeBySlug($slug);
         $repository = $this->getDoctrine()->getRepository('App:Theme');
-        $theme      = $repository->findOneBySlug($slug);
-
-        if (null === $theme) {
-            throw $this->createNotFoundException();
-        }
 
         $form = $this->createForm(EditThemeType::class, $theme);
         $form->handleRequest($request);
@@ -178,12 +155,8 @@ class ThemeController extends Controller
      */
     public function moveAction(Request $request, $slug)
     {
+        $theme      = $this->getThemeBySlug($slug);
         $repository = $this->getDoctrine()->getRepository('App:Theme');
-        $theme      = $repository->findOneBySlug($slug);
-
-        if (null === $theme) {
-            throw $this->createNotFoundException();
-        }
 
         // in this array are the id of the theme considered, and the ids of all its descendants
         $descendantsIds = $repository->getChildrenId($theme, false, null, 'ASC', true);
@@ -220,12 +193,8 @@ class ThemeController extends Controller
      */
     public function deleteAction(Request $request, $slug)
     {
+        $theme      = $this->getThemeBySlug($slug);
         $repository = $this->getDoctrine()->getRepository('App:Theme');
-        $theme      = $repository->findOneBySlug($slug);
-
-        if (null === $theme) {
-            throw $this->createNotFoundException();
-        }
 
         if (false === $theme->isEmpty()) {
             $this->addFlash('info', 'Une thématique ne peut pas être supprimée si elle contient des propositions !');
@@ -261,5 +230,16 @@ class ThemeController extends Controller
         }
 
         return $this->redirect($this->generateUrl('roots'));
+    }
+
+    private function getThemeBySlug($slug)
+    {
+        $theme = $this->getDoctrine()->getRepository('App:Theme')->findOneBySlug($slug);
+
+        if (null === $theme) {
+            throw $this->createNotFoundException();
+        }
+
+        return $theme;
     }
 }

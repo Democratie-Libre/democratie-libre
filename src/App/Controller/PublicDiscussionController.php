@@ -13,6 +13,9 @@ use App\Form\Discussion\EditDiscussionType;
 use App\Form\SelectThemeType;
 use App\Form\SelectProposalType;
 use App\Form\SelectArticleType;
+use App\Security\Authorization\Voter\ProposalVoter;
+use App\Security\Authorization\Voter\PublicDiscussionVoter;
+use App\Security\Authorization\Voter\ArticleVoter;
 
 class PublicDiscussionController extends Controller
 {
@@ -32,7 +35,7 @@ class PublicDiscussionController extends Controller
             ]);
         }
 
-        if ($this->isGranted('follow', $discussion)) {
+        if ($this->isGranted(PublicDiscussionVoter::FOLLOW, $discussion)) {
             $discussion->removeUnreader($user);
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
@@ -138,7 +141,7 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $this->denyAccessUnlessGranted('published', $proposal);
+        $this->denyAccessUnlessGranted(ProposalVoter::PUBLISHED, $proposal);
 
         $discussion = PublicDiscussion::createProposalDiscussion($proposal);
         $form       = $this->createForm(EditDiscussionType::class, $discussion);
@@ -174,7 +177,7 @@ class PublicDiscussionController extends Controller
         }
 
         $proposal = $article->getProposal();
-        $this->denyAccessUnlessGranted('published', $proposal);
+        $this->denyAccessUnlessGranted(ProposalVoter::PUBLISHED, $proposal);
 
         $discussion = PublicDiscussion::createArticleDiscussion($article);
         $form       = $this->createForm(EditDiscussionType::class, $discussion);
@@ -209,7 +212,7 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $this->denyAccessUnlessGranted('published', $discussion);
+        $this->denyAccessUnlessGranted(PublicDiscussionVoter::PUBLISHED, $discussion);
 
         $form = $this->createForm(EditDiscussionType::class, $discussion);
         $form->handleRequest($request);
@@ -241,7 +244,7 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $this->denyAccessUnlessGranted('published', $discussion);
+        $this->denyAccessUnlessGranted(PublicDiscussionVoter::PUBLISHED, $discussion);
 
         $em = $this->getDoctrine()->getManager();
 
@@ -358,7 +361,7 @@ class PublicDiscussionController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $hostProposal = $form->get('proposal')->getData();
-            $this->denyAccessUnlessGranted('published', $hostProposal);
+            $this->denyAccessUnlessGranted(ProposalVoter::PUBLISHED, $hostProposal);
             $discussion->moveAs(PublicDiscussion::PROPOSAL_DISCUSSION, $hostProposal);
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
@@ -393,7 +396,7 @@ class PublicDiscussionController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $hostArticle = $form->get('article')->getData();
-            $this->denyAccessUnlessGranted('published', $hostArticle);
+            $this->denyAccessUnlessGranted(ArticleVoter::PUBLISHED, $hostArticle);
             $discussion->moveAs(PublicDiscussion::ARTICLE_DISCUSSION, $hostArticle);
             $em = $this->getDoctrine()->getManager();
             $em->persist($discussion);
@@ -423,7 +426,7 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $this->denyAccessUnlessGranted('published', $discussion);
+        $this->denyAccessUnlessGranted(PublicDiscussionVoter::PUBLISHED, $discussion);
 
         $discussion->setLocked(true);
         $em = $this->getDoctrine()->getManager();
@@ -448,7 +451,7 @@ class PublicDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $this->denyAccessUnlessGranted('locked', $discussion);
+        $this->denyAccessUnlessGranted(PublicDiscussionVoter::LOCKED, $discussion);
 
         $discussion->setLocked(false);
         $em = $this->getDoctrine()->getManager();

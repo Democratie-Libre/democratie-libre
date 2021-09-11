@@ -33,9 +33,9 @@ class Article
     private $slug;
 
     /**
-     * @ORM\Column(type="string", length=255, options={"default" : "published"})
+     * @ORM\Column(type="string", length=255, options={"default" : Article::PUBLISHED})
      */
-    private $status = 'published';
+    private $status = self::PUBLISHED;
 
     /**
      * If the article has been removed by the author of the proposal, it should
@@ -110,7 +110,7 @@ class Article
 
     public function __construct()
     {
-        $this->status               = $this::PUBLISHED;
+        $this->status               = self::PUBLISHED;
         $this->removingExplanation  = null;
         $this->creationDate         = new \DateTime();
         $this->versionNumber        = 1;
@@ -128,7 +128,7 @@ class Article
         return $this->slug;
     }
 
-    public function setStatus($status)
+    public function setStatus(string $status)
     {
         $this->status = $status;
 
@@ -142,7 +142,7 @@ class Article
 
     public function isPublished()
     {
-        return $this->getStatus() == 'published';
+        return $this->getStatus() === self::PUBLISHED;
     }
 
     public function setRemovingExplanation($removingExplanation)
@@ -358,8 +358,9 @@ class Article
         $proposal             = $this->getProposal();
 
         foreach ($proposal->getArticles() as $article) {
-            if ($article->isPublished() and
-                $article->getNumber() > $removedArticleNumber) {
+            if ($article->isPublished()
+                && $article->getNumber() > $removedArticleNumber
+            ) {
                 $article
                     ->decreaseNumber()
                     ->incrementVersionNumber()

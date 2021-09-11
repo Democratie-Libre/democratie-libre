@@ -39,8 +39,8 @@ class GlobalController extends Controller
 
     public function removedProposalsAction()
     {
-        $removed_proposals = $this->getDoctrine()->getRepository('App:Proposal')->findByStatus(Proposal::REMOVED);
+        $removedProposals = $this->getDoctrine()->getRepository('App:Proposal')->findByStatus(Proposal::REMOVED);
 
-        return $this->render('App:Global:removed_proposals.html.twig', ['removed_proposals' => $removed_proposals]);
+        return $this->render('App:Global:removed_proposals.html.twig', ['removed_proposals' => $removedProposals]);
     }
 }

@@ -13,7 +13,7 @@
         </ul>
     </div>
     <div class="row">
-        {% if is_granted('published', proposal) and is_granted('edit', proposal) %}
+        {% if is_granted('published', proposal) and is_granted('can_be_edited', proposal) %}
             <div class="col-md-3 col-md-offset-7">
                 <a href="{{ path('article_add', {'proposalSlug': proposal.slug}) }}" class="btn btn-default custom-btn">Ajouter un article</a>
             </div>

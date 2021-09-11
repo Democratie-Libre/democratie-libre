@@ -10,7 +10,7 @@
             <li><a href="#">Bibliothèque</a></li>
             <li><a href="#">Débats</a></li>
             -->
-            {% if not theme.children is empty %}
+            {% if theme.children %}
                 <li class="active"><a href="{{ path('theme_show_children', {'slug': theme.slug}) }}">Thématiques filles</a></li>
             {% endif %}
         </ul>
