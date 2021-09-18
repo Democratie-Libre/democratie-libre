@@ -171,6 +171,10 @@ class Article
 
     public function decreaseNumber()
     {
+        if ($this->number === 0) {
+            throw new Exception('An article number cannot be under 0 !');
+        }
+
         $this->number -= 1;
 
         return $this;
