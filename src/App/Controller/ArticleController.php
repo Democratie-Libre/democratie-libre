@@ -16,11 +16,7 @@ class ArticleController extends Controller
 {
     public function showContentAction($slug)
     {
-        $article = $this->getDoctrine()->getRepository('App:Article')->findOneBySlug($slug);
-
-        if (null === $article) {
-            throw $this->createNotFoundException();
-        }
+        $article = $this->getArticleBySlug($slug);
 
         return $this->render('App:Article:show_article_content.html.twig', [
             'article' => $article,
@@ -29,11 +25,7 @@ class ArticleController extends Controller
 
     public function showDiscussionsAction($slug)
     {
-        $article = $this->getDoctrine()->getRepository('App:Article')->findOneBySlug($slug);
-
-        if (null === $article) {
-            throw $this->createNotFoundException();
-        }
+        $article = $this->getArticleBySlug($slug);
 
         return $this->render('App:Article:show_article_discussions.html.twig', [
             'article'            => $article,
@@ -43,11 +35,7 @@ class ArticleController extends Controller
 
     public function showLockedDiscussionsAction($slug)
     {
-        $article = $this->getDoctrine()->getRepository('App:Article')->findOneBySlug($slug);
-
-        if (null === $article) {
-            throw $this->createNotFoundException();
-        }
+        $article = $this->getArticleBySlug($slug);
 
         return $this->render('App:Article:show_article_discussions.html.twig', [
             'article'            => $article,
@@ -57,11 +45,7 @@ class ArticleController extends Controller
 
     public function showVersioningAction($slug)
     {
-        $article = $this->getDoctrine()->getRepository('App:Article')->findOneBySlug($slug);
-
-        if (null === $article) {
-            throw $this->createNotFoundException();
-        }
+        $article = $this->getArticleBySlug($slug);
 
         return $this->render('App:Article:show_article_versioning.html.twig', [
             'article' => $article,
@@ -73,11 +57,7 @@ class ArticleController extends Controller
      */
     public function showAdministrationAction($slug)
     {
-        $article = $this->getDoctrine()->getRepository('App:Article')->findOneBySlug($slug);
-
-        if (null === $article) {
-            throw $this->createNotFoundException();
-        }
+        $article = $this->getArticleBySlug($slug);
 
         $proposal = $article->getProposal();
         $this->denyAccessUnlessGranted(ProposalVoter::CAN_BE_EDITED, $proposal);
@@ -129,11 +109,7 @@ class ArticleController extends Controller
      */
     public function editAction(Request $request, $slug)
     {
-        $article = $this->getDoctrine()->getRepository('App:Article')->findOneBySlug($slug);
-
-        if (null ===  $article) {
-            throw $this->createNotFoundException();
-        }
+        $article = $this->getArticleBySlug($slug);
 
         $this->denyAccessUnlessGranted(ArticleVoter::CAN_BE_EDITED, $article);
 
@@ -173,11 +149,7 @@ class ArticleController extends Controller
      */
     public function removeAction(Request $request, $slug)
     {
-        $article = $this->getDoctrine()->getRepository('App:Article')->findOneBySlug($slug);
-
-        if (null === $article) {
-            throw $this->createNotFoundException();
-        }
+        $article = $this->getArticleBySlug($slug);
 
         $this->denyAccessUnlessGranted(ArticleVoter::CAN_BE_REMOVED, $article);
 
@@ -202,5 +174,16 @@ class ArticleController extends Controller
             'article' => $article,
             'form'    => $form->createView(),
         ]);
+    }
+
+    private function getArticleBySlug($slug)
+    {
+        $article = $this->getDoctrine()->getRepository('App:Article')->findOneBySlug($slug);
+
+        if (null === $article) {
+            throw $this->createNotFoundException();
+        }
+
+        return $article;
     }
 }
