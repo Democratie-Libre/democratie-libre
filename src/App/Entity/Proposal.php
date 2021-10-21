@@ -15,6 +15,9 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Proposal
 {
+    const PUBLISHED = 'published';
+    const LOCKED    = 'locked';
+
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
@@ -27,6 +30,21 @@ class Proposal
      * @ORM\Column(length=128, unique=true)
      */
     private $slug;
+
+    /**
+     * @ORM\Column(type="string", length=255, options={"default" : Proposal::PUBLISHED})
+     */
+    private $status = self::PUBLISHED;
+
+    /**
+     * If the proposal has been locked, it should be justified here.
+     *
+     * @ORM\Column(type="text", nullable=true)
+     * @Assert\Length(
+     *      max = 400,
+     * )
+     */
+    private $lockingExplanation;
 
     /**
      * @ORM\Column(type="string")
@@ -65,7 +83,7 @@ class Proposal
     private $motivation;
 
     /**
-     * @ORM\OneToMany(targetEntity="Article", mappedBy="proposal", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="Article", mappedBy="proposal", cascade={"persist", "remove"})
      * @ORM\OrderBy({"number" = "ASC"})
      */
     private $articles;
@@ -118,20 +136,22 @@ class Proposal
     private $versioning;
 
     /**
-     * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="proposal", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="proposal", cascade={"persist", "remove"})
      */
     private $discussions;
 
     public function __construct()
     {
-        $this->creationDate  = new \DateTime();
-        $this->articles      = new ArrayCollection();
-        $this->versionNumber = 1;
-        $this->isAWiki       = false;
-        $this->supporters    = new ArrayCollection();
-        $this->opponents     = new ArrayCollection();
-        $this->versioning    = new ArrayCollection();
-        $this->discussions   = new ArrayCollection();
+        $this->status              = self::PUBLISHED;
+        $this->lockingExplanation  = null;
+        $this->creationDate        = new \DateTime();
+        $this->articles            = new ArrayCollection();
+        $this->versionNumber       = 1;
+        $this->isAWiki             = false;
+        $this->supporters          = new ArrayCollection();
+        $this->opponents           = new ArrayCollection();
+        $this->versioning          = new ArrayCollection();
+        $this->discussions         = new ArrayCollection();
     }
 
     public function getId()
@@ -142,6 +162,30 @@ class Proposal
     public function getSlug()
     {
         return $this->slug;
+    }
+
+    public function setStatus($status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    public function setLockingExplanation($lockingExplanation)
+    {
+        $this->lockingExplanation = $lockingExplanation;
+
+        return $this;
+    }
+
+    public function getLockingExplanation()
+    {
+        return $this->lockingExplanation;
     }
 
     public function setTitle($title)
@@ -208,22 +252,22 @@ class Proposal
         return $this;
     }
 
-    public function removeArticle(Article $article)
-    {
-        $this->articles->removeElement($article);
-        $article->removeProposal($this);
-
-        return $this;
-    }
-
     public function getArticles()
     {
         return $this->articles;
     }
 
-    public function getNumberOfArticles()
+    public function getNumberOfPublishedArticles()
     {
-        return $this->articles->count();
+        $numberOfPublishedArticles = 0;
+
+        foreach ($this->getArticles() as $article) {
+            if ($article->getStatus() === $article::PUBLISHED) {
+                $numberOfPublishedArticles += 1;
+            }
+        }
+
+        return $numberOfPublishedArticles;
     }
 
     public function setVersionNumber($number)
@@ -377,5 +421,22 @@ class Proposal
     public function getDiscussions()
     {
         return $this->discussions;
+    }
+
+    public function lock()
+    {
+        $this->setStatus($this::LOCKED);
+
+        foreach ($this->discussions as $discussion) {
+            $discussion->setLocked(True);
+        }
+
+        foreach ($this->articles as $article) {
+            if ($article->isPublished()) {
+                $article->lock();
+            }
+        }
+
+        return $this;
     }
 }

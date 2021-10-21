@@ -9,14 +9,18 @@ use App\Entity\User;
 
 class PublicDiscussionVoter extends Voter
 {
-    const FOLLOW   = 'follow';
-    const UNREADER = 'unreader';
+    const FOLLOW     = 'follow';
+    const UNREADER   = 'unreader';
+    const PUBLISHED  = 'published';
+    const LOCKED     = 'locked';
 
     protected function supports($attribute, $subject)
     {
         if (!in_array($attribute, [
             self::FOLLOW,
-            self::UNREADER
+            self::UNREADER,
+            self::PUBLISHED,
+            self::LOCKED
         ])) {
             return false;
         }
@@ -30,13 +34,20 @@ class PublicDiscussionVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
+        $publicDiscussion = $subject;
+
+        switch ($attribute) {
+            case self::PUBLISHED:
+                return $this->isPublished($publicDiscussion);
+            case self::LOCKED:
+                return $this->isLocked($publicDiscussion);
+        }
+
         $user = $token->getUser();
 
         if (!$user instanceof User) {
             return false;
         }
-
-        $publicDiscussion = $subject;
 
         switch ($attribute) {
             case self::FOLLOW:
@@ -56,5 +67,15 @@ class PublicDiscussionVoter extends Voter
     private function isUnreader($publicDiscussion, $user)
     {
         return $publicDiscussion->hasUnreader($user);
+    }
+
+    private function isPublished($publicDiscussion)
+    {
+        return !$publicDiscussion->isLocked();
+    }
+
+    private function isLocked($publicDiscussion)
+    {
+        return $publicDiscussion->isLocked();
     }
 }

@@ -13,6 +13,7 @@ use App\Form\Post\EditPostType;
 use App\Form\Discussion\AddPrivateDiscussionType;
 use App\Form\Discussion\EditDiscussionType;
 use App\Form\SelectUserType;
+use App\Security\Authorization\Voter\PrivateDiscussionVoter;
 
 class PrivateDiscussionController extends Controller
 {
@@ -101,7 +102,7 @@ class PrivateDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $this->denyAccessUnlessGranted('edit', $discussion);
+        $this->denyAccessUnlessGranted(PrivateDiscussionVoter::CAN_BE_EDITED, $discussion);
 
         $form = $this->createForm(EditDiscussionType::class, $discussion);
         $form->handleRequest($request);
@@ -220,7 +221,7 @@ class PrivateDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $this->denyAccessUnlessGranted('edit', $discussion);
+        $this->denyAccessUnlessGranted(PrivateDiscussionVoter::CAN_BE_EDITED, $discussion);
 
         $user = $this->getUser();
 
@@ -258,7 +259,7 @@ class PrivateDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $this->denyAccessUnlessGranted('edit', $discussion);
+        $this->denyAccessUnlessGranted(PrivateDiscussionVoter::CAN_BE_EDITED, $discussion);
 
         $em = $this->getDoctrine()->getManager();
         $em->remove($discussion);
@@ -278,7 +279,7 @@ class PrivateDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $this->denyAccessUnlessGranted('edit', $discussion);
+        $this->denyAccessUnlessGranted(PrivateDiscussionVoter::CAN_BE_EDITED, $discussion);
 
         $discussion->setLocked(true);
         $em = $this->getDoctrine()->getManager();
@@ -301,7 +302,7 @@ class PrivateDiscussionController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $this->denyAccessUnlessGranted('edit', $discussion);
+        $this->denyAccessUnlessGranted(PrivateDiscussionVoter::CAN_BE_EDITED, $discussion);
 
         $discussion->setLocked(false);
         $em = $this->getDoctrine()->getManager();

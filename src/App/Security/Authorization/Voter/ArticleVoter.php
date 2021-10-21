@@ -10,8 +10,12 @@ use App\Entity\User;
 
 class ArticleVoter extends Voter
 {
-    const EDIT   = 'edit';
-    const DELETE = 'delete';
+    const CAN_BE_EDITED    = 'can_be_edited';
+    const CAN_BE_REMOVED   = 'can_be_removed';
+    const PUBLISHED        = 'published';
+    const LOCKED           = 'locked';
+    const REMOVED          = 'removed';
+    const SHOW_ADMIN_PANEL = 'show_admin_panel';
 
     private $decisionManager;
 
@@ -23,8 +27,12 @@ class ArticleVoter extends Voter
     protected function supports($attribute, $subject)
     {
         if (!in_array($attribute, [
-            self::EDIT,
-            self::DELETE,
+            self::CAN_BE_EDITED,
+            self::CAN_BE_REMOVED,
+            self::PUBLISHED,
+            self::LOCKED,
+            self::REMOVED,
+            self::SHOW_ADMIN_PANEL
         ])) {
             return false;
         }
@@ -38,34 +46,72 @@ class ArticleVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
+        $article = $subject;
+
+        switch ($attribute) {
+            case self::PUBLISHED:
+                return $this->isPublished($article);
+            case self::LOCKED:
+                return $this->isLocked($article);
+            case self::REMOVED:
+                return $this->isRemoved($article);
+        }
+
         $user = $token->getUser();
 
         if (!$user instanceof User) {
             return false;
         }
 
-        $article = $subject;
-
         switch ($attribute) {
-            case self::EDIT:
-                return $this->canEdit($article, $user);
-            case self::DELETE:
-                return $this->canDelete($article, $user, $token);
+            case self::CAN_BE_EDITED:
+                return $this->canBeEdited($article, $user);
+            case self::CAN_BE_REMOVED:
+                return $this->canBeRemoved($article, $user);
+            case self::SHOW_ADMIN_PANEL:
+                return $this->showAdminPanel($article, $user);
         }
 
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canEdit($article, $user)
+    private function canBeEdited($article, $user)
     {
-        // We should have the case of a wiki here
+        if (!$this->isPublished($article)) {
+            return false;
+        }
+
         return $user === $article->getProposal()->getAuthor();
     }
 
-    private function canDelete($article, $user, $token)
+    private function canBeRemoved($article, $user)
     {
-        if ($this->decisionManager->decide($token, ['ROLE_ADMIN'])) {
-            return true;
+        if (!$article->isPublished()) {
+            return false;
+        }
+
+        return $user === $article->getProposal()->getAuthor();
+    }
+
+    private function isPublished($article)
+    {
+        return $article->getStatus() === $article::PUBLISHED;
+    }
+
+    private function isLocked($article)
+    {
+        return $article->getStatus() === $article::LOCKED;
+    }
+
+    private function isRemoved($article)
+    {
+        return $article->getStatus() === $article::REMOVED;
+    }
+
+    private function showAdminPanel($article, $user)
+    {
+        if (!$this->isPublished($article)) {
+            return false;
         }
 
         return $user === $article->getProposal()->getAuthor();

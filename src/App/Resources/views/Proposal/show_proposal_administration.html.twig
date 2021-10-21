@@ -1,0 +1,25 @@
+{% extends 'Proposal/layout_proposal.html.twig' %}
+
+{% block page_content %}
+    <div class="section-menu row">
+        <ul>
+            <li><a href="{{ path('proposal_show_motivation', {'slug': proposal.slug}) }}">Motifs</a></li>
+            <li><a href="{{ path('proposal_show_articles', {'slug': proposal.slug}) }}">Articles</a></li>
+            <li><a href="{{ path('proposal_show_discussions', {'slug': proposal.slug}) }}">Salon</a></li>
+            <li><a href="{{ path('proposal_show_versioning', {'slug': proposal.slug}) }}">Historique</a></li>
+            <li class="active"><a href="{{ path('proposal_show_administration', {'slug': proposal.slug}) }}">Administration</a></li>
+        </ul>
+    </div>
+    <div class="tab-content">
+        {% if is_granted('can_be_moved', proposal) %}
+            <div class="col-md-3 col-md-offset-9">
+                <a href="{{ path('proposal_move', {'slug': proposal.slug}) }}" class="btn btn-default custom-admin-btn">Déplacer la proposition</a>
+            </div>
+        {% endif %}
+        {% if is_granted('can_be_locked', proposal) %}
+            <div class="col-md-3 col-md-offset-9">
+                <a href="{{ path('proposal_lock', {'slug': proposal.slug}) }}" class="btn btn-default custom-admin-btn">Verrouiller la proposition</a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock page_content %}

@@ -85,7 +85,7 @@
             <div class="subsection-block row">
                 <h2>Mes propositions</h2>
                 {% for proposal in app.user.proposals %}
-                    <a href="{{ path('proposal_show', {'slug': proposal.slug}) }}" class="subsection-panel col-md-12 col-xs-12">
+                    <a href="{{ path('proposal_show_motivation', {'slug': proposal.slug}) }}" class="subsection-panel col-md-12 col-xs-12">
                         <div class="subsection-panel-heading">
                             <div class="subsection-panel-title">{{ proposal.title }}</div>
                         </div>
@@ -98,7 +98,7 @@
             <div class="subsection-block row">
                 <h2>Propositions soutenues</h2>
                 {% for proposal in app.user.supportedProposals %}
-                    <a href="{{ path('proposal_show', {'slug': proposal.slug}) }}" class="subsection-panel col-md-12 col-xs-12">
+                    <a href="{{ path('proposal_show_motivation', {'slug': proposal.slug}) }}" class="subsection-panel col-md-12 col-xs-12">
                         <div class="subsection-panel-heading">
                             <div class="subsection-panel-title">{{ proposal.title }}</div>
                         </div>
@@ -111,7 +111,7 @@
             <div class="subsection-block row">
                 <h2>Propositions contestées</h2>
                 {% for proposal in app.user.opposedProposals %}
-                    <a href="{{ path('proposal_show', {'slug': proposal.slug}) }}" class="subsection-panel col-md-12 col-xs-12">
+                    <a href="{{ path('proposal_show_motivation', {'slug': proposal.slug}) }}" class="subsection-panel col-md-12 col-xs-12">
                         <div class="subsection-panel-heading">
                             <div class="subsection-panel-title">{{ proposal.title }}</div>
                         </div>

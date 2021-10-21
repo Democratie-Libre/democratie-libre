@@ -7,15 +7,15 @@
                 <li><a href="{{ path('roots') }}">Arbre</a></li>
                 {% for parent in proposal.theme.parents %}
                     <li>></li>
-                    <li><a href="{{ path('theme_show', {'slug': parent.slug}) }}">{{ parent.title }}</a></li>
+                    <li><a href="{{ path('theme_show_proposals', {'slug': parent.slug}) }}">{{ parent.title }}</a></li>
                 {% endfor %}
                 <li>></li>
-                <li><a href="{{ path('theme_show', {'slug': proposal.theme.slug}) }}">{{ proposal.theme.title }}</a></li>
+                <li><a href="{{ path('theme_show_proposals', {'slug': proposal.theme.slug}) }}">{{ proposal.theme.title }}</a></li>
                 <li>></li>
-                <li><a href="{{ path('proposal_show', {'slug': proposal.slug}) }}">{{ proposal.title }}</a></li>
+                <li><a href="{{ path('proposal_show_motivation', {'slug': proposal.slug}) }}">{{ proposal.title }}</a></li>
             </ul>
         </div>
-        {% if is_granted('ROLE_USER') %}
+        {% if is_granted('ROLE_USER') and is_granted('published', proposal) %}
             <div class="section-header-menu col-md-12 col-xs-12">
                 {% if is_granted('neutral', proposal) %}
                     <div class="col-md-1 col-md-offset-10">
@@ -42,12 +42,17 @@
             <div class="proposal-title">
                 {{ proposal.title }}
             </div>
-            <div>
-                {% if proposal.isAWiki %}
-                    Tout utilisateur peut éditer cette proposition
-                {% endif %}
-            </div>
         </div>
+        {% if is_granted('locked', proposal) %}
+            <div class="center">
+                CETTE PROPOSITION EST FERMÉE
+            </div>
+            <hr>
+            <div class="center">
+                {{ proposal.lockingExplanation }}
+            </div>
+            <hr>
+        {% endif %}
     </div>
 
     {% block page_content %}{% endblock page_content %}

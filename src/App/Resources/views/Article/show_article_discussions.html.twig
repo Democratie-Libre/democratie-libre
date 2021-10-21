@@ -1,0 +1,88 @@
+{% extends 'Article/layout_article.html.twig' %}
+
+{% block page_content %}
+    {% if is_granted('locked', article) or is_granted('removed', article) %}
+        <div class="center">
+            CET ARTICLE EST FERMÉ
+        </div>
+    {% endif %}
+    <div class="section-menu row">
+        <ul>
+            <li><a href="{{ path('article_show', {'slug': article.slug}) }}">Texte</a></li>
+            <li class="active"><a href="{{ path('article_show_discussions', {'slug': article.slug}) }}">Salon</a></li>
+            <li><a href="{{ path('article_show_versioning', {'slug': article.slug}) }}">Historique</a></li>
+            {% if is_granted('show_admin_panel', article) %}
+                <li><a href="{{ path('article_show_administration', {'slug': article.slug}) }}">Administration</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="tab-content">
+        {% if is_granted('published', article) %}
+            <div class="col-md-3 col-md-offset-7">
+                <a href="{{ path('public_discussion_add_to_article', {'slug': article.slug}) }}" class="btn btn-default custom-btn">Ouvrir une discussion</a>
+            </div>
+            <div class="btn-group custom-btn-group ">
+                <button class="dropdown-toggle btn btn-default" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
+                <ul class="dropdown-menu pull-right">
+                    {% if locked_discussions %}
+                        <li><a href="{{ path('article_show_discussions', {'slug': article.slug}) }}">Voir les discussions ouvertes</a></li>
+                    {% else %}
+                        <li><a href="{{ path('article_show_locked_discussions', {'slug': article.slug}) }}">Voir les discussions fermées</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        {% endif %}
+        <table class="table">
+            {% if not article.discussions is empty %}
+                <thead>
+                    <tr>
+                        <th>Discussion</th>
+                        <th>Dernier commentaire</th>
+                    </tr>
+                </thead>
+            {% endif %}
+            <tbody>
+                <!-- If the article is published we can have both closed and opened discussions -->
+                {% if is_granted('published', article) %}
+                    {% for discussion in article.discussions %}
+                        {% if locked_discussions %}
+                            {% if is_granted('locked', discussion) %}
+                                <tr>
+                                    <td><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="table-link">{{ discussion.title }}</a></td>
+                                    {% if discussion.posts is empty %}
+                                        <td></td>
+                                    {% else %}
+                                        <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
+                                    {% endif %}
+                                </tr>
+                            {% endif %}
+                        {% else %}
+                            {% if is_granted('published', discussion) %}
+                                <tr>
+                                    <td><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="table-link">{{ discussion.title }}</a></td>
+                                    {% if discussion.posts is empty %}
+                                        <td></td>
+                                    {% else %}
+                                        <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
+                                    {% endif %}
+                                </tr>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                <!-- If the article is locked then we have only closed discussions -->
+                {% else %}
+                    {% for discussion in article.discussions %}
+                        <tr>
+                            <td><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="table-link">{{ discussion.title }}</a></td>
+                            {% if discussion.posts is empty %}
+                                <td></td>
+                            {% else %}
+                                <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+{% endblock page_content %}

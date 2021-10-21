@@ -10,11 +10,16 @@ use App\Entity\User;
 
 class ProposalVoter extends Voter
 {
-    const EDIT       = 'edit';
-    const AUTHOR     = 'author';
-    const SUPPORTER  = 'supporter';
-    const OPPONENT   = 'opponent';
-    const NEUTRAL    = 'neutral';
+    const CAN_BE_EDITED    = 'can_be_edited';
+    const AUTHOR           = 'author';
+    const SUPPORTER        = 'supporter';
+    const OPPONENT         = 'opponent';
+    const NEUTRAL          = 'neutral';
+    const PUBLISHED        = 'published';
+    const LOCKED           = 'locked';
+    const CAN_BE_LOCKED    = 'can_be_locked';
+    const CAN_BE_MOVED     = 'can_be_moved';
+    const SHOW_ADMIN_PANEL = 'show_admin_panel';
 
     private $decisionManager;
 
@@ -26,11 +31,16 @@ class ProposalVoter extends Voter
     protected function supports($attribute, $subject)
     {
         if (!in_array($attribute, [
-            self::EDIT,
+            self::CAN_BE_EDITED,
             self::AUTHOR,
             self::SUPPORTER,
             self::OPPONENT,
-            self::NEUTRAL
+            self::NEUTRAL,
+            self::PUBLISHED,
+            self::LOCKED,
+            self::CAN_BE_LOCKED,
+            self::CAN_BE_MOVED,
+            self::SHOW_ADMIN_PANEL
         ])) {
             return false;
         }
@@ -44,17 +54,24 @@ class ProposalVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
+        $proposal = $subject;
+
+        switch ($attribute) {
+            case self::PUBLISHED:
+                return $this->isPublished($proposal);
+            case self::LOCKED:
+                return $this->isLocked($proposal);
+        }
+
         $user = $token->getUser();
 
         if (!$user instanceof User) {
             return false;
         }
 
-        $proposal = $subject;
-
         switch ($attribute) {
-            case self::EDIT:
-                return $this->canEdit($proposal, $user, $token);
+            case self::CAN_BE_EDITED:
+                return $this->canBeEdited($proposal, $user, $token);
             case self::AUTHOR:
                 return $this->isAuthor($proposal, $user);
             case self::SUPPORTER:
@@ -63,12 +80,18 @@ class ProposalVoter extends Voter
                 return $this->isOpponent($proposal, $user);
             case self::NEUTRAL:
                 return $this->isNeutral($proposal, $user);
+            case self::CAN_BE_LOCKED:
+                return $this->canBeLocked($proposal, $user, $token);
+            case self::CAN_BE_MOVED:
+                return $this->canBeMoved($proposal, $user, $token);
+            case self::SHOW_ADMIN_PANEL:
+                return $this->showAdminPanel($proposal, $user, $token);
         }
 
         throw new \LogicException('This code should not be reached!');
     }
 
-    private function canEdit($proposal, $user, $token)
+    private function canBeEdited($proposal, $user, $token)
     {
         if ($this->decisionManager->decide($token, ['ROLE_ADMIN'])) {
             return true;
@@ -99,5 +122,62 @@ class ProposalVoter extends Voter
     private function isNeutral($proposal, $user)
     {
         return !$this->isSupporter($proposal, $user) and !$this->isOpponent($proposal, $user);
+    }
+
+    private function isPublished($proposal)
+    {
+        return $proposal->getStatus() == $proposal::PUBLISHED;
+    }
+
+    private function isLocked($proposal)
+    {
+        return $proposal->getStatus() == $proposal::LOCKED;
+    }
+
+    private function canBeLocked($proposal, $user, $token)
+    {
+        if ($this->isLocked($proposal)) {
+            return false;
+        }
+
+        if ($this->decisionManager->decide($token, ['ROLE_ADMIN'])) {
+            return true;
+        }
+
+        if ($this->isAuthor($proposal, $user)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function canBeMoved($proposal, $user, $token)
+    {
+        if ($this->isLocked($proposal)) {
+            return false;
+        }
+
+        if ($this->decisionManager->decide($token, ['ROLE_ADMIN'])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function showAdminPanel($proposal, $user, $token)
+    {
+        if ($this->isLocked($proposal)) {
+            return false;
+        }
+
+        if ($this->decisionManager->decide($token, ['ROLE_ADMIN'])) {
+            return true;
+        }
+
+        if ($this->isAuthor($proposal, $user)) {
+            return true;
+        }
+
+        return false;
     }
 }

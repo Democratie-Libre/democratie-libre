@@ -10,10 +10,10 @@ use App\Entity\PrivateDiscussion;
 
 class PrivateDiscussionVoter extends Voter
 {
-    const VIEW       = 'view';
-    const EDIT       = 'edit';
-    const ADD_MEMBER = 'add_member';
-    const UNREADER   = 'unreader';
+    const VIEW          = 'view';
+    const CAN_BE_EDITED = 'can_be_edited';
+    const ADD_MEMBER    = 'add_member';
+    const UNREADER      = 'unreader';
 
     private $doctrine;
 
@@ -26,7 +26,7 @@ class PrivateDiscussionVoter extends Voter
     {
         if (!in_array($attribute, [
             self::VIEW,
-            self::EDIT,
+            self::CAN_BE_EDITED,
             self::ADD_MEMBER,
             self::UNREADER
         ])) {
@@ -53,8 +53,8 @@ class PrivateDiscussionVoter extends Voter
         switch ($attribute) {
             case self::VIEW:
                 return $this->canView($privateDiscussion, $user);
-            case self::EDIT:
-                return $this->canEdit($privateDiscussion, $user);
+            case self::CAN_BE_EDITED:
+                return $this->canBeEdited($privateDiscussion, $user);
             case self::ADD_MEMBER:
                 return $this->canAddMember($privateDiscussion, $user);
             case self::UNREADER:
@@ -69,7 +69,7 @@ class PrivateDiscussionVoter extends Voter
         return $privateDiscussion->hasMember($user);
     }
 
-    private function canEdit($privateDiscussion, $user)
+    private function canBeEdited($privateDiscussion, $user)
     {
         return $user === $privateDiscussion->getAdmin();
     }

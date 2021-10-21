@@ -15,6 +15,10 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Article
 {
+    const PUBLISHED = 'published';
+    const REMOVED   = 'removed';
+    const LOCKED    = 'locked';
+
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
@@ -29,6 +33,24 @@ class Article
     private $slug;
 
     /**
+     * @ORM\Column(type="string", length=255, options={"default" : Article::PUBLISHED})
+     */
+    private $status = self::PUBLISHED;
+
+    /**
+     * If the article has been removed by the author of the proposal, it should
+     * be justified here.
+     *
+     * @ORM\Column(type="text", nullable=true)
+     * @Assert\Length(
+     *      max = 400,
+     * )
+     */
+    private $removingExplanation;
+
+    /**
+     * If the article is locked, its number will be zero.
+     *
      * @ORM\Column(type="integer")
      */
     private $number;
@@ -76,7 +98,7 @@ class Article
     private $proposal;
 
     /**
-     * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="article", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="article", cascade={"persist", "remove"})
      */
     private $discussions;
 
@@ -88,10 +110,12 @@ class Article
 
     public function __construct()
     {
-        $this->creationDate  = new \DateTime();
-        $this->versionNumber = 1;
-        $this->discussions   = new ArrayCollection();
-        $this->versioning    = new ArrayCollection();
+        $this->status               = self::PUBLISHED;
+        $this->removingExplanation  = null;
+        $this->creationDate         = new \DateTime();
+        $this->versionNumber        = 1;
+        $this->discussions          = new ArrayCollection();
+        $this->versioning           = new ArrayCollection();
     }
 
     public function getId()
@@ -104,6 +128,35 @@ class Article
         return $this->slug;
     }
 
+    public function setStatus(string $status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    public function isPublished()
+    {
+        return $this->getStatus() === self::PUBLISHED;
+    }
+
+    public function setRemovingExplanation($removingExplanation)
+    {
+        $this->removingExplanation = $removingExplanation;
+
+        return $this;
+    }
+
+    public function getRemovingExplanation()
+    {
+        return $this->removingExplanation;
+    }
+
     public function setNumber($number)
     {
         $this->number = $number;
@@ -114,6 +167,17 @@ class Article
     public function getNumber()
     {
         return $this->number;
+    }
+
+    public function decreaseNumber()
+    {
+        if ($this->number === 0) {
+            throw new Exception('An article number cannot be under 0 !');
+        }
+
+        $this->number -= 1;
+
+        return $this;
     }
 
     public function setTitle($title)
@@ -200,7 +264,7 @@ class Article
 
         $this->proposal = $proposal;
         $this
-            ->setNumber($proposal->getNumberOfArticles() + 1)
+            ->setNumber($proposal->getNumberOfPublishedArticles() + 1)
             ->snapshot()
         ;
 
@@ -263,6 +327,56 @@ class Article
     {
         $articleVersion = new ArticleVersion($this);
         $this->addToVersioning($articleVersion);
+
+        return $this;
+    }
+
+    /**
+     * This method is called on each published article of a proposal when the
+     * author or the moderation decide to lock the proposal.
+     */
+    public function lock()
+    {
+        $this->setStatus($this::LOCKED);
+
+        foreach ($this->discussions as $discussion) {
+            $discussion->setLocked(True);
+        }
+
+        return $this;
+    }
+
+    /**
+     * This method is called when the author of a proposal decides to remove
+     * this article from the proposal.
+     */
+    public function remove()
+    {
+        $this->setStatus($this::REMOVED);
+
+        foreach ($this->discussions as $discussion) {
+            $discussion->setLocked(True);
+        }
+
+        $removedArticleNumber = $this->getNumber();
+        $proposal             = $this->getProposal();
+
+        foreach ($proposal->getArticles() as $article) {
+            if ($article->isPublished()
+                && $article->getNumber() > $removedArticleNumber
+            ) {
+                $article
+                    ->decreaseNumber()
+                    ->incrementVersionNumber()
+                    ->snapshot()
+                ;
+            }
+        }
+
+        $proposal
+            ->incrementVersionNumber()
+            ->snapshot()
+        ;
 
         return $this;
     }
