@@ -1,6 +1,6 @@
 ---
 # dL application documentation
-## v1.0
+## v1.0.1
 ### Symfony 3.4
 ### 02/11/21
 ---
@@ -38,11 +38,17 @@ In case the deleted theme has children, they will be reparent with the parent of
 
 ## Proposal
 
-A proposal represents a political project.
+A proposal represents a political project. It is necessarily classified into a theme.
 
-It is necessarily classified into a theme (see Theme entity).
+It contains a general motive and some articles that are written by the author.
 
-A proposal can host articles and public discussions.
+The general motive gives the general idea of the project. It is written in the common language to be understandable by a large public.
+
+The articles give the details of the project. They are written in the legal language. Each article is also motivated.
+
+A proposal can also host public discussions. They can be opened by any logged user.
+
+Starting from the first publication, a proposal is versioned. Each modification is saved. Anyone can view the history of a proposal.
 
 ### Attributes (not exhaustive)
 
@@ -52,20 +58,38 @@ A proposal can host articles and public discussions.
 
 *$motivation* is a text written in the common language that defend the project of the proposal.
 
+*$supporters* The users that support the proposal
+
+*$opponents* The users that are opposed to the proposal
+
+*$versioning* is an array of the versions of the proposal (ProposalVersion entity) since its first publication. Each time the author modifies the proposal, a new ProposalVersion is created. A ProposalVersion entity represents a snapshot of the proposal at a given time
+
+*$discussions* are the public discussions about the proposal
+
+### Create a proposal
+Any logged user can create a proposal through a theme view.
+
+The proposal will then be classified in this theme and publicly visible.
+
+The user becomes the author of the proposal.
+
+
 ### Edit a proposal
-Editing an article consist in:
+Editing a proposal consist in:
 
 * changing its title
+* changing its abstract
 * changing its motivation
 
-The edition of a proposal is only permitted to the author, and not to the administration.
+The edition of a proposal is only permitted to the author, not to the administration. And only if it is published.
 
-The edition of an article is possible only if it is published.
+The edition of a proposal will provoke its versioning.
 
-Editing an article will provoke the versioning of the proposal.
+### Supporters/opponents
+Any logged user can support or contest a published proposal. He can then access the proposal from his profile.
 
 ### Lock a proposal
-Locking a proposal will lock its articles and its public discussions, and it will not be possible to move it to an other theme.
+Locking a proposal will make it inactive: it will not be possible anymore to edit it, it will lock its articles and its public discussions, and it will not be possible to move it to an other theme.
 
 It is not a reversible operation.
 
@@ -78,7 +102,7 @@ A proposal can be moved to a different theme.
 
 Only the administration is allowed to do that action. If the propossal is published.
 
-**So what happen if the administration wants to delete a theme where there are locked proposals?**
+**So what happen if the administration wants to delete a theme where there are locked proposals? (this opened issue #113)**
 
 
 
