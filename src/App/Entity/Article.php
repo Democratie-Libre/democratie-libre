@@ -49,8 +49,6 @@ class Article
     private $removingExplanation;
 
     /**
-     * If the article is locked, its number will be zero.
-     *
      * @ORM\Column(type="integer")
      */
     private $number;
