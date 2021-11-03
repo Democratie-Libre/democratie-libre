@@ -201,7 +201,7 @@ It will still be readable and ordered in the view of the locked proposal.
 No versioning operation is performed.
 
 
-## Public discussion
+## PublicDiscussion
 
 This entity inherits from the AbstractDiscussion entity.
 
@@ -244,3 +244,45 @@ This action is reversible.
 
 ### Delete a public discussion
 **Only the administration can remove a public discussion from the database only if it is published (issue #116)**
+
+
+## PrivateDiscussion
+
+Inherits from AbstractDiscussion.
+
+This entity represents a private discussion between some users.
+
+### Attributes (not exhaustive)
+*$admin* is the administrator of the discussion. He has special rights.
+
+*$members* is an array of Users entities. Only them can read and post in the discussion. The admin is always among the members.
+
+### Create a private discussion
+Any logged user can create a private discussion through its profile.
+
+He can choose the members he likes.
+
+The creator of the discussion is by default the admin.
+
+### Follow a private discussion
+
+The members can access the discussion through their personal profile.
+
+It is signaled when there has been some new posts (the members are then placed in PrivateDiscussion.unreaders). The discussion is highlighted.
+
+### Edit a private discussion
+The change of the title can be done by the admin.
+
+### Lock a private discussion
+Locking the discussion can be done by the admin.
+
+This is reversible.
+
+### Add/remove a member to a private discussion
+Can be done by the admin.
+
+### Change the admin of a private discussion
+The admin can choose another member to replace him.
+
+### Delete a private discussion
+The admin can remove the discussion from the database.
