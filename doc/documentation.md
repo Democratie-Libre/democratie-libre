@@ -10,17 +10,35 @@
 
 ## Theme
 
-A theme represents a political topic that is adressed by the state.
+A theme represents a political topic that is adressed by the state. The set of all the themes should implement a full partition of the political domain.
+
+The themes are supposed to give a proper way to classify the proposals written by the users. Every published proposal is classified in a theme.
 
 The themes are organized in a tree structure, as a folder system on an operating system. Each theme can host several children themes.
 
-At the top of this hierarchic structure are themes that have no parent. Those specific themes are called roots.
+At the top of this hierarchic structure are themes that have no parent ($parent = null). Those specific themes are called roots.
 
 Each theme hosts proposals that propose solutions for a better management of this topic.
 
 It also hosts public discussions about the theme.
 
 Only the administration is allowed to perform operations on the themes.
+
+### Attributes (not exhaustive)
+
+*$abtract* is a short text description of the theme
+
+*$parent* is the parent theme that host the theme. It is null if the theme is a root.
+
+*$children* is an array of the descendant themes
+
+*$file* is the image associated to a theme
+
+Some other arguments are used to manage the hierarchy relation. The tree architecture is implemented using DoctrineExtensions.
+
+### Create a theme
+
+The themes are created by the administration.
 
 ### Move a theme
 
@@ -33,6 +51,8 @@ The form will ask to choose either a parent theme, either the null value. The la
 A theme can be deleted only if it hosts no proposal.
 
 In case the deleted theme has children, they will be reparent with the parent of the deleted theme.
+
+If a theme is suppressed, all its public discussions will be suppressed from the database.
 
 
 
@@ -179,3 +199,48 @@ Locking an article will lock its edition and its discussions.
 It will still be readable and ordered in the view of the locked proposal.
 
 No versioning operation is performed.
+
+
+## Public discussion
+
+This entity inherits from the AbstractDiscussion entity.
+
+This entity represents an open discussion that anyone can read.
+
+A public discussion hosts Post entities that represent the comments of the users.
+
+### Attributes (not exhaustive)
+*$type* The public discussions are classified into 4 types depending on the topic they address.
+
+* a $GLOBAL_DISCUSSION type in accessible through the global room. The topic is free.
+* $THEME_DISCUSSION associated to a particular theme
+* $PROPOSAL_DISCUSSION
+* $ARTICLE_DISCUSSION
+
+*$followers* is an array of Users entities. It registers the users that follow the discussion. In that case they can access it directly through their account.
+
+### Create a public discussion
+Any logged user can create a public discussion through a theme, a proposal or article view, and also in the global room.
+
+### Edit a public discussion
+Edit a public discussion consists only in modifying its title.
+
+**Only the administration can edit a public discussion?? (issue #115)**
+
+### Follow a public discussion
+Any logged user can choose to follow any public discussion. In this case the discussion will appear in the followed discussion tab of his profile.
+
+### Post in a public discussion
+Any logged user can post in a public discussion.
+He can post an empty comment.
+
+### Move a public discussion
+The administration can move a public discussion and also change its type. It can for exemple move a global discussion to a theme discussion.
+
+### Lock a public discussion
+The administration can lock a public discussion. In this case the $locked attribute is set to True. The discussion is inactive: no posts are accepted and the user should choose the proper filter to read it.
+
+This action is reversible.
+
+### Delete a public discussion
+**Only the administration can remove a public discussion from the database only if it is published (issue #116)**
