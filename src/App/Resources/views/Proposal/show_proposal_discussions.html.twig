@@ -48,7 +48,7 @@
                                     {% if discussion.posts is empty %}
                                         <td>Vide</td>
                                     {% else %}
-                                        <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
+                                        <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}}</td>
                                     {% endif %}
                                 </tr>
                             {% endif %}
@@ -59,7 +59,7 @@
                                     {% if discussion.posts is empty %}
                                         <td>Vide</td>
                                     {% else %}
-                                        <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
+                                        <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}}</td>
                                     {% endif %}
                                 </tr>
                             {% endif %}
@@ -73,7 +73,7 @@
                             {% if discussion.posts is empty %}
                                 <td>Vide</td>
                             {% else %}
-                                <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
+                                <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}}</td>
                             {% endif %}
                         </tr>
                     {% endfor %}
