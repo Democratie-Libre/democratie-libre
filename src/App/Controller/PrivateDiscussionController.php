@@ -66,34 +66,6 @@ class PrivateDiscussionController extends Controller
     /**
      * @Security("has_role('ROLE_USER')")
      */
-    public function addAction(Request $request)
-    {
-        $discussion = PrivateDiscussion::create();
-        $user       = $this->getUser();
-        $form       = $this->createForm(AddPrivateDiscussionType::class, $discussion, [
-            'userId' => $user->getId(),
-        ]);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $discussion->setAdmin($user)->resetUnreaders();
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($discussion);
-            $em->flush();
-
-            return $this->redirect($this->generateUrl('private_discussion_show', [
-                'slug' => $discussion->getSlug(),
-            ]));
-        }
-
-        return $this->render('App:Discussion:add_private_discussion.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Security("has_role('ROLE_USER')")
-     */
     public function editAction(Request $request, $slug)
     {
         $discussion = $this->getDoctrine()->getRepository('App:PrivateDiscussion')->findOneBySlug($slug);

@@ -7,10 +7,52 @@ use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use App\Entity\PublicDiscussion;
+use App\Entity\PrivateDiscussion;
 use App\Form\Post\MovePostType;
 
 class PostController extends Controller
 {
+    /**
+     * @Security("has_role('ROLE_USER')")
+     */
+    public function openPrivateDiscussionAction($id)
+    {
+        $post = $this->getDoctrine()->getRepository('App:Post')->find($id);
+
+        if (null ===  $post) {
+            throw $this->createNotFoundException();
+        }
+
+        if ($post->getDiscussion() instanceof PrivateDiscussion) {
+            throw new \Exception(
+                'A private discussion cannot be opened from a private discussion post.'
+            );
+        }
+
+        $user         = $this->getUser();
+        $authorOfPost = $post->getAuthor();
+
+        if ($authorOfPost === $user) {
+            throw new \Exception(
+                'The user cannot open a discussion with himself.'
+            );
+        }
+
+        $discussion = PrivateDiscussion::create();
+        $discussion
+            ->setTitle($post->getDiscussion()->getTitle())
+            ->setAdmin($user)
+            ->addMember($authorOfPost)
+            ->resetUnreaders($authorOfPost);
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($discussion);
+        $em->flush();
+
+        return $this->redirect($this->generateUrl('private_discussion_show', [
+            'slug' => $discussion->getSlug(),
+        ]));
+    }
+
     /**
      * @Security("has_role('ROLE_ADMIN')")
      */

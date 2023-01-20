@@ -21,9 +21,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                <div class="col-md-3 col-md-offset-9">
-                    <a href="{{ path('private_discussion_add') }}" class="btn btn-default custom-btn">Ouvrir une discussion</a>
-                </div>
                 {% for discussion in app.user.privateDiscussions %}
                     {% if is_granted('unreader', discussion) %}
                         <tr class="discussion-unread">
@@ -64,7 +61,7 @@
                             {% if discussion.posts is empty %}
                                 <td></td>
                             {% else %}
-                                <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
+                                <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}}</td>
                             {% endif %}
                         </tr>
                     {% else %}
@@ -73,7 +70,7 @@
                             {% if discussion.posts is empty %}
                                 <td></td>
                             {% else %}
-                                <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
+                                <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}}</td>
                             {% endif %}
                         </tr>
                     {% endif %}

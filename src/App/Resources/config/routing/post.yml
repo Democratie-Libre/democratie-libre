@@ -1,3 +1,7 @@
+post_open_private_discussion:
+    path: /open_private_discussion/{id}
+    defaults: { _controller: 'App:Post:openPrivateDiscussion' }
+
 post_move:
     path: /move/{id}
     defaults: { _controller: 'App:Post:move' }

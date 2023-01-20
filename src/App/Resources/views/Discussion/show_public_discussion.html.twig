@@ -5,12 +5,16 @@
         {% for post in discussion.posts %}
             <div class="post">
                 <div class="post-header row">
-                    <span class="col-md-2 col-md-offset-6 col-xs-2 col-xs-offset-6">{{ post.date|date('d/m/Y H:i') }}</span>
+                    <span class="col-md-2 col-md-offset-5 col-xs-2 col-xs-offset-5">{{ post.date|date('d/m/Y H:i') }}</span>
                     {% if is_granted('ROLE_ADMIN') %}
-                        <span class="post-administration col-md-1 col-xs-1">
+                        <span class="post-administration col-md-2 col-xs-2">
+                            <a href="{{ path('post_open_private_discussion', {'id': post.id}) }}" class="post-admin-btn" title="Ouvrir une discussion privée"><span class="glyphicon glyphicon-envelope"></span></a>
                             <a href="{{ path('post_move', {'id': post.id}) }}" class="post-admin-btn" title="Déplacer ce commentaire"><span class="glyphicon glyphicon-export"></span></a>
                             <a href="{{ path('post_delete', {'id': post.id}) }}" class="post-admin-btn" title="Supprimer ce commentaire"><span class="glyphicon glyphicon-remove"></span></a>
                         </span>
+                    {% elseif is_granted('show_private_discussion_icon', post) %}
+                        <span class="post-administration col-md-1 col-xs-1">
+                            <a href="{{ path('post_open_private_discussion', {'id': post.id}) }}" class="post-admin-btn" title="Ouvrir une discussion privée"><span class="glyphicon glyphicon-envelope"></span></a>
                     {% endif %}
                 </div>
                 <div class="post-content">
