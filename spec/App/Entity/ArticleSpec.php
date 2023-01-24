@@ -24,7 +24,7 @@ class ArticleSpec extends ObjectBehavior
 
     function it_sets_a_proposal(Proposal $proposal)
     {
-        $proposal->getNumberOfArticles()->willReturn(3);
+        $proposal->getNumberOfPublishedArticles()->willReturn(3);
         $proposal->addArticle($this)->willReturn($proposal);
         $proposal->incrementVersionNumber()->willReturn($proposal);
         $proposal->snapshot()->willReturn($proposal);
