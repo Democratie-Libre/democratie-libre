@@ -12,7 +12,7 @@ class PrivateDiscussionVoter extends Voter
 {
     const VIEW          = 'view';
     const CAN_BE_EDITED = 'can_be_edited';
-    const ADD_MEMBER    = 'add_member';
+    const CAN_BE_LOCKED = 'can_be_locked';
     const UNREADER      = 'unreader';
 
     private $doctrine;
@@ -27,7 +27,7 @@ class PrivateDiscussionVoter extends Voter
         if (!in_array($attribute, [
             self::VIEW,
             self::CAN_BE_EDITED,
-            self::ADD_MEMBER,
+            self::CAN_BE_LOCKED,
             self::UNREADER
         ])) {
             return false;
@@ -55,8 +55,8 @@ class PrivateDiscussionVoter extends Voter
                 return $this->canView($privateDiscussion, $user);
             case self::CAN_BE_EDITED:
                 return $this->canBeEdited($privateDiscussion, $user);
-            case self::ADD_MEMBER:
-                return $this->canAddMember($privateDiscussion, $user);
+            case self::CAN_BE_LOCKED:
+                return $this->canBeLocked($privateDiscussion, $user);
             case self::UNREADER:
                 return $this->isUnreader($privateDiscussion, $user);
         }
@@ -71,16 +71,22 @@ class PrivateDiscussionVoter extends Voter
 
     private function canBeEdited($privateDiscussion, $user)
     {
-        return $user === $privateDiscussion->getAdmin();
+        if ($privateDiscussion->isLocked()) {
+            return false;
+        }
+        else {
+            return $user === $privateDiscussion->getAdmin();
+        }
     }
 
-    private function canAddMember($privateDiscussion, $user)
+    private function canBeLocked($privateDiscussion, $user)
     {
-        $isAdmin       = $user === $privateDiscussion->getAdmin();
-        $usersNumber   = $this->doctrine->getRepository('App:User')->count([]);
-        $membersNumber = count($privateDiscussion->getMembers());
-
-        return $isAdmin and $usersNumber !== $membersNumber;
+        if ($privateDiscussion->isLocked()) {
+            return false;
+        }
+        else {
+            return $privateDiscussion->hasMember($user);
+        }
     }
 
     private function isUnreader($privateDiscussion, $user)

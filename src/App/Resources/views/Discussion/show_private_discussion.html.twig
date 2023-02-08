@@ -1,69 +1,35 @@
 {% extends 'Discussion/layout_private_discussion.html.twig' %}
 
 {% block page_content %}
-    <div class="section-menu row">
-        <ul>
-            <li class="active"><a data-toggle="tab" href="#discussion">Discussion</a></li>
-            <li><a data-toggle="tab" href="#members">Membres</a></li>
-        </ul>
-    </div>
-    <div class="tab-content">
-        <div id="discussion" class="tab-pane fade in active">
-            <div class="subsection-content col-md-12 col-xs-12">
-                {% for post in discussion.posts %}
-                    <div class="post">
-                        <div class="post-header row">
-                            <span class="post-author col-md-2 col-md-offset-1 col-xs-2 col-xs-offset-1">{{ post.author }}</span>
-                            <span class="col-md-2 col-md-offset-6 col-xs-2 col-xs-offset-6">{{ post.date|date('d/m/Y H:i') }}</span>
-                        </div>
-                        <div class="post-content">
-                            {{ post.content | markdown }}
-                        </div>
-                    </div>
-                {% endfor %}
-
-                {% if form is defined %}
-                    {{ form_start(form, {'attr': {'class': 'post-form'}}) }}
-                        {{ form_errors(form) }}
-                        <div class="form-group row">
-                            {{ form_label(form.content, ' ', {'label_attr': {'class': 'control-label form-label'}}) }}
-                            {{ form_errors(form.content) }}
-                            {{ form_widget(form.content, {'attr': {
-                                'class': 'form-control form-abstract-textarea',
-                                'placeholder' : 'Your comment'
-                                }})
-                            }}
-                        </div>
-                        <div class="form-group row">
-                            {{ form_widget(form.save, {'label': 'Send', 'attr': {'class': 'btn btn-default custom-btn'}}) }}
-                        </div>
-                    {{ form_end(form) }}
-                {% endif %}
+    <div class="section-content">
+        {% for post in discussion.posts %}
+            <div class="post">
+                <div class="post-header row">
+                    <span class="col-md-2 col-md-offset-6 col-xs-2 col-xs-offset-6">{{ post.date|date('d/m/Y H:i') }}</span>
+                </div>
+                <div class="post-content">
+                    {{ post.content | markdown }}
+                </div>
             </div>
-        </div>
-        <div id="members" class="tab-pane fade">
-            <dl class="dl-horizontal">
-                {% for member in discussion.members %}
-                    <dt>
-                        {{ member.username }}
-                    </dt>
-                    <dd>
-                        {% if is_granted('edit', discussion) %}
-                            {% if member == discussion.admin %}
-                                <a href="{{ path('private_discussion_change_admin', {'slug': discussion.slug}) }}">Changer d'administrateur</a>
-                            {% elseif member == app.user %}
-                                <a href="{{ path('private_discussion_remove_member', {'slug': discussion.slug}) }}" class="btn btn-default">Me retirer de la discussion</a>
-                            {% else %}
-                                <a href="{{ path('private_discussion_remove_member', {'discussionSlug': discussion.slug, 'memberId': member.id}) }}">Éjecter de la discussion</a>
-                            {% endif %}
-                        {% elseif member == app.user %}
-                            <a href="{{ path('private_discussion_remove_member', {'discussionSlug': discussion.slug, 'memberId': member.id}) }}">Me retirer de la discussion</a>
-                        {% endif %}
-                        <br>
-                    </dd>
-                {% endfor %}
-            </dl>
-        </div>
+        {% endfor %}
+
+        {% if form is defined %}
+            {{ form_start(form, {'attr': {'class': 'post-form'}}) }}
+                {{ form_errors(form) }}
+                <div class="form-group row">
+                    {{ form_label(form.content, ' ', {'label_attr': {'class': 'control-label form-label'}}) }}
+                    {{ form_errors(form.content) }}
+                    {{ form_widget(form.content, {'attr': {
+                        'class': 'form-control form-abstract-textarea',
+                        'placeholder' : 'Your comment'
+                        }})
+                    }}
+                </div>
+                <div class="form-group row">
+                    {{ form_widget(form.save, {'label': 'Send', 'attr': {'class': 'btn btn-default custom-btn'}}) }}
+                </div>
+            {{ form_end(form) }}
+        {% endif %}
     </div>
 {% endblock page_content %}
 

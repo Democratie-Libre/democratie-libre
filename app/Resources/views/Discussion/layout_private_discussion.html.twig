@@ -2,25 +2,21 @@
 
 {% block content %}
     <div class="section-header row">
-        <div class="section-header-menu col-md-12 col-xs-12">
-            {% if is_granted('edit', discussion) %}
+        {% if not discussion.isLocked %}
+            <div class="section-header-menu col-md-12 col-xs-12">
                 <div class="btn-group custom-btn-group ">
                     <button class="dropdown-toggle btn btn-default" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></button>
                     <ul class="dropdown-menu pull-right">
-                        <li><a href="{{ path('private_discussion_edit', {'slug': discussion.slug}) }}">Éditer la discussion</a></li>
-                        {% if is_granted('add_member', discussion) %}
-                            <li><a href="{{ path('private_discussion_add_member', {'slug': discussion.slug}) }}">Ajouter un membre</a></li>
+                        {% if is_granted('can_be_edited', discussion) %}
+                            <li><a href="{{ path('private_discussion_edit', {'slug': discussion.slug}) }}">Éditer la discussion</a></li>
                         {% endif %}
-                        {% if discussion.locked %}
-                            <li><a href="{{ path('private_discussion_unlock', {'slug': discussion.slug}) }}">Dévérouiller la discussion</a></li>
-                        {% else %}
+                        {% if is_granted('can_be_locked', discussion) %}
                             <li><a href="{{ path('private_discussion_lock', {'slug': discussion.slug}) }}">Vérouiller la discussion</a></li>
                         {% endif %}
-                        <li><a href="{{ path('private_discussion_delete', {'slug': discussion.slug}) }}">Supprimer la discussion</a></li>
                     </ul>
                 </div>
-            {% endif %}
-        </div>
+            </div>
+        {% endif %}
         <div class="section-header-title col-md-6 col-xs-6">
             {% if is_granted('ROLE_ADMIN') %}
                 <div>discussion privée | <a href="{{ path('admin_profile') }}" title="Messagerie"><span class="glyphicon glyphicon-envelope"></span></a></div>

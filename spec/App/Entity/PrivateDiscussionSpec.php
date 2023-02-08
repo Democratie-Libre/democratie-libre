@@ -30,26 +30,6 @@ class PrivateDiscussionSpec extends ObjectBehavior
         $this->getAdmin()->shouldReturn($user);
     }
 
-    function it_adds_a_member(User $user)
-    {
-        $user->addUnreadDiscussion($this)->willReturn(null);
-        $user->addPrivateDiscussion($this)->willReturn($user);
-
-        $this->addMember($user);
-
-        $this->getMembers()->shouldContain($user);
-        $this->getUnreaders()->shouldContain($user);
-    }
-
-    function it_removes_a_member(User $user)
-    {
-        $user->removePrivateDiscussion($this)->willReturn(null);
-
-        $this->removeMember($user);
-
-        $this->getMembers()->shouldNotContain($user);
-    }
-
     function it_reset_the_unreaders(User $user)
     {
         $user->addUnreadDiscussion($this)->willReturn(null);

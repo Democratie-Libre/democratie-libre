@@ -258,7 +258,9 @@ This entity represents a private discussion between some users.
 *$members* is an array of Users entities. Only them can read and post in the discussion. The admin is always among the members.
 
 ### Create a private discussion
-Any logged user can create a private discussion through its profile.
+Any logged user can create a private discussion from a post of an other user in a public discussion. He cannot open a private discussion from his own posts. This will open a private discussion between the user and the author of the post.
+
+The title of the private discussion is the title of the proposal it originates from.
 
 He can choose the members he likes.
 

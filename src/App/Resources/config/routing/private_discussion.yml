@@ -2,34 +2,10 @@ private_discussion_show:
     path: /show/{slug}
     defaults: { _controller: 'App:PrivateDiscussion:show'}
 
-private_discussion_add:
-    path: /add
-    defaults: { _controller: 'App:PrivateDiscussion:add'}
-
 private_discussion_edit:
     path: /edit/{slug}
     defaults: { _controller: 'App:PrivateDiscussion:edit' }
 
-private_discussion_add_member:
-    path: /add_member/{slug}
-    defaults: { _controller: 'App:PrivateDiscussion:addMember' }
-
-private_discussion_remove_member:
-    path: /remove_member/{discussionSlug}/{memberId}
-    defaults: { _controller: 'App:PrivateDiscussion:removeMember' }
-
-private_discussion_change_admin:
-    path: /change_admin/{slug}
-    defaults: { _controller: 'App:PrivateDiscussion:changeAdmin' }
-
-private_discussion_delete:
-    path: /delete/{slug}
-    defaults: { _controller: 'App:PrivateDiscussion:delete' }
-
 private_discussion_lock:
     path: /lock/{slug}
     defaults: { _controller: 'App:PrivateDiscussion:lock' }
-
-private_discussion_unlock:
-    path: /unlock/{slug}
-    defaults: { _controller: 'App:PrivateDiscussion:unlock' }
