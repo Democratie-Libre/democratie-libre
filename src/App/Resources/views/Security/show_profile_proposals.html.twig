@@ -1,0 +1,55 @@
+{% extends "Security/layout_profile.html.twig" %}
+
+{% block page_content %}
+    <div class="section-menu row">
+        <ul>
+            <li><a href="{{ path('profile_private_discussions') }}">Messagerie</a></li>
+            <li><a href="{{ path('profile_followed_discussions')}}">Discussions</a></li>
+            <li class="active" ><a href="{{ path('profile_proposals')}}">Propositions</a></li>
+            {% if is_granted('ROLE_ADMIN') %}
+                <li ><a href="{{ path('profile_administration')}}">Administration</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    <div id="proposals" class="subsection-content col-md-10 col-xs-10">
+        <div class="subsection-block row">
+            <h3>Mes propositions</h3>
+            {% for proposal in app.user.proposals %}
+                <a href="{{ path('proposal_show_motivation', {'slug': proposal.slug}) }}" class="subsection-panel col-md-12 col-xs-12">
+                    <div class="subsection-panel-heading">
+                        <div class="subsection-panel-title">{{ proposal.title }}</div>
+                    </div>
+                    <div class="subsection-panel-body">{{ proposal.abstract }}</div>
+                </a>
+            {% else %}
+                <p>Pas de proposition personnelle</p>
+            {% endfor %}
+        </div>
+        <div class="subsection-block row">
+            <h3>Propositions soutenues</h3>
+            {% for proposal in app.user.supportedProposals %}
+                <a href="{{ path('proposal_show_motivation', {'slug': proposal.slug}) }}" class="subsection-panel col-md-12 col-xs-12">
+                    <div class="subsection-panel-heading">
+                        <div class="subsection-panel-title">{{ proposal.title }}</div>
+                    </div>
+                    <div class="subsection-panel-body">{{ proposal.abstract }}</div>
+                </a>
+            {% else %}
+                <p>Pas de proposition soutenue</p>
+            {% endfor %}
+        </div>
+        <div class="subsection-block row">
+            <h3>Propositions contestées</h3>
+            {% for proposal in app.user.opposedProposals %}
+                <a href="{{ path('proposal_show_motivation', {'slug': proposal.slug}) }}" class="subsection-panel col-md-12 col-xs-12">
+                    <div class="subsection-panel-heading">
+                        <div class="subsection-panel-title">{{ proposal.title }}</div>
+                    </div>
+                    <div class="subsection-panel-body">{{ proposal.abstract }}</div>
+                </a>
+            {% else %}
+                <p>Pas de proposition contestée</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

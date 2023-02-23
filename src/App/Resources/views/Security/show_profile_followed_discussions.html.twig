@@ -1,0 +1,47 @@
+{% extends "Security/layout_profile.html.twig" %}
+
+{% block page_content %}
+    <div class="section-menu row">
+        <ul>
+            <li><a href="{{ path('profile_private_discussions') }}">Messagerie</a></li>
+            <li class="active"><a href="{{ path('profile_followed_discussions')}}">Discussions</a></li>
+            <li ><a href="{{ path('profile_proposals')}}">Propositions</a></li>
+            {% if is_granted('ROLE_ADMIN') %}
+                <li ><a href="{{ path('profile_administration')}}">Administration</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="tab-content">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Discussion</th>
+                    <th>Dernier commentaire</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for discussion in app.user.followedDiscussions %}
+                {% if is_granted('unreader', discussion) %}
+                    <tr class="discussion-unread">
+                        <td><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="table-link">{{ discussion.title }}</a></td>
+                        {% if discussion.posts is empty %}
+                            <td></td>
+                        {% else %}
+                            <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}}</td>
+                        {% endif %}
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td><a href="{{ path('public_discussion_show', {'slug': discussion.slug}) }}" class="table-link">{{ discussion.title }}</a></td>
+                        {% if discussion.posts is empty %}
+                            <td></td>
+                        {% else %}
+                            <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}}</td>
+                        {% endif %}
+                    </tr>
+                {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

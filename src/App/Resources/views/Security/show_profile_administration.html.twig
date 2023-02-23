@@ -1,0 +1,56 @@
+{% extends "Security/layout_profile.html.twig" %}
+
+{% block page_content %}
+    <div class="section-menu row">
+        <ul>
+            <li><a href="{{ path('profile_private_discussions') }}">Messagerie</a></li>
+            <li><a href="{{ path('profile_followed_discussions')}}">Discussions</a></li>
+            <li ><a href="{{ path('profile_proposals')}}">Propositions</a></li>
+            {% if is_granted('ROLE_ADMIN') %}
+                <li class="active"> <a href="{{ path('profile_administration')}}">Administration</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    {% if is_granted('ROLE_ADMIN') %}
+        <div id="administration">
+            <div class="subsection-block row">
+                <h2>Statistiques</h2>
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td>Nombre d'utilisateurs</td>
+                            <td>{{ number_of_users }}</td>
+                        </tr>
+                        <tr>
+                            <td>Nombre de thématiques</td>
+                            <td>{{ number_of_themes }}</td>
+                        </tr>
+                        <tr>
+                            <td>Nombre de propositions</td>
+                            <td>{{ number_of_proposals }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h2>Utilisateurs</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>email</th>
+                            <th>Date d'inscription</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            <tr>
+                                <td>{{ user.username }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.registrationDate|date('d/m/Y à  H:i')}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

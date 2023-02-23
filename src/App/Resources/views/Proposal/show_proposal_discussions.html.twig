@@ -38,7 +38,7 @@
                 </thead>
             {% endif %}
             <tbody>
-                <!-- If the proposal is published we can have both closed and opened discussions -->
+                <!-- If the proposal is published we can have both closed and opened discussions. -->
                 {% if is_granted('published', proposal) %}
                     {% for discussion in proposal.discussions %}
                         {% if locked_discussions %}
@@ -65,7 +65,7 @@
                             {% endif %}
                         {% endif %}
                     {% endfor %}
-                <!-- If the proposal is locked then we have only closed discussions -->
+                <!-- If the proposal is locked then we have only closed discussions. -->
                 {% else %}
                     {% for discussion in proposal.discussions %}
                         <tr>

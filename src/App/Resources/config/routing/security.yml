@@ -12,13 +12,25 @@ register:
     path:  /register
     defaults: { _controller: App:Security:register }
 
-profile:
-    path: /profile
-    defaults: { _controller: App:Security:profile }
+profile_private_discussions:
+    path: /profile/private_discussions
+    defaults: { _controller: App:Security:showPrivateDiscussions }
 
-admin_profile:
-    path: /admin_profile
-    defaults: { _controller: App:Security:adminProfile }
+profile_locked_private_discussions:
+    path: /profile/locked_private_discussions
+    defaults: { _controller: App:Security:showLockedPrivateDiscussions }
+
+profile_followed_discussions:
+    path: /profile/followed_discussions
+    defaults: { _controller: App:Security:showFollowedDiscussions }
+
+profile_proposals:
+    path: /profile/proposals
+    defaults: { _controller: App:Security:showProposals }
+
+profile_administration:
+    path: /profile/administration
+    defaults: { _controller: App:Security:showAdministration }
 
 email_edit:
     path: /email/edit
@@ -31,7 +43,3 @@ password_edit:
 avatar_edit:
     path: /avatar/edit
     defaults: { _controller: App:Security:avatarEdit }
-
-profile_discussions:
-    path: /profile/discussions
-    defaults: { _controller: App:Security:profileDiscussions }
