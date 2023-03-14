@@ -1,8 +1,8 @@
 ---
 # dL application documentation
-## v1.0.1
-### Symfony 3.4
-### 02/11/21
+## v1.1.0
+### Symfony 3.4.49
+### 23/02/23
 ---
 
 
@@ -250,7 +250,13 @@ This action is reversible.
 
 Inherits from AbstractDiscussion.
 
-This entity represents a private discussion between some users.
+This entity represents a private discussion between two users.
+
+A private discussion can be opened from the comment in a public discussion: a user can start a private discussion with the author of a comment.
+
+Since we wanted to not reveal any username in the public space, it led to removing the usernames in the private discussions too. Indeed, if a user can see the username of the author of a comment while starting a private discussion, it is quite the same as if the username of the author of the comment was revealed publicly. Thus we decided to not reveal the usernames also in the private discussions. An other way would have been to just remove the possibility of private discussions. But it is quite certain that this would pollute the thread in the public discussions: how can two people agree on a meeting somewhere else if they do not have this feature? We do not want the terms of this meeting in the public thread.
+
+The usernames are not revealed, the discussion is anonymous.
 
 ### Attributes (not exhaustive)
 *$admin* is the administrator of the discussion. He has special rights.
@@ -258,31 +264,27 @@ This entity represents a private discussion between some users.
 *$members* is an array of Users entities. Only them can read and post in the discussion. The admin is always among the members.
 
 ### Create a private discussion
-Any logged user can create a private discussion through its profile.
+Any logged user can create a private discussion from a post of an other user in a public discussion (he cannot open a private discussion from his own posts). This will open a private discussion between the user and the author of the post.
 
-He can choose the members he likes.
+The title of the private discussion is the title of the proposal it originates from.
 
-The creator of the discussion is by default the admin.
+The creator of the discussion is the admin.
 
 ### Follow a private discussion
 
 The members can access the discussion through their personal profile.
 
-It is signaled when there has been some new posts (the members are then placed in PrivateDiscussion.unreaders). The discussion is highlighted.
+It is signaled when there has been some new posts (the members are then placed in PrivateDiscussion.unreaders). The discussion is highlighted in their profile view.
 
 ### Edit a private discussion
 The change of the title can be done by the admin.
 
 ### Lock a private discussion
-Locking the discussion can be done by the admin.
 
-This is reversible.
+Locking the discussion can be done by any member.
 
-### Add/remove a member to a private discussion
-Can be done by the admin.
+If the discussion is locked, then it become inactive: no one can post in it.
 
-### Change the admin of a private discussion
-The admin can choose another member to replace him.
+This action is not reversible.
 
-### Delete a private discussion
-The admin can remove the discussion from the database.
+The members can still access it and view the past thread of the discussion. The locked discussions are separeted from the opened ones in the profile of the user.

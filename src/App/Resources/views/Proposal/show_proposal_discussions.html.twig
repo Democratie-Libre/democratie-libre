@@ -38,7 +38,7 @@
                 </thead>
             {% endif %}
             <tbody>
-                <!-- If the proposal is published we can have both closed and opened discussions -->
+                <!-- If the proposal is published we can have both closed and opened discussions. -->
                 {% if is_granted('published', proposal) %}
                     {% for discussion in proposal.discussions %}
                         {% if locked_discussions %}
@@ -48,7 +48,7 @@
                                     {% if discussion.posts is empty %}
                                         <td>Vide</td>
                                     {% else %}
-                                        <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
+                                        <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}}</td>
                                     {% endif %}
                                 </tr>
                             {% endif %}
@@ -59,13 +59,13 @@
                                     {% if discussion.posts is empty %}
                                         <td>Vide</td>
                                     {% else %}
-                                        <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
+                                        <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}}</td>
                                     {% endif %}
                                 </tr>
                             {% endif %}
                         {% endif %}
                     {% endfor %}
-                <!-- If the proposal is locked then we have only closed discussions -->
+                <!-- If the proposal is locked then we have only closed discussions. -->
                 {% else %}
                     {% for discussion in proposal.discussions %}
                         <tr>
@@ -73,7 +73,7 @@
                             {% if discussion.posts is empty %}
                                 <td>Vide</td>
                             {% else %}
-                                <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}} par {{ discussion.lastPost.author.username }}</td>
+                                <td>{{ discussion.lastPost.date|date('d/m/Y à  H:i')}}</td>
                             {% endif %}
                         </tr>
                     {% endfor %}

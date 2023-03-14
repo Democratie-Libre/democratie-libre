@@ -71,19 +71,43 @@ class SecurityController extends Controller
     /**
      * @Security("has_role('ROLE_USER')")
      */
-    public function profileAction()
+    public function showPrivateDiscussionsAction(Request $request)
     {
-        $user = $this->getUser();
-
-        return $this->render('App:Security:profile.html.twig', [
-            'user' => $user,
+        return $this->render('App:Security:show_profile_private_discussions.html.twig', [
+            'locked_discussions' => False,
         ]);
+    }
+
+    /**
+     * @Security("has_role('ROLE_USER')")
+     */
+    public function showLockedPrivateDiscussionsAction(Request $request)
+    {
+        return $this->render('App:Security:show_profile_private_discussions.html.twig', [
+            'locked_discussions' => True,
+        ]);
+    }
+
+    /**
+     * @Security("has_role('ROLE_USER')")
+     */
+    public function showFollowedDiscussionsAction(Request $request)
+    {
+        return $this->render('App:Security:show_profile_followed_discussions.html.twig');
+    }
+
+    /**
+     * @Security("has_role('ROLE_USER')")
+     */
+    public function showProposalsAction(Request $request)
+    {
+        return $this->render('App:Security:show_profile_proposals.html.twig');
     }
 
     /**
      * @Security("has_role('ROLE_ADMIN')")
      */
-    public function adminProfileAction()
+    public function showAdministrationAction()
     {
         $user = $this->getUser();
 
@@ -92,7 +116,7 @@ class SecurityController extends Controller
         $numberOfThemes    = $this->getDoctrine()->getRepository('App:Theme')->count([]);
         $numberOfProposals = $this->getDoctrine()->getRepository('App:Proposal')->count([]);
 
-        return $this->render('App:Security:profile.html.twig', [
+        return $this->render('App:Security:show_profile_administration.html.twig', [
             'user'                => $user,
             'number_of_users'     => $numberOfUsers,
             'users'               => $users,

@@ -44,14 +44,10 @@
                                     </ul>
                                 </div>
                                 {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                                    {% if is_granted('ROLE_ADMIN') %}
-                                        <a class="col-md-2 col-md-offset-5 col-xs-2 col-xs-offset-5 navlink-top-menu" href="{{ path('admin_profile') }}">{{ app.user.username }}</a>
-                                    {% else %}
-                                        <a class="col-md-2 col-md-offset-5 col-xs-2 col-xs-offset-5 navlink-top-menu" href="{{ path('profile') }}">{{ app.user.username }}</a>
-                                    {% endif %}
+                                    <a class="col-md-2 col-md-offset-5 col-xs-2 col-xs-offset-5 navlink-top-menu" href="{{ path('profile_private_discussions') }}">{{ app.user.username }}</a>
                                     <a class="col-md-2 col-xs-2 navlink-top-menu" href="{{ path('logout') }}" title="Déconnexion"><span class="glyphicon glyphicon-off"></span><span class="text-top-menu">Déconnexion</span></a>
                                 {% else %}
-                                <a class="col-md-2 col-md-offset-5 col-xs-2 col-xs-offset-5 navlink-top-menu" href="{{ path('register') }}" title="Inscription"><span class="glyphicon glyphicon-tasks"></span><span class="text-top-menu">Inscription</span></a>
+                                    <a class="col-md-2 col-md-offset-5 col-xs-2 col-xs-offset-5 navlink-top-menu" href="{{ path('register') }}" title="Inscription"><span class="glyphicon glyphicon-tasks"></span><span class="text-top-menu">Inscription</span></a>
                                     <a class="col-md-2 col-xs-2 navlink-top-menu" href="{{ path('login') }}" title="Connexion"><span class="glyphicon glyphicon-off"></span><span class="text-top-menu">Connexion</span></a>
                                 {% endif %}
                             </div>
