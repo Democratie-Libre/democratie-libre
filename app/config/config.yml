@@ -1,10 +1,18 @@
 imports:
-    - { resource: parameters.yml }
     - { resource: security.yml }
     - { resource: services.yml }
 
+parameters:
+    locale: fr
+    env(DATABASE_HOST): 127.0.0.1
+    env(DATABASE_USER): root
+    env(DATABASE_PASSWORD): ''
+    env(APP_SECRET): ThisTokenIsNotSoSecretChangeIt
+    env(GOOGLE_RECAPTCHA_SITE_KEY): recaptcha
+    env(GOOGLE_RECAPTCHA_SECRET): recaptcha
+
 framework:
-    secret: "%secret%"
+    secret: "%env(APP_SECRET)%"
     default_locale: "%locale%"
     translator:
         default_path: "%kernel.project_dir%/src/App/Resources/translations"
@@ -36,12 +44,11 @@ twig:
 # Doctrine Configuration
 doctrine:
     dbal:
-        driver:   "%database_driver%"
-        host:     "%database_host%"
-        port:     "%database_port%"
-        dbname:   "%database_name%"
-        user:     "%database_user%"
-        password: "%database_password%"
+        driver:   pdo_mysql
+        host:     "%env(DATABASE_HOST)%"
+        dbname:   "%env(DATABASE_NAME)%"
+        user:     "%env(DATABASE_USER)%"
+        password: "%env(DATABASE_PASSWORD)%"
         charset:  utf8mb4
         default_table_options:
             charset: utf8mb4
@@ -75,5 +82,5 @@ stof_doctrine_extensions:
             sluggable: true
 
 beelab_recaptcha2:
-    site_key: '%google_recaptcha.site_key%'
-    secret: '%google_recaptcha.secret%'
+    site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
+    secret: '%env(GOOGLE_RECAPTCHA_SECRET)%'

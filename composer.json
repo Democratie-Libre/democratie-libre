@@ -22,7 +22,6 @@
     "doctrine/doctrine-migrations-bundle": "^3.4",
     "doctrine/orm": "^2.20",
     "gedmo/doctrine-extensions": "^3.20",
-    "incenteev/composer-parameter-handler": "^2.2",
     "michelf/php-markdown": "^2.0",
     "beelab/recaptcha2-bundle": "^2.14",
     "stof/doctrine-extensions-bundle": "^1.14",
@@ -58,7 +57,6 @@
   },
   "scripts": {
     "symfony-scripts": [
-      "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
       "bin/console cache:clear"
     ],
     "post-install-cmd": [
@@ -76,9 +74,6 @@
     "symfony-var-dir": "var",
     "symfony-bin-dir": "bin",
     "symfony-tests-dir": "tests",
-    "incenteev-parameters": {
-      "file": "app/config/parameters.yml"
-    },
     "autoload-dev": {
       "psr-4": {
         "Tests\\": "tests/"

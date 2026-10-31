@@ -2,6 +2,7 @@
 
 use Symfony\Component\ErrorHandler\Debug;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Dotenv\Dotenv;
 
 // Only allow local access to the development front controller.
 if (isset($_SERVER['HTTP_CLIENT_IP'])
@@ -13,6 +14,11 @@ if (isset($_SERVER['HTTP_CLIENT_IP'])
 }
 
 require dirname(__DIR__).'/vendor/autoload.php';
+
+$envFile = dirname(__DIR__).'/.env';
+if (is_file($envFile)) {
+    (new Dotenv())->load($envFile);
+}
 
 Debug::enable();
 

@@ -12,7 +12,7 @@ The documentation can be found here : www.github.com/Democratie-Libre/democratie
 
 ### With Docker
 
-After installing `docker` and `docker-compose`, copy `.env.dist` to `.env` and change the few parameters there. Then in `parameters.yml` you can use the environment variables like `database_host: "%env(DATABASE_HOST)%"`.
+After installing `docker` and `docker-compose`, copy `.env.dist` to `.env` and change the few parameters there. The app reads its configuration (database, secret, reCAPTCHA keys) only from these environment variables; there is no `parameters.yml` anymore.
 
     - To fix cache and logs permissions: `make configure`
     - To install the project: `make install`
