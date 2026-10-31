@@ -6,10 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 
-/**
- * @ORM\Entity()
- * @ORM\HasLifecycleCallbacks
- */
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 class PublicDiscussion extends AbstractDiscussion
 {
     const GLOBAL_DISCUSSION   = 'global_discussion';
@@ -17,30 +15,20 @@ class PublicDiscussion extends AbstractDiscussion
     const PROPOSAL_DISCUSSION = 'proposal_discussion';
     const ARTICLE_DISCUSSION  = 'article_discussion';
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private $type;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Theme", inversedBy="discussions", cascade={"persist"})
-     */
+    #[ORM\ManyToOne(targetEntity: \Theme::class, inversedBy: 'discussions', cascade: ['persist'])]
     private $theme;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Proposal", inversedBy="discussions", cascade={"persist"})
-     */
+    #[ORM\ManyToOne(targetEntity: \Proposal::class, inversedBy: 'discussions', cascade: ['persist'])]
     private $proposal;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Article", inversedBy="discussions", cascade={"persist"})
-     */
+    #[ORM\ManyToOne(targetEntity: \Article::class, inversedBy: 'discussions', cascade: ['persist'])]
     private $article;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="User", inversedBy="followedDiscussions", cascade={"persist"})
-     * @ORM\JoinTable(name="public_discussions_followers")
-     */
+    #[ORM\ManyToMany(targetEntity: \User::class, inversedBy: 'followedDiscussions', cascade: ['persist'])]
+    #[ORM\JoinTable(name: 'public_discussions_followers')]
     private $followers;
 
     protected function __construct()

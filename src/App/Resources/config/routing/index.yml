@@ -1,19 +1,19 @@
 index:
     path: /
-    defaults: { _controller: 'App:Global:index' }
+    defaults: { _controller: 'App\Controller\GlobalController::indexAction' }
 
 global_room:
     path: /global_room
-    defaults: { _controller: 'App:Global:globalRoom' }
+    defaults: { _controller: 'App\Controller\GlobalController::globalRoomAction' }
 
 roots:
     path: /roots
-    defaults: { _controller: 'App:Global:roots' }
+    defaults: { _controller: 'App\Controller\GlobalController::rootsAction' }
 
 project:
     path: /project
-    defaults: { _controller: 'App:Global:project' }
+    defaults: { _controller: 'App\Controller\GlobalController::projectAction' }
 
 contact:
     path: /contact
-    defaults: { _controller: 'App:Global:contact' }
+    defaults: { _controller: 'App\Controller\GlobalController::contactAction' }

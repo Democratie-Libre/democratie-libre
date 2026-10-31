@@ -1,35 +1,35 @@
 article_show:
     path: /show/{slug}
-    defaults: { _controller: 'App:Article:showContent'}
+    defaults: { _controller: 'App\Controller\ArticleController::showContentAction'}
 
 article_show_discussions:
     path: /show_discussions/{slug}
-    defaults: { _controller: 'App:Article:showDiscussions'}
+    defaults: { _controller: 'App\Controller\ArticleController::showDiscussionsAction'}
 
 article_show_locked_discussions:
     path: /show_locked_discussions/{slug}
-    defaults: { _controller: 'App:Article:showLockedDiscussions'}
+    defaults: { _controller: 'App\Controller\ArticleController::showLockedDiscussionsAction'}
 
 article_show_versioning:
     path: /show_versioning/{slug}
-    defaults: { _controller: 'App:Article:showVersioning'}
+    defaults: { _controller: 'App\Controller\ArticleController::showVersioningAction'}
 
 article_show_administration:
     path: /show_administration/{slug}
-    defaults: { _controller: 'App:Article:showAdministration'}
+    defaults: { _controller: 'App\Controller\ArticleController::showAdministrationAction'}
 
 article_add:
     path: /add/{proposalSlug}
-    defaults: { _controller: 'App:Article:add' }
+    defaults: { _controller: 'App\Controller\ArticleController::addAction' }
 
 article_edit:
     path: /edit/{slug}
-    defaults: { _controller: 'App:Article:edit' }
+    defaults: { _controller: 'App\Controller\ArticleController::editAction' }
 
 article_delete:
     path: /delete/{slug}
-    defaults: { _controller: 'App:Article:delete' }
+    defaults: { _controller: 'App\Controller\ArticleController::deleteAction' }
 
 article_remove:
     path: /remove/{slug}
-    defaults: { _controller: 'App:Article:remove' }
+    defaults: { _controller: 'App\Controller\ArticleController::removeAction' }

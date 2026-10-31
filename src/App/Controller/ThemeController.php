@@ -2,23 +2,29 @@
 
 namespace App\Controller;
 
+use Doctrine\Persistence\ManagerRegistry;
 use App\Security\Authorization\Voter\ProposalVoter;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Security\Core\User\UserInterface;
 use App\Entity\Theme;
 use App\Entity\Proposal;
 use App\Form\Theme\EditThemeType;
 use App\Form\Theme\MoveThemeType;
 
-class ThemeController extends Controller
+class ThemeController extends AbstractController
 {
+
+    public function __construct(private ManagerRegistry $doctrine)
+    {
+    }
+
     public function showProposalsAction($slug)
     {
         $theme = $this->getThemeBySlug($slug);
 
-        return $this->render('App:Theme:show_theme_proposals.html.twig', [
+        return $this->render('@App/Theme/show_theme_proposals.html.twig', [
             'theme'            => $theme,
             'locked_proposals' => false,
         ]);
@@ -28,7 +34,7 @@ class ThemeController extends Controller
     {
         $theme = $this->getThemeBySlug($slug);
 
-        return $this->render('App:Theme:show_theme_proposals.html.twig', [
+        return $this->render('@App/Theme/show_theme_proposals.html.twig', [
             'theme'            => $theme,
             'locked_proposals' => True,
         ]);
@@ -38,7 +44,7 @@ class ThemeController extends Controller
     {
         $theme = $this->getThemeBySlug($slug);
 
-        return $this->render('App:Theme:show_theme_discussions.html.twig', [
+        return $this->render('@App/Theme/show_theme_discussions.html.twig', [
             'theme'              => $theme,
             'locked_discussions' => False,
         ]);
@@ -48,7 +54,7 @@ class ThemeController extends Controller
     {
         $theme = $this->getThemeBySlug($slug);
 
-        return $this->render('App:Theme:show_theme_discussions.html.twig', [
+        return $this->render('@App/Theme/show_theme_discussions.html.twig', [
             'theme'              => $theme,
             'locked_discussions' => True,
         ]);
@@ -58,7 +64,7 @@ class ThemeController extends Controller
     {
         $theme = $this->getThemeBySlug($slug);
 
-        return $this->render('App:Theme:show_theme_children.html.twig', [
+        return $this->render('@App/Theme/show_theme_children.html.twig', [
             'theme' => $theme,
         ]);
     }
@@ -66,8 +72,8 @@ class ThemeController extends Controller
     /**
      * Creates a new Theme entity of level 0 (root).
      *
-     * @Security("has_role('ROLE_ADMIN')")
      */
+    #[IsGranted('ROLE_ADMIN')]
     public function addRootAction(Request $request)
     {
         $theme = new Theme();
@@ -77,7 +83,7 @@ class ThemeController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $theme->setLvl(0);
 
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->doctrine->getManager();
             $em->persist($theme);
             $em->flush();
 
@@ -86,20 +92,18 @@ class ThemeController extends Controller
             ]));
         }
 
-        return $this->render('App:Theme:add_root.html.twig', [
+        return $this->render('@App/Theme/add_root.html.twig', [
             'form' => $form->createView(),
         ]);
     }
 
-    /**
-     * @Security("has_role('ROLE_ADMIN')")
-     */
+    #[IsGranted('ROLE_ADMIN')]
     public function addAction(Request $request, $slug)
     {
         $theme = new Theme();
         $form  = $this->createForm(EditThemeType::class, $theme);
         $form->handleRequest($request);
-        $parent = $this->getDoctrine()->getRepository('App:Theme')->findOneBySlug($slug);
+        $parent = $this->doctrine->getRepository(Theme::class)->findOneBySlug($slug);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
@@ -108,7 +112,7 @@ class ThemeController extends Controller
             }
 
             $theme->setParent($parent);
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->doctrine->getManager();
             $em->persist($theme);
             $em->flush();
 
@@ -117,25 +121,23 @@ class ThemeController extends Controller
             ]));
         }
 
-        return $this->render('App:Theme:add_theme.html.twig', [
+        return $this->render('@App/Theme/add_theme.html.twig', [
             'form'  => $form->createView(),
             'theme' => $parent,
         ]);
     }
 
-    /**
-     * @Security("has_role('ROLE_ADMIN')")
-     */
+    #[IsGranted('ROLE_ADMIN')]
     public function editAction(Request $request, $slug)
     {
         $theme      = $this->getThemeBySlug($slug);
-        $repository = $this->getDoctrine()->getRepository('App:Theme');
+        $repository = $this->doctrine->getRepository(Theme::class);
 
         $form = $this->createForm(EditThemeType::class, $theme);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->doctrine->getManager();
             $em->persist($theme);
             $em->flush();
 
@@ -144,19 +146,17 @@ class ThemeController extends Controller
             ]));
         }
 
-        return $this->render('App:Theme:edit_theme.html.twig', [
+        return $this->render('@App/Theme/edit_theme.html.twig', [
             'form'   => $form->createView(),
             'theme'  => $theme,
         ]);
     }
 
-    /**
-     * @Security("has_role('ROLE_ADMIN')")
-     */
+    #[IsGranted('ROLE_ADMIN')]
     public function moveAction(Request $request, $slug)
     {
         $theme      = $this->getThemeBySlug($slug);
-        $repository = $this->getDoctrine()->getRepository('App:Theme');
+        $repository = $this->doctrine->getRepository(Theme::class);
 
         // in this array are the id of the theme considered, and the ids of all its descendants
         $descendantsIds = $repository->getChildrenId($theme, false, null, 'ASC', true);
@@ -173,7 +173,7 @@ class ThemeController extends Controller
                 $theme->setParent();
             }
 
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->doctrine->getManager();
             $em->persist($theme);
             $em->flush();
 
@@ -182,19 +182,17 @@ class ThemeController extends Controller
             ]));
         }
 
-        return $this->render('App:Theme:move_theme.html.twig', [
+        return $this->render('@App/Theme/move_theme.html.twig', [
             'form'   => $form->createView(),
             'theme'  => $theme,
         ]);
     }
 
-    /**
-     * @Security("has_role('ROLE_ADMIN')")
-     */
+    #[IsGranted('ROLE_ADMIN')]
     public function deleteAction(Request $request, $slug)
     {
         $theme      = $this->getThemeBySlug($slug);
-        $repository = $this->getDoctrine()->getRepository('App:Theme');
+        $repository = $this->doctrine->getRepository(Theme::class);
 
         if (false === $theme->isEmpty()) {
             $this->addFlash('info', 'Une thématique ne peut pas être supprimée si elle contient des propositions !');
@@ -204,7 +202,7 @@ class ThemeController extends Controller
             ]));
         }
 
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
 
         // we suppress all the discussions associated before removing the theme
         // we do it manually because Doctrine cascading does not work has we expect here
@@ -234,7 +232,7 @@ class ThemeController extends Controller
 
     private function getThemeBySlug($slug)
     {
-        $theme = $this->getDoctrine()->getRepository('App:Theme')->findOneBySlug($slug);
+        $theme = $this->doctrine->getRepository(Theme::class)->findOneBySlug($slug);
 
         if (null === $theme) {
             throw $this->createNotFoundException();

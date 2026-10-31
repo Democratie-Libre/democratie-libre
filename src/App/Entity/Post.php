@@ -5,38 +5,25 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks
- */
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 class Post
 {
-    /**
-     * @ORM\Column(type="integer", unique=true)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Column(type: 'integer', unique: true)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     private $id;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Assert\DateTime()
-     */
+    #[ORM\Column(type: 'datetime')]
     private $date;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $content;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="AbstractDiscussion", inversedBy="posts")
-     */
+    #[ORM\ManyToOne(targetEntity: \AbstractDiscussion::class, inversedBy: 'posts')]
     private $discussion;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="User")
-     */
+    #[ORM\ManyToOne(targetEntity: \User::class)]
     private $author;
 
     public function getId()
@@ -56,9 +43,7 @@ class Post
         return $this->content;
     }
 
-    /**
-     * @ORM\PrePersist()
-     */
+    #[ORM\PrePersist]
     public function updateDate()
     {
         $this->date = new \DateTime();

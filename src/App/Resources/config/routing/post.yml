@@ -1,11 +1,11 @@
 post_open_private_discussion:
     path: /open_private_discussion/{id}
-    defaults: { _controller: 'App:Post:openPrivateDiscussion' }
+    defaults: { _controller: 'App\Controller\PostController::openPrivateDiscussionAction' }
 
 post_move:
     path: /move/{id}
-    defaults: { _controller: 'App:Post:move' }
+    defaults: { _controller: 'App\Controller\PostController::moveAction' }
 
 post_delete:
     path: /delete/{id}
-    defaults: { _controller: 'App:Post:delete' }
+    defaults: { _controller: 'App\Controller\PostController::deleteAction' }

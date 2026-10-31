@@ -1,6 +1,6 @@
 login:
     path:  /login
-    defaults: { _controller: 'App:Security:login' }
+    defaults: { _controller: 'App\Controller\SecurityController::loginAction' }
 
 login_check:
     path:  /login
@@ -10,36 +10,36 @@ logout:
 
 register:
     path:  /register
-    defaults: { _controller: App:Security:register }
+    defaults: { _controller: 'App\Controller\SecurityController::registerAction' }
 
 profile_private_discussions:
     path: /profile/private_discussions
-    defaults: { _controller: App:Security:showPrivateDiscussions }
+    defaults: { _controller: 'App\Controller\SecurityController::showPrivateDiscussionsAction' }
 
 profile_locked_private_discussions:
     path: /profile/locked_private_discussions
-    defaults: { _controller: App:Security:showLockedPrivateDiscussions }
+    defaults: { _controller: 'App\Controller\SecurityController::showLockedPrivateDiscussionsAction' }
 
 profile_followed_discussions:
     path: /profile/followed_discussions
-    defaults: { _controller: App:Security:showFollowedDiscussions }
+    defaults: { _controller: 'App\Controller\SecurityController::showFollowedDiscussionsAction' }
 
 profile_proposals:
     path: /profile/proposals
-    defaults: { _controller: App:Security:showProposals }
+    defaults: { _controller: 'App\Controller\SecurityController::showProposalsAction' }
 
 profile_administration:
     path: /profile/administration
-    defaults: { _controller: App:Security:showAdministration }
+    defaults: { _controller: 'App\Controller\SecurityController::showAdministrationAction' }
 
 email_edit:
     path: /email/edit
-    defaults: { _controller: App:Security:emailEdit }
+    defaults: { _controller: 'App\Controller\SecurityController::emailEditAction' }
 
 password_edit:
     path: /password/edit
-    defaults: { _controller: App:Security:passwordEdit }
+    defaults: { _controller: 'App\Controller\SecurityController::passwordEditAction' }
 
 avatar_edit:
     path: /avatar/edit
-    defaults: { _controller: App:Security:avatarEdit }
+    defaults: { _controller: 'App\Controller\SecurityController::avatarEditAction' }

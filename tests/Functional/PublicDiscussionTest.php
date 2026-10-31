@@ -16,7 +16,7 @@ class PublicDiscussionTest extends AppTestCase
         $this->assertRedirectsTo('/public_discussion/show/un-sujet-global');
         $discussion = $this->em->getRepository(PublicDiscussion::class)->findOneBySlug('un-sujet-global');
         $this->assertTrue($discussion->isGlobalDiscussion());
-        $this->assertTrue($discussion->hasFollower($this->em->getRepository('App:User')->findOneByUsername('other')));
+        $this->assertTrue($discussion->hasFollower($this->em->getRepository(\App\Entity\User::class)->findOneByUsername('other')));
     }
 
     public function testUserOpensADiscussionOnThemeProposalAndArticle()

@@ -2,6 +2,7 @@
 
 namespace Tests\Functional;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\AppTestCase;
 
 /**
@@ -114,9 +115,7 @@ class RoutesTest extends AppTestCase
         }
     }
 
-    /**
-     * @dataProvider routeProvider
-     */
+    #[DataProvider('routeProvider')]
     public function testRouteStatus($name, $visitor)
     {
         $route = self::routes()[$name];

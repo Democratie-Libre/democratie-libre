@@ -8,136 +8,95 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\Common\Collections\ArrayCollection;
 
-/**
- * @ORM\Entity
- * @UniqueEntity(fields="slug")
- * @ORM\HasLifecycleCallbacks
- */
+#[ORM\Entity]
+#[UniqueEntity(fields: 'slug')]
+#[ORM\HasLifecycleCallbacks]
 class Proposal
 {
     const PUBLISHED = 'published';
     const LOCKED    = 'locked';
 
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     private $id;
 
-    /**
-     * @Gedmo\Slug(fields={"title"})
-     * @ORM\Column(length=128, unique=true)
-     */
+    #[Gedmo\Slug(fields: ['title'])]
+    #[ORM\Column(length: 128, unique: true)]
     private $slug;
 
-    /**
-     * @ORM\Column(type="string", length=255, options={"default" : Proposal::PUBLISHED})
-     */
+    #[ORM\Column(type: 'string', length: 255, options: ['default' => Proposal::PUBLISHED])]
     private $status = self::PUBLISHED;
 
     /**
      * If the proposal has been locked, it should be justified here.
-     *
-     * @ORM\Column(type="text", nullable=true)
-     * @Assert\Length(
-     *      max = 400,
-     * )
      */
+    #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\Length(max: 400)]
     private $lockingExplanation;
 
-    /**
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     * @Assert\Regex("/[a-zA-Z0-9]+/")
-     * @Assert\Length(
-     *      max = 100,
-     * )
-     */
+    #[ORM\Column(type: 'string')]
+    #[Assert\NotBlank]
+    #[Assert\Regex('/[a-zA-Z0-9]+/')]
+    #[Assert\Length(max: 100)]
     private $title;
 
-    /**
-     * @ORM\Column(type="text")
-     * @Assert\NotBlank()
-     * @Assert\Length(
-     *      max = 400,
-     * )
-     */
+    #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 400)]
     private $abstract;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Assert\DateTime()
-     */
+    #[ORM\Column(type: 'datetime')]
     private $creationDate;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Assert\DateTime()
-     */
+    #[ORM\Column(type: 'datetime')]
     private $lastEditDate;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $motivation;
 
-    /**
-     * @ORM\OneToMany(targetEntity="Article", mappedBy="proposal", cascade={"persist", "remove"})
-     * @ORM\OrderBy({"number" = "ASC"})
-     */
+    #[ORM\OneToMany(targetEntity: \Article::class, mappedBy: 'proposal', cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['number' => 'ASC'])]
     private $articles;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private $versionNumber;
 
     /**
      * If the proposal is a wiki, every user can edit it.
      * The author is the only one that can make it a wiki.
-     *
-     * @ORM\Column(type="boolean")
      */
+    #[ORM\Column(type: 'boolean')]
     private $isAWiki;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Theme", inversedBy="proposals", cascade={"persist"})
-     */
+    #[ORM\ManyToOne(targetEntity: \Theme::class, inversedBy: 'proposals', cascade: ['persist'])]
     private $theme;
 
     /**
      * The author is initially the creator of the proposal.
-     *
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="proposals", cascade={"persist"})
      */
+    #[ORM\ManyToOne(targetEntity: \User::class, inversedBy: 'proposals', cascade: ['persist'])]
     private $author;
 
     /**
      * Users that claim their support to the proposal.
-     *
-     * @ORM\ManyToMany(targetEntity="User", inversedBy="supportedProposals", cascade={"persist"})
-     * @ORM\JoinTable(name="proposals_supporters")
      */
+    #[ORM\ManyToMany(targetEntity: \User::class, inversedBy: 'supportedProposals', cascade: ['persist'])]
+    #[ORM\JoinTable(name: 'proposals_supporters')]
     private $supporters;
 
     /**
      * Users that claim their opposition to the proposal.
-     *
-     * @ORM\ManyToMany(targetEntity="User", inversedBy="opposedProposals", cascade={"persist"})
-     * @ORM\JoinTable(name="proposals_opposents")
      */
+    #[ORM\ManyToMany(targetEntity: \User::class, inversedBy: 'opposedProposals', cascade: ['persist'])]
+    #[ORM\JoinTable(name: 'proposals_opposents')]
     private $opponents;
 
-    /**
-     * @ORM\OneToMany(targetEntity="ProposalVersion", mappedBy="recordedProposal", cascade={"persist", "remove"})
-     * @ORM\OrderBy({"versionNumber" = "DESC"})
-     */
+    #[ORM\OneToMany(targetEntity: \ProposalVersion::class, mappedBy: 'recordedProposal', cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['versionNumber' => 'DESC'])]
     private $versioning;
 
-    /**
-     * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="proposal", cascade={"persist", "remove"})
-     */
+    #[ORM\OneToMany(targetEntity: \PublicDiscussion::class, mappedBy: 'proposal', cascade: ['persist', 'remove'])]
     private $discussions;
 
     public function __construct()
@@ -217,10 +176,8 @@ class Proposal
         return $this->creationDate;
     }
 
-    /**
-     * @ORM\PrePersist()
-     * @ORM\PreUpdate()
-     */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function setLastEditDate()
     {
         $this->lastEditDate = new \DateTime();
@@ -323,7 +280,7 @@ class Proposal
         return $this->theme;
     }
 
-    public function setAuthor(User $user = null)
+    public function setAuthor(?User $user = null)
     {
         if ($this->author) {
             $this->author->removeProposal($this);

@@ -15,7 +15,7 @@ use Beelab\Recaptcha2Bundle\Validator\Constraints\Recaptcha2;
 
 class RegisterType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('username', TextType::class)
@@ -30,7 +30,7 @@ class RegisterType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => User::class,

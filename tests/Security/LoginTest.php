@@ -36,6 +36,6 @@ class LoginTest extends AppTestCase
         $this->client->submit($form);
         $this->client->followRedirect();
 
-        $this->assertContains('Identifiants invalides', $this->client->getResponse()->getContent());
+        $this->assertStringContainsString('Identifiants invalides', $this->client->getResponse()->getContent());
     }
 }

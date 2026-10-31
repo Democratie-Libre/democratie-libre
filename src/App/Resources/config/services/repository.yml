@@ -1,6 +1,0 @@
-services:
-    app.repository.user_repository:
-        class: Doctrine\ORM\EntityRepository
-        factory: ['@doctrine.orm.default_entity_manager', getRepository]
-        arguments:
-            - App\Entity\User

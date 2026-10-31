@@ -3,122 +3,89 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Knp\Rad\User\HasPassword;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- * @UniqueEntity(fields="username")
- * @UniqueEntity(fields="email")
- * @ORM\HasLifecycleCallbacks
- */
-class User implements UserInterface, \Serializable, HasPassword
+#[ORM\Entity(repositoryClass: \App\Repository\UserRepository::class)]
+#[UniqueEntity(fields: 'username')]
+#[UniqueEntity(fields: 'email')]
+#[ORM\HasLifecycleCallbacks]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    use HasPassword\HasPassword;
-
     /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * Not persisted: hashed into $password by App\EventListener\PasswordHashListener
+     * when the user is saved.
      */
+    private ?string $plainPassword = null;
+
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=30, unique=true)
-     */
+    #[ORM\Column(type: 'string', length: 30, unique: true)]
     private $username;
 
-    /**
-     * @ORM\Column(type="string", length=64)
-     */
+    #[ORM\Column(type: 'string', length: 64)]
     private $password;
 
-    /**
-     * @ORM\Column(type="string", length=60, unique=true)
-     * @Assert\Email(message="This email adress is not valid.")
-     */
+    #[ORM\Column(type: 'string', length: 60, unique: true)]
+    #[Assert\Email(message: 'This email adress is not valid.')]
     private $email;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: 'datetime')]
     private $registrationDate;
 
-    /**
-     * @ORM\Column(type="array")
-     */
+    #[ORM\Column(type: 'array')]
     private $roles;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private $banned;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
      * Stores the name of the image file associated to the user
      */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $path;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
      * Stores temporarily the name of the old image file to delete it after the upload
      */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $temp;
 
-    /**
-     * @Assert\Image(
-     *     minWidth = 128,
-     *     maxWidth = 128,
-     *     minHeight = 128,
-     *     maxHeight = 128,
-     *     mimeTypes = {"image/png"},
-     *     maxSize = "1024k"
-     * )
-     */
+    #[Assert\Image(minWidth: 128, maxWidth: 128, minHeight: 128, maxHeight: 128, mimeTypes: ['image/png'], maxSize: '1024k')]
     private $file;
 
-    /**
-     * @ORM\OneToMany(targetEntity="Proposal", mappedBy="author")
-     */
+    #[ORM\OneToMany(targetEntity: \Proposal::class, mappedBy: 'author')]
     private $proposals;
 
     /**
      * The user claims his support to these proposals.
-     *
-     * @ORM\ManyToMany(targetEntity="Proposal", mappedBy="supporters", cascade={"persist"})
      */
+    #[ORM\ManyToMany(targetEntity: \Proposal::class, mappedBy: 'supporters', cascade: ['persist'])]
     private $supportedProposals;
 
     /**
      * The user claims his opposition to these proposals.
-     *
-     * @ORM\ManyToMany(targetEntity="Proposal", mappedBy="opponents", cascade={"persist"})
      */
+    #[ORM\ManyToMany(targetEntity: \Proposal::class, mappedBy: 'opponents', cascade: ['persist'])]
     private $opposedProposals;
 
-    /**
-     * @ORM\OneToMany(targetEntity="PrivateDiscussion", mappedBy="admin")
-     */
+    #[ORM\OneToMany(targetEntity: \PrivateDiscussion::class, mappedBy: 'admin')]
     private $adminDiscussions;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="PrivateDiscussion", mappedBy="members", cascade={"persist"})
-     */
+    #[ORM\ManyToMany(targetEntity: \PrivateDiscussion::class, mappedBy: 'members', cascade: ['persist'])]
     private $privateDiscussions;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="PublicDiscussion", mappedBy="followers", cascade={"persist"})
-     */
+    #[ORM\ManyToMany(targetEntity: \PublicDiscussion::class, mappedBy: 'followers', cascade: ['persist'])]
     private $followedDiscussions;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="AbstractDiscussion", mappedBy="unreaders", cascade={"persist"})
-     */
+    #[ORM\ManyToMany(targetEntity: \AbstractDiscussion::class, mappedBy: 'unreaders', cascade: ['persist'])]
     private $unreadDiscussions;
 
     public function __construct()
@@ -194,14 +161,38 @@ class User implements UserInterface, \Serializable, HasPassword
         return $this;
     }
 
-    public function getRoles()
+    public function getRoles(): array
     {
         return $this->roles;
     }
 
-    public function getPassword()
+    public function getPassword(): ?string
     {
         return $this->password;
+    }
+
+    public function setPassword($password)
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(?string $plainPassword)
+    {
+        $this->plainPassword = $plainPassword;
+
+        return $this;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->username;
     }
 
     public function setBanned($banned)
@@ -288,32 +279,28 @@ class User implements UserInterface, \Serializable, HasPassword
         return $this->opposedProposals;
     }
 
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
     }
 
     /**
-     * @see \Serializable::serialize()
+     * Only what is needed to refresh the user from the session is serialized,
+     * the password is replaced by a checksum (see ContextListener).
      */
-    public function serialize()
+    public function __serialize(): array
     {
-        return serialize([
-            $this->id,
-            $this->username,
-            $this->password,
-        ]);
+        return [
+            'id'       => $this->id,
+            'username' => $this->username,
+            'password' => null === $this->password ? null : hash('crc32c', $this->password),
+        ];
     }
 
-    /**
-     * @see \Serializable::unserialize()
-     */
-    public function unserialize($serialized)
+    public function __unserialize(array $data): void
     {
-        list(
-            $this->id,
-            $this->username,
-            $this->password,
-        ) = unserialize($serialized);
+        $this->id       = $data['id'];
+        $this->username = $data['username'];
+        $this->password = $data['password'];
     }
 
     public function addAdminDiscussion(PrivateDiscussion $discussion)
@@ -451,7 +438,7 @@ class User implements UserInterface, \Serializable, HasPassword
         return 'uploads/users/images';
     }
 
-    public function setFile(UploadedFile $file = null)
+    public function setFile(?UploadedFile $file = null)
     {
         $this->file = $file;
         // check if we have an old image path
@@ -469,11 +456,8 @@ class User implements UserInterface, \Serializable, HasPassword
         return $this->file;
     }
 
-    /**
-     * @ORM\PrePersist()
-     * @ORM\PreUpdate()
-     * Manage the path attribute
-     */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function preUpload()
     {
         if (null !== $this->getFile()) {
@@ -492,11 +476,8 @@ class User implements UserInterface, \Serializable, HasPassword
         }
     }
 
-    /**
-     * @ORM\PostPersist()
-     * @ORM\PostUpdate()
-     * Uploads the image file after persisting the user
-     */
+    #[ORM\PostPersist]
+    #[ORM\PostUpdate]
     public function upload()
     {
         // the file property can be empty if the field is not required
@@ -524,10 +505,7 @@ class User implements UserInterface, \Serializable, HasPassword
         $this->file = null;
     }
 
-    /**
-     * @ORM\PostRemove()
-     * Remove the image file after suppression of a user
-     */
+    #[ORM\PostRemove]
     public function removeUpload()
     {
         if ($file = $this->getAbsolutePath()) {

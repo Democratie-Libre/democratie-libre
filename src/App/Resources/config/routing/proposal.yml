@@ -1,63 +1,63 @@
 proposal_show_motivation:
     path: /show_motivation/{slug}
-    defaults: { _controller: 'App:Proposal:showMotivation'}
+    defaults: { _controller: 'App\Controller\ProposalController::showMotivationAction'}
 
 proposal_show_articles:
     path: /show_articles/{slug}
-    defaults: { _controller: 'App:Proposal:showArticles'}
+    defaults: { _controller: 'App\Controller\ProposalController::showArticlesAction'}
 
 proposal_show_removed_articles:
     path: /show_removed_articles/{slug}
-    defaults: { _controller: 'App:Proposal:showRemovedArticles'}
+    defaults: { _controller: 'App\Controller\ProposalController::showRemovedArticlesAction'}
 
 proposal_show_discussions:
     path: /show_discussions/{slug}
-    defaults: { _controller: 'App:Proposal:showDiscussions'}
+    defaults: { _controller: 'App\Controller\ProposalController::showDiscussionsAction'}
 
 proposal_show_locked_discussions:
     path: /show_locked_discussions/{slug}
-    defaults: { _controller: 'App:Proposal:showLockedDiscussions'}
+    defaults: { _controller: 'App\Controller\ProposalController::showLockedDiscussionsAction'}
 
 proposal_show_versioning:
     path: /show_versioning/{slug}
-    defaults: { _controller: 'App:Proposal:showVersioning'}
+    defaults: { _controller: 'App\Controller\ProposalController::showVersioningAction'}
 
 proposal_show_administration:
     path: /show_administration/{slug}
-    defaults: { _controller: 'App:Proposal:showAdministration'}
+    defaults: { _controller: 'App\Controller\ProposalController::showAdministrationAction'}
 
 proposal_add:
     path: /add/{themeSlug}
-    defaults: { _controller: 'App:Proposal:add' }
+    defaults: { _controller: 'App\Controller\ProposalController::addAction' }
 
 proposal_edit:
     path: /edit/{slug}
-    defaults: { _controller: 'App:Proposal:edit' }
+    defaults: { _controller: 'App\Controller\ProposalController::editAction' }
 
 proposal_support:
     path: /support/{slug}
-    defaults: { _controller: 'App:Proposal:support' }
+    defaults: { _controller: 'App\Controller\ProposalController::supportAction' }
 
 proposal_removesupport:
     path: /removesupport/{slug}
-    defaults: { _controller: 'App:Proposal:removeSupport' }
+    defaults: { _controller: 'App\Controller\ProposalController::removeSupportAction' }
 
 proposal_oppose:
     path: /oppose/{slug}
-    defaults: { _controller: 'App:Proposal:oppose' }
+    defaults: { _controller: 'App\Controller\ProposalController::opposeAction' }
 
 proposal_removeoppose:
     path: /removeoppose/{slug}
-    defaults: { _controller: 'App:Proposal:removeOppose' }
+    defaults: { _controller: 'App\Controller\ProposalController::removeOpposeAction' }
 
 proposal_move:
     path: /move/{slug}
-    defaults: { _controller: 'App:Proposal:move' }
+    defaults: { _controller: 'App\Controller\ProposalController::moveAction' }
 
 proposal_delete:
     path: /delete/{slug}
-    defaults: { _controller: 'App:Proposal:delete' }
+    defaults: { _controller: 'App\Controller\ProposalController::deleteAction' }
 
 proposal_lock:
     path: /lock/{slug}
-    defaults: { _controller: 'App:Proposal:lock' }
+    defaults: { _controller: 'App\Controller\ProposalController::lockAction' }

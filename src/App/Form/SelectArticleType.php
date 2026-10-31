@@ -10,7 +10,7 @@ use App\Entity\Article;
 
 class SelectArticleType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('article', EntityType::class, [

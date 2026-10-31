@@ -2,23 +2,30 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use App\Entity\Theme;
+use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Request;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Entity\Proposal;
 use App\Form\Proposal\EditProposalType;
 use App\Form\Proposal\LockProposalType;
 use App\Form\SelectThemeType;
 use App\Security\Authorization\Voter\ProposalVoter;
 
-class ProposalController extends Controller
+class ProposalController extends AbstractController
 {
+
+    public function __construct(private ManagerRegistry $doctrine)
+    {
+    }
+
     public function showMotivationAction($slug)
     {
         $proposal = $this->getProposalBySlug($slug);
 
-        return $this->render('App:Proposal:show_proposal_motivation.html.twig', [
+        return $this->render('@App/Proposal/show_proposal_motivation.html.twig', [
             'proposal' => $proposal,
         ]);
     }
@@ -27,7 +34,7 @@ class ProposalController extends Controller
     {
         $proposal = $this->getProposalBySlug($slug);
 
-        return $this->render('App:Proposal:show_proposal_articles.html.twig', [
+        return $this->render('@App/Proposal/show_proposal_articles.html.twig', [
             'proposal'        => $proposal,
             'locked_articles' => false,
         ]);
@@ -37,7 +44,7 @@ class ProposalController extends Controller
     {
         $proposal = $this->getProposalBySlug($slug);
 
-        return $this->render('App:Proposal:show_proposal_removed_articles.html.twig', [
+        return $this->render('@App/Proposal/show_proposal_removed_articles.html.twig', [
             'proposal' => $proposal,
         ]);
     }
@@ -46,7 +53,7 @@ class ProposalController extends Controller
     {
         $proposal = $this->getProposalBySlug($slug);
 
-        return $this->render('App:Proposal:show_proposal_discussions.html.twig', [
+        return $this->render('@App/Proposal/show_proposal_discussions.html.twig', [
             'proposal'           => $proposal,
             'locked_discussions' => False,
         ]);
@@ -56,7 +63,7 @@ class ProposalController extends Controller
     {
         $proposal = $this->getProposalBySlug($slug);
 
-        return $this->render('App:Proposal:show_proposal_discussions.html.twig', [
+        return $this->render('@App/Proposal/show_proposal_discussions.html.twig', [
             'proposal'           => $proposal,
             'locked_discussions' => True,
         ]);
@@ -66,31 +73,27 @@ class ProposalController extends Controller
     {
         $proposal = $this->getProposalBySlug($slug);
 
-        return $this->render('App:Proposal:show_proposal_versioning.html.twig', [
+        return $this->render('@App/Proposal/show_proposal_versioning.html.twig', [
             'proposal' => $proposal,
         ]);
     }
 
-    /**
-     * @Security("has_role('ROLE_USER')")
-     */
+    #[IsGranted('ROLE_USER')]
     public function showAdministrationAction($slug)
     {
         $proposal = $this->getProposalBySlug($slug);
 
         $this->denyAccessUnlessGranted(ProposalVoter::SHOW_ADMIN_PANEL, $proposal);
 
-        return $this->render('App:Proposal:show_proposal_administration.html.twig', [
+        return $this->render('@App/Proposal/show_proposal_administration.html.twig', [
             'proposal' => $proposal,
         ]);
     }
 
-    /**
-     * @Security("has_role('ROLE_USER')")
-     */
+    #[IsGranted('ROLE_USER')]
     public function addAction(Request $request, $themeSlug)
     {
-        $theme = $this->getDoctrine()->getRepository('App:Theme')->findOneBySlug($themeSlug);
+        $theme = $this->doctrine->getRepository(Theme::class)->findOneBySlug($themeSlug);
 
         if(null === $theme) {
             throw $this->createNotFoundException();
@@ -107,7 +110,7 @@ class ProposalController extends Controller
                 ->snapshot()
             ;
 
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->doctrine->getManager();
             $em->persist($proposal);
             $em->flush();
 
@@ -116,16 +119,14 @@ class ProposalController extends Controller
             ]));
         }
 
-        return $this->render('App:Proposal:add_proposal.html.twig', [
+        return $this->render('@App/Proposal/add_proposal.html.twig', [
             'proposal' => $proposal,
             'theme'    => $theme,
             'form'     => $form->createView(),
         ]);
     }
 
-    /**
-     * @Security("has_role('ROLE_USER')")
-     */
+    #[IsGranted('ROLE_USER')]
     public function editAction(Request $request, $slug)
     {
         $proposal = $this->getProposalBySlug($slug);
@@ -142,7 +143,7 @@ class ProposalController extends Controller
                 ->snapshot()
             ;
 
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->doctrine->getManager();
             $em->persist($proposal);
             $em->flush();
 
@@ -151,15 +152,13 @@ class ProposalController extends Controller
              ]));
         }
 
-        return $this->render('App:Proposal:edit_proposal.html.twig', [
+        return $this->render('@App/Proposal/edit_proposal.html.twig', [
             'proposal' => $proposal,
             'form'     => $form->createView(),
         ]);
     }
 
-    /**
-     * @Security("has_role('ROLE_USER')")
-     */
+    #[IsGranted('ROLE_USER')]
     public function supportAction($slug)
     {
         $proposal = $this->getProposalBySlug($slug);
@@ -168,19 +167,17 @@ class ProposalController extends Controller
         $this->denyAccessUnlessGranted(ProposalVoter::NEUTRAL, $proposal);
 
         $proposal->addSupporter($this->getUser());
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
         $em->persist($proposal);
         $em->flush();
-        $this->get('session')->getFlashBag()->add('info', 'Vous soutenez cette proposition');
+        $this->addFlash('info', 'Vous soutenez cette proposition');
 
         return $this->redirect($this->generateUrl('proposal_show_motivation', [
             'slug' => $proposal->getSlug(),
         ]));
     }
 
-    /**
-     * @Security("has_role('ROLE_USER')")
-     */
+    #[IsGranted('ROLE_USER')]
     public function removeSupportAction($slug)
     {
         $proposal = $this->getProposalBySlug($slug);
@@ -189,19 +186,17 @@ class ProposalController extends Controller
         $this->denyAccessUnlessGranted(ProposalVoter::SUPPORTER, $proposal);
 
         $proposal->removeSupporter($this->getUser());
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
         $em->persist($proposal);
         $em->flush();
-        $this->get('session')->getFlashBag()->add('info', 'Vous ne soutenez plus cette proposition');
+        $this->addFlash('info', 'Vous ne soutenez plus cette proposition');
 
         return $this->redirect($this->generateUrl('proposal_show_motivation', [
             'slug' => $proposal->getSlug(),
         ]));
     }
 
-    /**
-     * @Security("has_role('ROLE_USER')")
-     */
+    #[IsGranted('ROLE_USER')]
     public function opposeAction($slug)
     {
         $proposal = $this->getProposalBySlug($slug);
@@ -210,19 +205,17 @@ class ProposalController extends Controller
         $this->denyAccessUnlessGranted(ProposalVoter::NEUTRAL, $proposal);
 
         $proposal->addOpponent($this->getUser());
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
         $em->persist($proposal);
         $em->flush();
-        $this->get('session')->getFlashBag()->add('info', 'Vous contestez cette proposition');
+        $this->addFlash('info', 'Vous contestez cette proposition');
 
         return $this->redirect($this->generateUrl('proposal_show_motivation', [
             'slug' => $proposal->getSlug(),
         ]));
     }
 
-    /**
-     * @Security("has_role('ROLE_USER')")
-     */
+    #[IsGranted('ROLE_USER')]
     public function removeOpposeAction($slug)
     {
         $proposal = $this->getProposalBySlug($slug);
@@ -231,19 +224,17 @@ class ProposalController extends Controller
         $this->denyAccessUnlessGranted(ProposalVoter::OPPONENT, $proposal);
 
         $proposal->removeOpponent($this->getUser());
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
         $em->persist($proposal);
         $em->flush();
-        $this->get('session')->getFlashBag()->add('info', 'Vous ne contestez plus cette proposition');
+        $this->addFlash('info', 'Vous ne contestez plus cette proposition');
 
         return $this->redirect($this->generateUrl('proposal_show_motivation', [
             'slug' => $proposal->getSlug(),
         ]));
     }
 
-    /**
-     * @Security("has_role('ROLE_ADMIN')")
-     */
+    #[IsGranted('ROLE_ADMIN')]
     public function moveAction(Request $request, $slug)
     {
         $proposal = $this->getProposalBySlug($slug);
@@ -261,26 +252,24 @@ class ProposalController extends Controller
                 ->snapshot()
             ;
 
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->doctrine->getManager();
             $em->persist($proposal);
             $em->flush();
 
-            $this->get('session')->getFlashBag()->add('info', 'The proposal has been moved in the theme '.$hostTheme->getTitle());
+            $this->addFlash('info', 'The proposal has been moved in the theme '.$hostTheme->getTitle());
 
             return $this->redirect($this->generateUrl('proposal_show_motivation', [
                 'slug' => $proposal->getSlug(),
              ]));
         }
 
-        return $this->render('App:Proposal:move_proposal.html.twig', [
+        return $this->render('@App/Proposal/move_proposal.html.twig', [
             'proposal' => $proposal,
             'form'     => $form->createView(),
         ]);
     }
 
-    /**
-     * @Security("has_role('ROLE_ADMIN')")
-     */
+    #[IsGranted('ROLE_ADMIN')]
     public function deleteAction($slug)
     {
         $proposal = $this->getProposalBySlug($slug);
@@ -289,18 +278,16 @@ class ProposalController extends Controller
 
         $title = $proposal->getTitle();
 
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
         $em->remove($proposal);
         $em->flush();
 
-        $this->get('session')->getFlashBag()->add('info', 'The proposal '.$title.' has been removed');
+        $this->addFlash('info', 'The proposal '.$title.' has been removed');
 
         return $this->redirect($this->generateUrl('roots'));
     }
 
-    /**
-     * @Security("has_role('ROLE_USER')")
-     */
+    #[IsGranted('ROLE_USER')]
     public function lockAction(Request $request, $slug)
     {
         $proposal = $this->getProposalBySlug($slug);
@@ -313,7 +300,7 @@ class ProposalController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $proposal->lock();
 
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->doctrine->getManager();
             $em->persist($proposal);
             $em->flush();
 
@@ -322,7 +309,7 @@ class ProposalController extends Controller
             ]));
         }
 
-        return $this->render('App:Proposal:lock_proposal.html.twig', [
+        return $this->render('@App/Proposal/lock_proposal.html.twig', [
             'proposal' => $proposal,
             'form'     => $form->createView(),
         ]);
@@ -330,7 +317,7 @@ class ProposalController extends Controller
 
     private function getProposalBySlug($slug)
     {
-        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+        $proposal = $this->doctrine->getRepository(Proposal::class)->findOneBySlug($slug);
 
         if (null === $proposal) {
             throw $this->createNotFoundException();

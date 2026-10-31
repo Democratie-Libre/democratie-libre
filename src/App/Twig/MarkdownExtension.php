@@ -3,8 +3,10 @@
 namespace App\Twig;
 
 use App\Utils\Markdown;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 
-class MarkdownExtension extends \Twig_Extension
+class MarkdownExtension extends AbstractExtension
 {
     private $parser;
 
@@ -13,10 +15,10 @@ class MarkdownExtension extends \Twig_Extension
         $this->parser = $parser;
     }
 
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
-            new \Twig_SimpleFilter(
+            new TwigFilter(
                 'markdown',
                 [$this, 'markdownToHtml'],
                 ['is_safe' => ['html'], 'pre_escape' => 'html']
@@ -29,7 +31,7 @@ class MarkdownExtension extends \Twig_Extension
         return $this->parser->toHtml($content);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'markdown_extension';
     }

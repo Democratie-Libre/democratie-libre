@@ -2,22 +2,27 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use App\Entity\Post;
+use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use App\Entity\PublicDiscussion;
 use App\Entity\PrivateDiscussion;
 use App\Form\Post\MovePostType;
 
-class PostController extends Controller
+class PostController extends AbstractController
 {
-    /**
-     * @Security("has_role('ROLE_USER')")
-     */
+
+    public function __construct(private ManagerRegistry $doctrine)
+    {
+    }
+
+    #[IsGranted('ROLE_USER')]
     public function openPrivateDiscussionAction($id)
     {
-        $post = $this->getDoctrine()->getRepository('App:Post')->find($id);
+        $post = $this->doctrine->getRepository(Post::class)->find($id);
 
         if (null ===  $post) {
             throw $this->createNotFoundException();
@@ -44,7 +49,7 @@ class PostController extends Controller
             ->setAdmin($user)
             ->addMember($authorOfPost)
             ->resetUnreaders($authorOfPost);
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
         $em->persist($discussion);
         $em->flush();
 
@@ -53,12 +58,10 @@ class PostController extends Controller
         ]));
     }
 
-    /**
-     * @Security("has_role('ROLE_ADMIN')")
-     */
+    #[IsGranted('ROLE_ADMIN')]
     public function moveAction(Request $request, $id)
     {
-        $post = $this->getDoctrine()->getRepository('App:Post')->find($id);
+        $post = $this->doctrine->getRepository(Post::class)->find($id);
 
         if (null === $post) {
             throw $this->createNotFoundException();
@@ -75,7 +78,7 @@ class PostController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $newDiscussion = $form->get('discussion')->getData();
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->doctrine->getManager();
             $em->persist($post);
             $em->flush();
 
@@ -84,18 +87,16 @@ class PostController extends Controller
             ]));
         }
 
-        return $this->render('App:Post:move_post.html.twig', [
+        return $this->render('@App/Post/move_post.html.twig', [
             'post' => $post,
             'form' => $form->createView(),
         ]);
     }
 
-    /**
-     * @Security("has_role('ROLE_ADMIN')")
-     */
+    #[IsGranted('ROLE_ADMIN')]
     public function deleteAction($id)
     {
-        $post = $this->getDoctrine()->getRepository('App:Post')->find($id);
+        $post = $this->doctrine->getRepository(Post::class)->find($id);
 
         if (null === $post) {
             throw $this->createNotFoundException();
@@ -107,7 +108,7 @@ class PostController extends Controller
             throw new AccessDeniedException();
         }
 
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
         $em->remove($post);
         $em->flush();
 

@@ -31,7 +31,7 @@ class RemoveThemeCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('app:remove-theme')
@@ -45,7 +45,7 @@ class RemoveThemeCommand extends Command
             ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
        $id = $input->getArgument('id');
 
@@ -78,5 +78,7 @@ class RemoveThemeCommand extends Command
         // it will remove this node from tree and reparent all children
 
         $output->writeln('The theme has been removed !');
+
+        return Command::SUCCESS;
     }
 }

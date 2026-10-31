@@ -1,11 +1,11 @@
 private_discussion_show:
     path: /show/{slug}
-    defaults: { _controller: 'App:PrivateDiscussion:show'}
+    defaults: { _controller: 'App\Controller\PrivateDiscussionController::showAction'}
 
 private_discussion_edit:
     path: /edit/{slug}
-    defaults: { _controller: 'App:PrivateDiscussion:edit' }
+    defaults: { _controller: 'App\Controller\PrivateDiscussionController::editAction' }
 
 private_discussion_lock:
     path: /lock/{slug}
-    defaults: { _controller: 'App:PrivateDiscussion:lock' }
+    defaults: { _controller: 'App\Controller\PrivateDiscussionController::lockAction' }

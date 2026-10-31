@@ -12,7 +12,7 @@ use App\Entity\User;
 
 class SelectUserType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $unlisted_users = $options['unlisted_users'];
 
@@ -35,7 +35,7 @@ class SelectUserType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'unlisted_users'  => null,

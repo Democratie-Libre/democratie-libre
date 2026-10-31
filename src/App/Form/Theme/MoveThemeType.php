@@ -12,7 +12,7 @@ use App\Entity\Theme;
 
 class MoveThemeType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $descendantsIds = $options['descendantsIds'];
 
@@ -37,7 +37,7 @@ class MoveThemeType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class'     => Theme::class,

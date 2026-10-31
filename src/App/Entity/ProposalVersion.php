@@ -11,98 +11,62 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * This entity allows to record the versions of the proposals.
  * It is instanciated each time a proposal is modified.
- *
- * @ORM\Entity(repositoryClass="App\Repository\ProposalVersionRepository")
- * @UniqueEntity(fields={"slug"})
- * @ORM\HasLifecycleCallbacks
  */
+#[ORM\Entity(repositoryClass: \App\Repository\ProposalVersionRepository::class)]
+#[UniqueEntity(fields: ['slug'])]
+#[ORM\HasLifecycleCallbacks]
 class ProposalVersion
 {
-    /**
-     * @ORM\Column(type="integer", unique=true)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Column(type: 'integer', unique: true)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     private $id;
 
-    /**
-     * @Gedmo\Slug(fields={"title"})
-     * @ORM\Column(length=128, unique=true)
-     */
+    #[Gedmo\Slug(fields: ['title'])]
+    #[ORM\Column(length: 128, unique: true)]
     private $slug;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\Regex("/[a-zA-Z0-9]+/")
-     * @Assert\Length(
-     *      max = 100,
-     * )
-     */
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\Regex('/[a-zA-Z0-9]+/')]
+    #[Assert\Length(max: 100)]
     private $title;
 
-    /**
-     * @ORM\Column(type="text")
-     * @Assert\NotBlank()
-     * @Assert\Length(
-     *      max = 400,
-     * )
-     */
+    #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 400)]
     private $abstract;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Assert\DateTime()
-     */
+    #[ORM\Column(type: 'datetime')]
     private $snapDate;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $motivation;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="ArticleVersion", inversedBy="proposalVersions")
-     */
+    #[ORM\ManyToMany(targetEntity: \ArticleVersion::class, inversedBy: 'proposalVersions')]
     private $articleVersions;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private $versionNumber;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private $isAWiki;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Proposal", inversedBy="versioning")
-     */
+    #[ORM\ManyToOne(targetEntity: \Proposal::class, inversedBy: 'versioning')]
     private $recordedProposal;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\Length(
-     *      max = 100,
-     * )
-     */
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\Length(max: 100)]
     private $themeTitle;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="User")
-     */
+    #[ORM\ManyToOne(targetEntity: \User::class)]
     private $author;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="User")
-     * @ORM\JoinTable(name="proposalVersions_supporters")
-     */
+    #[ORM\ManyToMany(targetEntity: \User::class)]
+    #[ORM\JoinTable(name: 'proposalVersions_supporters')]
     private $supporters;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="User")
-     * @ORM\JoinTable(name="proposalVersions_opponents")
-     */
+    #[ORM\ManyToMany(targetEntity: \User::class)]
+    #[ORM\JoinTable(name: 'proposalVersions_opponents')]
     private $opponents;
 
     public function __construct(Proposal $proposal)

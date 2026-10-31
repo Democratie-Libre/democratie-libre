@@ -1,5 +1,5 @@
 security:
-    encoders:
+    password_hashers:
         App\Entity\User:
             algorithm: bcrypt
             cost: 13
@@ -10,7 +10,7 @@ security:
     providers:
         main:
             entity:
-                class: App:User
+                class: App\Entity\User
                 property: username
 
     firewalls:
@@ -20,18 +20,17 @@ security:
 
         main:
             pattern:   ^/
-            anonymous: ~
+            lazy: true
             provider: main
             form_login:
                 login_path: login
                 check_path: login
-                csrf_token_generator: security.csrf.token_manager
+                enable_csrf: true
             logout:
                 path:   /logout
                 target: /
-            logout_on_user_change: true
 
     access_control:
-        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/, roles: PUBLIC_ACCESS }
         - { path: ^/admin^, roles: ROLE_ADMIN }

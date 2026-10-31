@@ -4,28 +4,32 @@ imports:
     - { resource: services.yml }
 
 framework:
-    #esi:       ~
-    translator: { fallback: "%locale%" }
-    secret:     "%secret%"
+    secret: "%secret%"
+    default_locale: "%locale%"
+    translator:
+        default_path: "%kernel.project_dir%/src/App/Resources/translations"
+        fallbacks: ["%locale%"]
     router:
-        resource:            "%kernel.root_dir%/config/routing.yml"
-        strict_requirements: ~
-    form:            ~
+        resource: "%kernel.project_dir%/app/config/routing.yml"
+        utf8: true
+    form: ~
     csrf_protection: ~
-    validation: { enable_annotations: true }
-    templating:
-        engines: ['twig']
-    default_locale:       "%locale%"
-    trusted_hosts:        ~
-    session:              ~
-    fragments:            ~
+    validation:
+        email_validation_mode: html5
+    session:
+        cookie_secure: auto
+        cookie_samesite: lax
+    fragments: ~
     http_method_override: true
-    assets:               ~
+    assets: ~
+    php_errors:
+        log: true
 
 # Twig Configuration
 twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
+    default_path:     "%kernel.project_dir%/app/Resources/views"
     form_themes:
         - 'bootstrap_3_layout.html.twig'
 
@@ -45,7 +49,23 @@ doctrine:
 
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
-        auto_mapping: true
+        enable_lazy_ghost_objects: true
+        report_fields_where_declared: true
+        auto_mapping: false
+        mappings:
+            App:
+                type: attribute
+                is_bundle: false
+                dir: "%kernel.project_dir%/src/App/Entity"
+                prefix: 'App\Entity'
+                alias: App
+
+doctrine_migrations:
+    migrations_paths:
+        'Application\Migrations': "%kernel.project_dir%/app/DoctrineMigrations"
+    storage:
+        table_storage:
+            table_name: migration_versions
 
 # Stof\DoctrineExtensionsBundle configuration
 stof_doctrine_extensions:
@@ -53,14 +73,6 @@ stof_doctrine_extensions:
         default:
             tree: true
             sluggable: true
-
-# Swiftmailer Configuration
-swiftmailer:
-    transport: "%mailer_transport%"
-    host:      "%mailer_host%"
-    username:  "%mailer_user%"
-    password:  "%mailer_password%"
-    spool:     { type: memory }
 
 beelab_recaptcha2:
     site_key: '%google_recaptcha.site_key%'

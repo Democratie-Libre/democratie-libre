@@ -3,8 +3,7 @@ imports:
 
 framework:
     router:
-        resource: "%kernel.root_dir%/config/routing_dev.yml"
-        strict_requirements: true
+        resource: "%kernel.project_dir%/app/config/routing_dev.yml"
     profiler: { only_exceptions: false }
 
 web_profiler:
@@ -28,9 +27,6 @@ monolog:
         #chromephp:
         #    type:   chromephp
         #    level:  info
-
-#swiftmailer:
-#    delivery_address: me@example.com
 
 beelab_recaptcha2:
     enabled: false

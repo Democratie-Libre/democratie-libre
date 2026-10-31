@@ -9,126 +9,81 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Doctrine\Common\Collections\ArrayCollection;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\ThemeRepository")
- * @Gedmo\Tree(type="nested")
- * @UniqueEntity(fields="slug")
- * @ORM\HasLifecycleCallbacks
- */
+#[ORM\Entity(repositoryClass: \App\Repository\ThemeRepository::class)]
+#[Gedmo\Tree(type: 'nested')]
+#[UniqueEntity(fields: 'slug')]
+#[ORM\HasLifecycleCallbacks]
 class Theme
 {
-    /**
-     * @ORM\Column(type="integer", unique=true)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Column(type: 'integer', unique: true)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     private $id;
 
-    /**
-     * @Gedmo\Slug(fields={"title"})
-     * @ORM\Column(length=128, unique=true)
-     */
+    #[Gedmo\Slug(fields: ['title'])]
+    #[ORM\Column(length: 128, unique: true)]
     private $slug;
 
-    /**
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     * @Assert\Regex("/[a-zA-Z0-9]+/")
-     * @Assert\Length(
-     *      max = 100,
-     * )
-     */
+    #[ORM\Column(type: 'string')]
+    #[Assert\NotBlank]
+    #[Assert\Regex('/[a-zA-Z0-9]+/')]
+    #[Assert\Length(max: 100)]
     private $title;
 
-    /**
-     * @ORM\Column(type="text")
-     * @Assert\Length(
-     *      max = 200,
-     * )
-     */
+    #[ORM\Column(type: 'text')]
+    #[Assert\Length(max: 200)]
     private $abstract;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Assert\DateTime()
-     */
+    #[ORM\Column(type: 'datetime')]
     private $creationDate;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Assert\DateTime()
-     */
+    #[ORM\Column(type: 'datetime')]
     private $editDate;
 
-    /**
-     * @Gedmo\TreeLeft
-     * @ORM\Column(type="integer")
-     */
+    #[Gedmo\TreeLeft]
+    #[ORM\Column(type: 'integer')]
     private $lft;
 
-    /**
-     * @Gedmo\TreeLevel
-     * @ORM\Column(type="integer")
-     */
+    #[Gedmo\TreeLevel]
+    #[ORM\Column(type: 'integer')]
     private $lvl;
 
-    /**
-     * @Gedmo\TreeRight
-     * @ORM\Column(type="integer")
-     */
+    #[Gedmo\TreeRight]
+    #[ORM\Column(type: 'integer')]
     private $rgt;
 
-    /**
-     * @Gedmo\TreeRoot
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[Gedmo\TreeRoot]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private $root;
 
-    /**
-     * @Gedmo\TreeParent
-     * @ORM\ManyToOne(targetEntity="Theme", inversedBy="children")
-     * @ORM\JoinColumn(name="theme_parent_id", referencedColumnName="id", onDelete="CASCADE")
-     */
+    #[Gedmo\TreeParent]
+    #[ORM\ManyToOne(targetEntity: \Theme::class, inversedBy: 'children')]
+    #[ORM\JoinColumn(name: 'theme_parent_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     private $parent;
 
-    /**
-     * @ORM\OneToMany(targetEntity="Theme", mappedBy="parent")
-     * @ORM\OrderBy({"lft" = "ASC"})
-     */
+    #[ORM\OneToMany(targetEntity: \Theme::class, mappedBy: 'parent')]
+    #[ORM\OrderBy(['lft' => 'ASC'])]
     private $children;
 
-    /**
-     * @ORM\OneToMany(targetEntity="Proposal", mappedBy="theme")
-     */
+    #[ORM\OneToMany(targetEntity: \Proposal::class, mappedBy: 'theme')]
     private $proposals;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
      * Stores the name of the image file associated to the theme
      */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $path;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
      * Stores temporarily the name of the old image file to delete it after the upload
      */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $temp;
 
-    /**
-     * @Assert\Image(
-     *     minWidth = 128,
-     *     maxWidth = 128,
-     *     minHeight = 128,
-     *     maxHeight = 128,
-     *     mimeTypes = {"image/png"},
-     *     maxSize = "100k"
-     * )
-     */
+    #[Assert\Image(minWidth: 128, maxWidth: 128, minHeight: 128, maxHeight: 128, mimeTypes: ['image/png'], maxSize: '100k')]
     private $file;
 
-    /**
-     * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="theme", cascade={"persist", "remove"})
-     */
+    #[ORM\OneToMany(targetEntity: \PublicDiscussion::class, mappedBy: 'theme', cascade: ['persist', 'remove'])]
     private $discussions;
 
     public function __construct()
@@ -185,10 +140,8 @@ class Theme
         return $this->creationDate;
     }
 
-    /**
-     * @ORM\PrePersist()
-     * @ORM\PreUpdate()
-     */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function setEditDate()
     {
         $this->editDate = new \DateTime();
@@ -249,7 +202,7 @@ class Theme
         return $this->root;
     }
 
-    public function setParent(Theme $parent = null)
+    public function setParent(?Theme $parent = null)
     {
         $this->parent = $parent;
 
@@ -388,7 +341,7 @@ class Theme
         return 'uploads/themes/images';
     }
 
-    public function setFile(UploadedFile $file = null)
+    public function setFile(?UploadedFile $file = null)
     {
         $this->file = $file;
         // check if we have an old image path
@@ -406,11 +359,8 @@ class Theme
         return $this->file;
     }
 
-    /**
-     * @ORM\PrePersist()
-     * @ORM\PreUpdate()
-     * Manage the path attribute
-     */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function preUpload()
     {
         if (null !== $this->getFile()) {
@@ -429,11 +379,8 @@ class Theme
         }
     }
 
-    /**
-     * @ORM\PostPersist()
-     * @ORM\PostUpdate()
-     * Uploads the image file after persisting the theme
-     */
+    #[ORM\PostPersist]
+    #[ORM\PostUpdate]
     public function upload()
     {
         // the file property can be empty if the field is not required
@@ -461,10 +408,7 @@ class Theme
         $this->file = null;
     }
 
-    /**
-     * @ORM\PostRemove()
-     * Remove the image file after suppression of a theme
-     */
+    #[ORM\PostRemove]
     public function removeUpload()
     {
         if ($file = $this->getAbsolutePath()) {

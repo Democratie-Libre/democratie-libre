@@ -1,11 +1,11 @@
 article_version_show:
     path: /show/{slug}
-    defaults: { _controller: 'App:ArticleVersion:show'}
+    defaults: { _controller: 'App\Controller\ArticleVersionController::showAction'}
 
 article_version_previous_version:
     path: /previous_version/{slug}
-    defaults: { _controller: 'App:ArticleVersion:previousVersion' }
+    defaults: { _controller: 'App\Controller\ArticleVersionController::previousVersionAction' }
 
 article_version_next_version:
     path: /next_version/{slug}
-    defaults: { _controller: 'App:ArticleVersion:nextVersion' }
+    defaults: { _controller: 'App\Controller\ArticleVersionController::nextVersionAction' }

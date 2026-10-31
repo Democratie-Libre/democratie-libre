@@ -8,67 +8,46 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\Common\Collections\ArrayCollection;
 
-/**
- * @ORM\Entity
- * @ORM\InheritanceType("SINGLE_TABLE")
- * @ORM\DiscriminatorColumn(name="discr", type="string")
- * @ORM\DiscriminatorMap({"abstract_discussion" = "AbstractDiscussion", "public_discussion" = "PublicDiscussion", "private_discussion" = "PrivateDiscussion"})
- * @ORM\HasLifecycleCallbacks
- * @UniqueEntity(fields={"slug"})
- */
+#[ORM\Entity]
+#[ORM\InheritanceType('SINGLE_TABLE')]
+#[ORM\DiscriminatorColumn(name: 'discr', type: 'string')]
+#[ORM\DiscriminatorMap(['abstract_discussion' => 'AbstractDiscussion', 'public_discussion' => 'PublicDiscussion', 'private_discussion' => 'PrivateDiscussion'])]
+#[ORM\HasLifecycleCallbacks]
+#[UniqueEntity(fields: ['slug'])]
 class AbstractDiscussion
 {
-    /**
-     * @ORM\Column(type="integer", unique=true)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Column(type: 'integer', unique: true)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     private $id;
 
-    /**
-     * @Gedmo\Slug(fields={"title"})
-     * @ORM\Column(length=128, unique=true)
-     */
+    #[Gedmo\Slug(fields: ['title'])]
+    #[ORM\Column(length: 128, unique: true)]
     protected $slug;
 
-    /**
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     * @Assert\Regex("/[a-zA-Z0-9]+/")
-     * @Assert\Length(
-     *      max = 100,
-     * )
-     */
+    #[ORM\Column(type: 'string')]
+    #[Assert\NotBlank]
+    #[Assert\Regex('/[a-zA-Z0-9]+/')]
+    #[Assert\Length(max: 100)]
     protected $title;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Assert\DateTime()
-     */
+    #[ORM\Column(type: 'datetime')]
     protected $creationDate;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Assert\DateTime()
-     */
+    #[ORM\Column(type: 'datetime')]
     protected $lastEditDate;
 
     /**
      * If the discussion is locked the users cannot comment but can still access it.
-     *
-     * @ORM\Column(type="boolean")
      */
+    #[ORM\Column(type: 'boolean')]
     protected $locked;
 
-    /**
-     * @ORM\OneToMany(targetEntity="Post", mappedBy="discussion", cascade={"persist", "remove"})
-     */
+    #[ORM\OneToMany(targetEntity: \Post::class, mappedBy: 'discussion', cascade: ['persist', 'remove'])]
     protected $posts;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="User", inversedBy="unreadDiscussions", cascade={"persist"})
-     * @ORM\JoinTable(name="discussions_unreaders")
-     */
+    #[ORM\ManyToMany(targetEntity: \User::class, inversedBy: 'unreadDiscussions', cascade: ['persist'])]
+    #[ORM\JoinTable(name: 'discussions_unreaders')]
     protected $unreaders;
 
     protected function __construct()
@@ -108,10 +87,8 @@ class AbstractDiscussion
         return $this->creationDate;
     }
 
-    /**
-     * @ORM\PrePersist()
-     * @ORM\PreUpdate()
-     */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function setLastEditDate()
     {
         $this->lastEditDate = new \DateTime();

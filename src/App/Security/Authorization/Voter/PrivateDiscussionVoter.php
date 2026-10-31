@@ -4,7 +4,7 @@ namespace App\Security\Authorization\Voter;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Doctrine\Bundle\DoctrineBundle\Registry as Doctrine;
+use Doctrine\Persistence\ManagerRegistry as Doctrine;
 use App\Entity\User;
 use App\Entity\PrivateDiscussion;
 
@@ -22,7 +22,7 @@ class PrivateDiscussionVoter extends Voter
         $this->doctrine = $doctrine;
     }
 
-    protected function supports($attribute, $subject)
+    protected function supports(string $attribute, mixed $subject): bool
     {
         if (!in_array($attribute, [
             self::VIEW,
@@ -40,7 +40,7 @@ class PrivateDiscussionVoter extends Voter
         return true;
     }
 
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
 

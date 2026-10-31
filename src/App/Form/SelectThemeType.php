@@ -12,7 +12,7 @@ use App\Entity\PublicDiscussion;
 
 class SelectThemeType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('theme', EntityType::class, [

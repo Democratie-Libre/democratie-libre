@@ -28,7 +28,7 @@ class ProposalVoter extends Voter
         $this->decisionManager = $decisionManager;
     }
 
-    protected function supports($attribute, $subject)
+    protected function supports(string $attribute, mixed $subject): bool
     {
         if (!in_array($attribute, [
             self::CAN_BE_EDITED,
@@ -52,7 +52,7 @@ class ProposalVoter extends Voter
         return true;
     }
 
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $proposal = $subject;
 

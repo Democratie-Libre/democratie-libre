@@ -9,7 +9,7 @@ use App\Entity\Proposal;
 use App\Entity\PublicDiscussion;
 use App\Entity\Theme;
 use App\Entity\User;
-use Symfony\Bundle\FrameworkBundle\Client;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
@@ -20,7 +20,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  */
 abstract class AppTestCase extends WebTestCase
 {
-    /** @var Client */
+    /** @var KernelBrowser */
     protected $client;
 
     /** @var \Doctrine\ORM\EntityManagerInterface */
@@ -38,7 +38,7 @@ abstract class AppTestCase extends WebTestCase
     {
         $this->client = static::createClient();
         $this->client->disableReboot();
-        $this->em = static::$kernel->getContainer()->get('doctrine')->getManager();
+        $this->em = static::getContainer()->get('doctrine')->getManager();
 
         $this->resetDatabase();
         $this->loadDataset();
@@ -64,7 +64,6 @@ abstract class AppTestCase extends WebTestCase
             }
 
             $connection->exec(sprintf('DELETE FROM `%s`', $table));
-            $connection->exec(sprintf('ALTER TABLE `%s` AUTO_INCREMENT = 1', $table));
         }
 
         $connection->exec('SET FOREIGN_KEY_CHECKS = 1');

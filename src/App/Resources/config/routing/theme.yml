@@ -1,39 +1,39 @@
 theme_show_proposals:
     path: /show_proposals/{slug}
-    defaults: { _controller: 'App:Theme:showProposals'}
+    defaults: { _controller: 'App\Controller\ThemeController::showProposalsAction'}
 
 theme_show_locked_proposals:
     path: /show_locked_proposals/{slug}
-    defaults: { _controller: 'App:Theme:showLockedProposals'}
+    defaults: { _controller: 'App\Controller\ThemeController::showLockedProposalsAction'}
 
 theme_show_discussions:
     path: /show_discussions/{slug}
-    defaults: { _controller: 'App:Theme:showDiscussions'}
+    defaults: { _controller: 'App\Controller\ThemeController::showDiscussionsAction'}
 
 theme_show_locked_discussions:
     path: /show_locked_discussions/{slug}
-    defaults: { _controller: 'App:Theme:showLockedDiscussions'}
+    defaults: { _controller: 'App\Controller\ThemeController::showLockedDiscussionsAction'}
 
 theme_show_children:
     path: /show_children/{slug}
-    defaults: { _controller: 'App:Theme:showChildren'}
+    defaults: { _controller: 'App\Controller\ThemeController::showChildrenAction'}
 
 theme_addroot:
     path: /addroot
-    defaults: { _controller: 'App:Theme:addRoot' }
+    defaults: { _controller: 'App\Controller\ThemeController::addRootAction' }
 
 theme_add:
     path: /add/{slug}
-    defaults: { _controller: 'App:Theme:add' }
+    defaults: { _controller: 'App\Controller\ThemeController::addAction' }
 
 theme_edit:
     path: /edit/{slug}
-    defaults: { _controller: 'App:Theme:edit' }
+    defaults: { _controller: 'App\Controller\ThemeController::editAction' }
 
 theme_move:
     path: /move/{slug}
-    defaults: { _controller: 'App:Theme:move' }
+    defaults: { _controller: 'App\Controller\ThemeController::moveAction' }
 
 theme_delete:
     path: /delete/{slug}
-    defaults: { _controller: 'App:Theme:delete' }
+    defaults: { _controller: 'App\Controller\ThemeController::deleteAction' }

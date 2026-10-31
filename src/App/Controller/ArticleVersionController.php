@@ -2,27 +2,34 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use App\Entity\ArticleVersion;
+use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class ArticleVersionController extends Controller
+class ArticleVersionController extends AbstractController
 {
+
+    public function __construct(private ManagerRegistry $doctrine)
+    {
+    }
+
     public function showAction($slug)
     {
-        $articleVersion = $this->getDoctrine()->getRepository('App:ArticleVersion')->findOneBySlug($slug);
+        $articleVersion = $this->doctrine->getRepository(ArticleVersion::class)->findOneBySlug($slug);
 
         if (null === $articleVersion) {
             throw $this->createNotFoundException();
         }
 
-        return $this->render('App:ArticleVersion:show_article_version.html.twig', [
+        return $this->render('@App/ArticleVersion/show_article_version.html.twig', [
             'articleVersion' => $articleVersion,
         ]);
     }
 
     public function previousVersionAction($slug)
     {
-        $repository     = $this->getDoctrine()->getRepository('App:ArticleVersion');
+        $repository     = $this->doctrine->getRepository(ArticleVersion::class);
         $articleVersion = $repository->findOneBySlug($slug);
 
         if (null === $articleVersion) {
@@ -42,7 +49,7 @@ class ArticleVersionController extends Controller
 
     public function nextVersionAction($slug)
     {
-        $repository     = $this->getDoctrine()->getRepository('App:ArticleVersion');
+        $repository     = $this->doctrine->getRepository(ArticleVersion::class);
         $articleVersion = $repository->findOneBySlug($slug);
 
         if (null === $articleVersion) {

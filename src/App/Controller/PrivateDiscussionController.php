@@ -2,10 +2,11 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Request;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Security\Core\User\UserInterface;
 use App\Entity\Post;
 use App\Entity\PrivateDiscussion;
@@ -15,14 +16,17 @@ use App\Form\Discussion\EditDiscussionType;
 use App\Form\SelectUserType;
 use App\Security\Authorization\Voter\PrivateDiscussionVoter;
 
-class PrivateDiscussionController extends Controller
+class PrivateDiscussionController extends AbstractController
 {
-    /**
-     * @Security("has_role('ROLE_USER')")
-     */
+
+    public function __construct(private ManagerRegistry $doctrine)
+    {
+    }
+
+    #[IsGranted('ROLE_USER')]
     public function showAction(Request $request, $slug)
     {
-        $discussion = $this->getDoctrine()->getRepository('App:PrivateDiscussion')->findOneBySlug($slug);
+        $discussion = $this->doctrine->getRepository(PrivateDiscussion::class)->findOneBySlug($slug);
 
         if (null === $discussion) {
             throw $this->createNotFoundException();
@@ -31,12 +35,12 @@ class PrivateDiscussionController extends Controller
         $this->denyAccessUnlessGranted('view', $discussion);
 
         $discussion->removeUnreader($this->getUser());
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
         $em->persist($discussion);
         $em->flush();
 
         if ($discussion->isLocked()) {
-            return $this->render('App:Discussion:show_private_discussion.html.twig', [
+            return $this->render('@App/Discussion/show_private_discussion.html.twig', [
                 'discussion' => $discussion,
             ]);
         }
@@ -48,7 +52,7 @@ class PrivateDiscussionController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $post->setAuthor($this->getUser())->setDiscussion($discussion);
             $discussion->resetUnreaders();
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->doctrine->getManager();
             $em->persist($post);
             $em->flush();
 
@@ -57,18 +61,16 @@ class PrivateDiscussionController extends Controller
             ]));
         }
 
-        return $this->render('App:Discussion:show_private_discussion.html.twig', [
+        return $this->render('@App/Discussion/show_private_discussion.html.twig', [
             'discussion' => $discussion,
             'form'       => $form->createView(),
         ]);
     }
 
-    /**
-     * @Security("has_role('ROLE_USER')")
-     */
+    #[IsGranted('ROLE_USER')]
     public function editAction(Request $request, $slug)
     {
-        $discussion = $this->getDoctrine()->getRepository('App:PrivateDiscussion')->findOneBySlug($slug);
+        $discussion = $this->doctrine->getRepository(PrivateDiscussion::class)->findOneBySlug($slug);
 
         if (null ===  $discussion) {
             throw $this->createNotFoundException();
@@ -80,7 +82,7 @@ class PrivateDiscussionController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->doctrine->getManager();
             $em->persist($discussion);
             $em->flush();
 
@@ -89,18 +91,16 @@ class PrivateDiscussionController extends Controller
              ]));
         }
 
-        return $this->render('App:Discussion:edit_private_discussion.html.twig', [
+        return $this->render('@App/Discussion/edit_private_discussion.html.twig', [
             'discussion' => $discussion,
             'form' => $form->createView(),
         ]);
     }
 
-    /**
-     * @Security("has_role('ROLE_USER')")
-     */
+    #[IsGranted('ROLE_USER')]
     public function lockAction($slug)
     {
-        $discussion = $this->getDoctrine()->getRepository('App:PrivateDiscussion')->findOneBySlug($slug);
+        $discussion = $this->doctrine->getRepository(PrivateDiscussion::class)->findOneBySlug($slug);
 
         if (null === $discussion) {
             throw $this->createNotFoundException();
@@ -109,7 +109,7 @@ class PrivateDiscussionController extends Controller
         $this->denyAccessUnlessGranted(PrivateDiscussionVoter::CAN_BE_LOCKED, $discussion);
 
         $discussion->setLocked(true);
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
         $em->persist($discussion);
         $em->flush();
 

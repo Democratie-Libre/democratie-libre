@@ -2,27 +2,34 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use App\Entity\ProposalVersion;
+use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class ProposalVersionController extends Controller
+class ProposalVersionController extends AbstractController
 {
+
+    public function __construct(private ManagerRegistry $doctrine)
+    {
+    }
+
     public function showAction($slug)
     {
-        $proposalVersion = $this->getDoctrine()->getRepository('App:ProposalVersion')->findOneBySlug($slug);
+        $proposalVersion = $this->doctrine->getRepository(ProposalVersion::class)->findOneBySlug($slug);
 
         if (null === $proposalVersion) {
             throw $this->createNotFoundException();
         }
 
-        return $this->render('App:ProposalVersion:show_proposal_version.html.twig', [
+        return $this->render('@App/ProposalVersion/show_proposal_version.html.twig', [
             'proposalVersion' => $proposalVersion,
         ]);
     }
 
     public function previousVersionAction($slug)
     {
-        $repository      = $this->getDoctrine()->getRepository('App:ProposalVersion');
+        $repository      = $this->doctrine->getRepository(ProposalVersion::class);
         $proposalVersion = $repository->findOneBySlug($slug);
 
         if (null === $proposalVersion) {
@@ -42,7 +49,7 @@ class ProposalVersionController extends Controller
 
     public function nextVersionAction($slug)
     {
-        $repository      = $this->getDoctrine()->getRepository('App:ProposalVersion');
+        $repository      = $this->doctrine->getRepository(ProposalVersion::class);
         $proposalVersion = $repository->findOneBySlug($slug);
 
         if (null === $proposalVersion) {

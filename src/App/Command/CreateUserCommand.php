@@ -9,7 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Utils\Validator;
 
 /**
@@ -27,19 +27,19 @@ class CreateUserCommand extends Command
 {
     protected static $defaultName = 'app:create-user';
     private $entityManager;
-    private $passwordEncoder;
+    private $passwordHasher;
     private $validator;
 
-    public function __construct(EntityManagerInterface $em, UserPasswordEncoderInterface $encoder, Validator $validator)
+    public function __construct(EntityManagerInterface $em, UserPasswordHasherInterface $hasher, Validator $validator)
     {
         $this->entityManager = $em;
-        $this->passwordEncoder = $encoder;
+        $this->passwordHasher = $hasher;
         $this->validator = $validator;
 
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('app:create-user')
@@ -56,7 +56,7 @@ class CreateUserCommand extends Command
             ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $username = $input->getArgument('username');
         $email = $input->getArgument('email');
@@ -72,12 +72,14 @@ class CreateUserCommand extends Command
         $user->setEmail($email);
         $user->setRoles([$isAdmin ? 'ROLE_ADMIN' : 'ROLE_USER']);
         // See https://symfony.com/doc/current/book/security.html#security-encoding-password
-        $encodedPassword = $this->passwordEncoder->encodePassword($user, $plainPassword);
+        $encodedPassword = $this->passwordHasher->hashPassword($user, $plainPassword);
         $user->setPassword($encodedPassword);
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
         $output->writeln('The user has been created !');
+
+        return Command::SUCCESS;
     }
 
     private function validateUserData($username, $plainPassword, $email)

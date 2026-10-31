@@ -1,11 +1,11 @@
 proposal_version_show:
     path: /show/{slug}
-    defaults: { _controller: 'App:ProposalVersion:show'}
+    defaults: { _controller: 'App\Controller\ProposalVersionController::showAction'}
 
 proposal_version_next_version:
     path: /next_version/{slug}
-    defaults: { _controller: 'App:ProposalVersion:nextVersion'}
+    defaults: { _controller: 'App\Controller\ProposalVersionController::nextVersionAction'}
 
 proposal_version_previous_version:
     path: /previous_version/{slug}
-    defaults: { _controller: 'App:ProposalVersion:previousVersion'}
+    defaults: { _controller: 'App\Controller\ProposalVersionController::previousVersionAction'}

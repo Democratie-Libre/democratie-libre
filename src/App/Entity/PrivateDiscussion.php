@@ -6,20 +6,14 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 
-/**
- * @ORM\Entity()
- */
+#[ORM\Entity]
 class PrivateDiscussion extends AbstractDiscussion
 {
-    /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="adminDiscussions", cascade={"persist"})
-     */
+    #[ORM\ManyToOne(targetEntity: \User::class, inversedBy: 'adminDiscussions', cascade: ['persist'])]
     private $admin;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="User", inversedBy="privateDiscussions", cascade={"persist"})
-     * @ORM\JoinTable(name="private_discussions_members")
-     */
+    #[ORM\ManyToMany(targetEntity: \User::class, inversedBy: 'privateDiscussions', cascade: ['persist'])]
+    #[ORM\JoinTable(name: 'private_discussions_members')]
     private $members;
 
     protected function __construct()

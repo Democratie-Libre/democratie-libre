@@ -58,7 +58,7 @@
                     <div class="col-md-8 col-md-offset-2 col-xs-10 col-xs-offset-2">
                         {% block alerts %}
                             <div id="errors">
-                                {% for label, flashes in app.session.flashbag.all %}
+                                {% for label, flashes in app.flashes %}
                                     {% for flash in flashes %}
                                         <div class="alert alert-{{ label }}">
                                             {{ flash|raw }}

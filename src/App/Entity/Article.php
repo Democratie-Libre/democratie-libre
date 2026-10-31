@@ -8,102 +8,67 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\Common\Collections\ArrayCollection;
 
-/**
- * @ORM\Entity
- * @UniqueEntity(fields={"slug"})
- * @ORM\HasLifecycleCallbacks
- */
+#[ORM\Entity]
+#[UniqueEntity(fields: ['slug'])]
+#[ORM\HasLifecycleCallbacks]
 class Article
 {
     const PUBLISHED = 'published';
     const REMOVED   = 'removed';
     const LOCKED    = 'locked';
 
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     private $id;
 
-    /**
-     * @Gedmo\Slug(fields={"title"})
-     * @ORM\Column(length=128, unique=true)
-     */
+    #[Gedmo\Slug(fields: ['title'])]
+    #[ORM\Column(length: 128, unique: true)]
     private $slug;
 
-    /**
-     * @ORM\Column(type="string", length=255, options={"default" : Article::PUBLISHED})
-     */
+    #[ORM\Column(type: 'string', length: 255, options: ['default' => Article::PUBLISHED])]
     private $status = self::PUBLISHED;
 
     /**
      * If the article has been removed by the author of the proposal, it should
      * be justified here.
-     *
-     * @ORM\Column(type="text", nullable=true)
-     * @Assert\Length(
-     *      max = 400,
-     * )
      */
+    #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\Length(max: 400)]
     private $removingExplanation;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private $number;
 
-    /**
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank()
-     * @Assert\Regex("/[a-zA-Z0-9]+/")
-     * @Assert\Length(
-     *      max = 100,
-     * )
-     */
+    #[ORM\Column(type: 'string')]
+    #[Assert\NotBlank]
+    #[Assert\Regex('/[a-zA-Z0-9]+/')]
+    #[Assert\Length(max: 100)]
     private $title;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Assert\DateTime()
-     */
+    #[ORM\Column(type: 'datetime')]
     private $creationDate;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Assert\DateTime()
-     */
+    #[ORM\Column(type: 'datetime')]
     private $lastEditDate;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $content;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $motivation;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private $versionNumber;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Proposal", inversedBy="articles", cascade={"persist"})
-     */
+    #[ORM\ManyToOne(targetEntity: \Proposal::class, inversedBy: 'articles', cascade: ['persist'])]
     private $proposal;
 
-    /**
-     * @ORM\OneToMany(targetEntity="PublicDiscussion", mappedBy="article", cascade={"persist", "remove"})
-     */
+    #[ORM\OneToMany(targetEntity: \PublicDiscussion::class, mappedBy: 'article', cascade: ['persist', 'remove'])]
     private $discussions;
 
-    /**
-     * @ORM\OneToMany(targetEntity="ArticleVersion", mappedBy="recordedArticle", cascade={"persist", "remove"})
-     * @ORM\OrderBy({"versionNumber" = "DESC"})
-     */
+    #[ORM\OneToMany(targetEntity: \ArticleVersion::class, mappedBy: 'recordedArticle', cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['versionNumber' => 'DESC'])]
     private $versioning;
 
     public function __construct()
@@ -195,10 +160,8 @@ class Article
         return $this->creationDate;
     }
 
-    /**
-     * @ORM\PrePersist()
-     * @ORM\PreUpdate()
-     */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function setLastEditDate()
     {
         $this->lastEditDate = new \DateTime();

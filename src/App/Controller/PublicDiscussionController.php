@@ -2,9 +2,13 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use App\Entity\Article;
+use App\Entity\Proposal;
+use App\Entity\Theme;
+use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Security\Core\User\UserInterface;
 use App\Entity\PublicDiscussion;
 use App\Entity\Post;
@@ -17,11 +21,16 @@ use App\Security\Authorization\Voter\ProposalVoter;
 use App\Security\Authorization\Voter\PublicDiscussionVoter;
 use App\Security\Authorization\Voter\ArticleVoter;
 
-class PublicDiscussionController extends Controller
+class PublicDiscussionController extends AbstractController
 {
+
+    public function __construct(private ManagerRegistry $doctrine)
+    {
+    }
+
     public function showAction(Request $request, $slug)
     {
-        $discussion = $this->getDoctrine()->getRepository('App:PublicDiscussion')->findOneBySlug($slug);
+        $discussion = $this->doctrine->getRepository(PublicDiscussion::class)->findOneBySlug($slug);
 
         if (null === $discussion) {
             throw $this->createNotFoundException();
@@ -30,20 +39,20 @@ class PublicDiscussionController extends Controller
         $user = $this->getUser();
 
         if (!$user instanceof UserInterface) {
-            return $this->render('App:Discussion:show_public_discussion.html.twig', [
+            return $this->render('@App/Discussion/show_public_discussion.html.twig', [
                 'discussion' => $discussion,
             ]);
         }
 
         if ($this->isGranted(PublicDiscussionVoter::FOLLOW, $discussion)) {
             $discussion->removeUnreader($user);
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->doctrine->getManager();
             $em->persist($discussion);
             $em->flush();
         }
 
         if ($discussion->isLocked()) {
-            return $this->render('App:Discussion:show_locked_public_discussion.html.twig', [
+            return $this->render('@App/Discussion/show_locked_public_discussion.html.twig', [
                 'discussion' => $discussion,
             ]);
         }
@@ -55,7 +64,7 @@ class PublicDiscussionController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $post->setAuthor($user)->setDiscussion($discussion);
             $discussion->resetUnreaders();
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->doctrine->getManager();
             $em->persist($post);
             $em->flush();
 
@@ -64,15 +73,13 @@ class PublicDiscussionController extends Controller
             ]));
         }
 
-        return $this->render('App:Discussion:show_public_discussion.html.twig', [
+        return $this->render('@App/Discussion/show_public_discussion.html.twig', [
             'discussion' => $discussion,
             'form'       => $form->createView(),
         ]);
     }
 
-    /**
-     * @Security("has_role('ROLE_USER')")
-     */
+    #[IsGranted('ROLE_USER')]
     public function addToGlobalDiscussionsAction(Request $request)
     {
         $discussion = PublicDiscussion::createGlobalDiscussion();
@@ -82,7 +89,7 @@ class PublicDiscussionController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $discussion->addFollower($this->getUser());
 
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->doctrine->getManager();
             $em->persist($discussion);
             $em->flush();
 
@@ -91,18 +98,16 @@ class PublicDiscussionController extends Controller
             ]));
         }
 
-        return $this->render('App:Discussion:add_global_discussion.html.twig', [
+        return $this->render('@App/Discussion/add_global_discussion.html.twig', [
             'discussion' => $discussion,
             'form'       => $form->createView(),
         ]);
     }
 
-    /**
-     * @Security("has_role('ROLE_USER')")
-     */
+    #[IsGranted('ROLE_USER')]
     public function addToThemeAction(Request $request, $slug)
     {
-        $theme = $this->getDoctrine()->getRepository('App:Theme')->findOneBySlug($slug);
+        $theme = $this->doctrine->getRepository(Theme::class)->findOneBySlug($slug);
 
         if (null === $theme) {
             throw $this->createNotFoundException();
@@ -115,7 +120,7 @@ class PublicDiscussionController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $discussion->addFollower($this->getUser());
 
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->doctrine->getManager();
             $em->persist($discussion);
             $em->flush();
 
@@ -124,18 +129,16 @@ class PublicDiscussionController extends Controller
             ]));
         }
 
-        return $this->render('App:Discussion:add_theme_discussion.html.twig', [
+        return $this->render('@App/Discussion/add_theme_discussion.html.twig', [
             'theme' => $theme,
             'form'  => $form->createView(),
         ]);
     }
 
-    /**
-     * @Security("has_role('ROLE_USER')")
-     */
+    #[IsGranted('ROLE_USER')]
     public function addToProposalAction(Request $request, $slug)
     {
-        $proposal = $this->getDoctrine()->getRepository('App:Proposal')->findOneBySlug($slug);
+        $proposal = $this->doctrine->getRepository(Proposal::class)->findOneBySlug($slug);
 
         if (null === $proposal) {
             throw $this->createNotFoundException();
@@ -150,7 +153,7 @@ class PublicDiscussionController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $discussion->addFollower($this->getUser());
 
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->doctrine->getManager();
             $em->persist($discussion);
             $em->flush();
 
@@ -159,18 +162,16 @@ class PublicDiscussionController extends Controller
             ]));
         }
 
-        return $this->render('App:Discussion:add_proposal_discussion.html.twig', [
+        return $this->render('@App/Discussion/add_proposal_discussion.html.twig', [
             'proposal' => $proposal,
             'form'     => $form->createView(),
         ]);
     }
 
-    /**
-     * @Security("has_role('ROLE_USER')")
-     */
+    #[IsGranted('ROLE_USER')]
     public function addToArticleAction(Request $request, $slug)
     {
-        $article = $this->getDoctrine()->getRepository('App:Article')->findOneBySlug($slug);
+        $article = $this->doctrine->getRepository(Article::class)->findOneBySlug($slug);
 
         if (null === $article) {
             throw $this->createNotFoundException();
@@ -186,7 +187,7 @@ class PublicDiscussionController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $discussion->addFollower($this->getUser());
 
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->doctrine->getManager();
             $em->persist($discussion);
             $em->flush();
 
@@ -195,18 +196,16 @@ class PublicDiscussionController extends Controller
             ]));
         }
 
-        return $this->render('App:Discussion:add_article_discussion.html.twig', [
+        return $this->render('@App/Discussion/add_article_discussion.html.twig', [
             'article' => $article,
             'form'    => $form->createView(),
         ]);
     }
 
-    /**
-     * @Security("has_role('ROLE_ADMIN')")
-     */
+    #[IsGranted('ROLE_ADMIN')]
     public function editAction(Request $request, $slug)
     {
-        $discussion = $this->getDoctrine()->getRepository('App:PublicDiscussion')->findOneBySlug($slug);
+        $discussion = $this->doctrine->getRepository(PublicDiscussion::class)->findOneBySlug($slug);
 
         if (null ===  $discussion) {
             throw $this->createNotFoundException();
@@ -218,7 +217,7 @@ class PublicDiscussionController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->doctrine->getManager();
             $em->persist($discussion);
             $em->flush();
 
@@ -227,18 +226,16 @@ class PublicDiscussionController extends Controller
              ]));
         }
 
-        return $this->render('App:Discussion:edit_public_discussion.html.twig', [
+        return $this->render('@App/Discussion/edit_public_discussion.html.twig', [
             'discussion' => $discussion,
             'form' => $form->createView(),
         ]);
     }
 
-    /**
-     * @Security("has_role('ROLE_ADMIN')")
-     */
+    #[IsGranted('ROLE_ADMIN')]
     public function deleteAction($slug)
     {
-        $discussion = $this->getDoctrine()->getRepository('App:PublicDiscussion')->findOneBySlug($slug);
+        $discussion = $this->doctrine->getRepository(PublicDiscussion::class)->findOneBySlug($slug);
 
         if (null === $discussion) {
             throw $this->createNotFoundException();
@@ -246,7 +243,7 @@ class PublicDiscussionController extends Controller
 
         $this->denyAccessUnlessGranted(PublicDiscussionVoter::PUBLISHED, $discussion);
 
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
 
         if ($discussion->isGlobalDiscussion()) {
             $em->remove($discussion);
@@ -288,35 +285,31 @@ class PublicDiscussionController extends Controller
         throw new \LogicException('This code should not be reached!');
     }
 
-    /**
-     * @Security("has_role('ROLE_ADMIN')")
-     */
+    #[IsGranted('ROLE_ADMIN')]
     public function moveToGlobalAction($slug)
     {
-        $discussion = $this->getDoctrine()->getRepository('App:PublicDiscussion')->findOneBySlug($slug);
+        $discussion = $this->doctrine->getRepository(PublicDiscussion::class)->findOneBySlug($slug);
 
         if (null === $discussion) {
             throw $this->createNotFoundException();
         }
 
         $discussion->moveAs(PublicDiscussion::GLOBAL_DISCUSSION);
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
         $em->persist($discussion);
         $em->flush();
 
-        $this->get('session')->getFlashBag()->add('info', 'The discussion has been moved in the global room');
+        $this->addFlash('info', 'The discussion has been moved in the global room');
 
         return $this->redirect($this->generateUrl('public_discussion_show', [
             'slug' => $discussion->getSlug(),
         ]));
     }
 
-    /**
-     * @Security("has_role('ROLE_ADMIN')")
-     */
+    #[IsGranted('ROLE_ADMIN')]
     public function moveToThemeAction(Request $request, $slug)
     {
-        $discussion = $this->getDoctrine()->getRepository('App:PublicDiscussion')->findOneBySlug($slug);
+        $discussion = $this->doctrine->getRepository(PublicDiscussion::class)->findOneBySlug($slug);
 
         if (null === $discussion) {
             throw $this->createNotFoundException();
@@ -328,29 +321,27 @@ class PublicDiscussionController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $hostTheme = $form->get('theme')->getData();
             $discussion->moveAs(PublicDiscussion::THEME_DISCUSSION, $hostTheme);
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->doctrine->getManager();
             $em->persist($discussion);
             $em->flush();
 
-            $this->get('session')->getFlashBag()->add('info', 'The discussion has been moved in the theme '.$hostTheme->getTitle());
+            $this->addFlash('info', 'The discussion has been moved in the theme '.$hostTheme->getTitle());
 
             return $this->redirect($this->generateUrl('public_discussion_show', [
                 'slug' => $discussion->getSlug(),
              ]));
         }
 
-        return $this->render('App:Discussion:move_public_discussion_to_theme.html.twig', [
+        return $this->render('@App/Discussion/move_public_discussion_to_theme.html.twig', [
             'form'       => $form->createView(),
             'discussion' => $discussion,
         ]);
     }
 
-    /**
-     * @Security("has_role('ROLE_ADMIN')")
-     */
+    #[IsGranted('ROLE_ADMIN')]
     public function moveToProposalAction(Request $request, $slug)
     {
-        $discussion = $this->getDoctrine()->getRepository('App:PublicDiscussion')->findOneBySlug($slug);
+        $discussion = $this->doctrine->getRepository(PublicDiscussion::class)->findOneBySlug($slug);
 
         if (null ===  $discussion) {
             throw $this->createNotFoundException();
@@ -363,29 +354,27 @@ class PublicDiscussionController extends Controller
             $hostProposal = $form->get('proposal')->getData();
             $this->denyAccessUnlessGranted(ProposalVoter::PUBLISHED, $hostProposal);
             $discussion->moveAs(PublicDiscussion::PROPOSAL_DISCUSSION, $hostProposal);
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->doctrine->getManager();
             $em->persist($discussion);
             $em->flush();
 
-            $this->get('session')->getFlashBag()->add('info', 'The discussion has been moved in the proposal '.$hostProposal->getTitle());
+            $this->addFlash('info', 'The discussion has been moved in the proposal '.$hostProposal->getTitle());
 
             return $this->redirect($this->generateUrl('public_discussion_show', [
                 'slug' => $discussion->getSlug(),
              ]));
         }
 
-        return $this->render('App:Discussion:move_public_discussion_to_proposal.html.twig', [
+        return $this->render('@App/Discussion/move_public_discussion_to_proposal.html.twig', [
             'form'       => $form->createView(),
             'discussion' => $discussion,
         ]);
     }
 
-    /**
-     * @Security("has_role('ROLE_ADMIN')")
-     */
+    #[IsGranted('ROLE_ADMIN')]
     public function moveToArticleAction(Request $request, $slug)
     {
-        $discussion = $this->getDoctrine()->getRepository('App:PublicDiscussion')->findOneBySlug($slug);
+        $discussion = $this->doctrine->getRepository(PublicDiscussion::class)->findOneBySlug($slug);
 
         if (null ===  $discussion) {
             throw $this->createNotFoundException();
@@ -398,29 +387,27 @@ class PublicDiscussionController extends Controller
             $hostArticle = $form->get('article')->getData();
             $this->denyAccessUnlessGranted(ArticleVoter::PUBLISHED, $hostArticle);
             $discussion->moveAs(PublicDiscussion::ARTICLE_DISCUSSION, $hostArticle);
-            $em = $this->getDoctrine()->getManager();
+            $em = $this->doctrine->getManager();
             $em->persist($discussion);
             $em->flush();
 
-            $this->get('session')->getFlashBag()->add('info', 'The discussion has been moved in the article '.$hostArticle->getTitle());
+            $this->addFlash('info', 'The discussion has been moved in the article '.$hostArticle->getTitle());
 
             return $this->redirect($this->generateUrl('public_discussion_show', [
                 'slug' => $discussion->getSlug(),
              ]));
         }
 
-        return $this->render('App:Discussion:move_public_discussion_to_article.html.twig', [
+        return $this->render('@App/Discussion/move_public_discussion_to_article.html.twig', [
             'form'       => $form->createView(),
             'discussion' => $discussion,
         ]);
     }
 
-    /**
-     * @Security("has_role('ROLE_ADMIN')")
-     */
+    #[IsGranted('ROLE_ADMIN')]
     public function lockAction($slug)
     {
-        $discussion = $this->getDoctrine()->getRepository('App:PublicDiscussion')->findOneBySlug($slug);
+        $discussion = $this->doctrine->getRepository(PublicDiscussion::class)->findOneBySlug($slug);
 
         if (null === $discussion) {
             throw $this->createNotFoundException();
@@ -429,23 +416,21 @@ class PublicDiscussionController extends Controller
         $this->denyAccessUnlessGranted(PublicDiscussionVoter::PUBLISHED, $discussion);
 
         $discussion->setLocked(true);
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
         $em->persist($discussion);
         $em->flush();
 
-        $this->get('session')->getFlashBag()->add('info', 'The discussion has been locked');
+        $this->addFlash('info', 'The discussion has been locked');
 
         return $this->redirect($this->generateUrl('public_discussion_show', [
             'slug' => $discussion->getSlug(),
          ]));
     }
 
-    /**
-     * @Security("has_role('ROLE_ADMIN')")
-     */
+    #[IsGranted('ROLE_ADMIN')]
     public function unlockAction($slug)
     {
-        $discussion = $this->getDoctrine()->getRepository('App:PublicDiscussion')->findOneBySlug($slug);
+        $discussion = $this->doctrine->getRepository(PublicDiscussion::class)->findOneBySlug($slug);
 
         if (null === $discussion) {
             throw $this->createNotFoundException();
@@ -454,57 +439,53 @@ class PublicDiscussionController extends Controller
         $this->denyAccessUnlessGranted(PublicDiscussionVoter::LOCKED, $discussion);
 
         $discussion->setLocked(false);
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
         $em->persist($discussion);
         $em->flush();
 
-        $this->get('session')->getFlashBag()->add('info', 'The discussion has been unlocked');
+        $this->addFlash('info', 'The discussion has been unlocked');
 
         return $this->redirect($this->generateUrl('public_discussion_show', [
             'slug' => $discussion->getSlug(),
          ]));
     }
 
-    /**
-     * @Security("has_role('ROLE_USER')")
-     */
+    #[IsGranted('ROLE_USER')]
     public function followAction($slug)
     {
-        $discussion = $this->getDoctrine()->getRepository('App:PublicDiscussion')->findOneBySlug($slug);
+        $discussion = $this->doctrine->getRepository(PublicDiscussion::class)->findOneBySlug($slug);
 
         if (null === $discussion) {
             throw $this->createNotFoundException();
         }
 
         $discussion->addFollower($this->getUser());
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
         $em->persist($discussion);
         $em->flush();
 
-        $this->get('session')->getFlashBag()->add('info', 'You follow the discussion');
+        $this->addFlash('info', 'You follow the discussion');
 
         return $this->redirect($this->generateUrl('public_discussion_show', [
             'slug' => $discussion->getSlug(),
          ]));
     }
 
-    /**
-     * @Security("has_role('ROLE_USER')")
-     */
+    #[IsGranted('ROLE_USER')]
     public function stopFollowingAction($slug)
     {
-        $discussion = $this->getDoctrine()->getRepository('App:PublicDiscussion')->findOneBySlug($slug);
+        $discussion = $this->doctrine->getRepository(PublicDiscussion::class)->findOneBySlug($slug);
 
         if (null === $discussion) {
             throw $this->createNotFoundException();
         }
 
         $discussion->removeFollower($this->getUser());
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->doctrine->getManager();
         $em->persist($discussion);
         $em->flush();
 
-        $this->get('session')->getFlashBag()->add('info', 'You do not follow the discussion anymore');
+        $this->addFlash('info', 'You do not follow the discussion anymore');
 
         return $this->redirect($this->generateUrl('public_discussion_show', [
             'slug' => $discussion->getSlug(),

@@ -11,69 +11,45 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * This entity allows to record the versions of the articles.
  * It is instanciated each time an article is modified.
- *
- * @ORM\Entity(repositoryClass="App\Repository\ArticleVersionRepository")
- * @UniqueEntity(fields={"slug"})
- * @ORM\HasLifecycleCallbacks
  */
+#[ORM\Entity(repositoryClass: \App\Repository\ArticleVersionRepository::class)]
+#[UniqueEntity(fields: ['slug'])]
+#[ORM\HasLifecycleCallbacks]
 class ArticleVersion 
 {
-    /**
-     * @ORM\Column(type="integer", unique=true)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Column(type: 'integer', unique: true)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     private $id;
 
-    /**
-     * @Gedmo\Slug(fields={"title"})
-     * @ORM\Column(length=128, unique=true)
-     */
+    #[Gedmo\Slug(fields: ['title'])]
+    #[ORM\Column(length: 128, unique: true)]
     private $slug;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private $number;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\Regex("/[a-zA-Z0-9]+/")
-     * @Assert\Length(
-     *      max = 100,
-     * )
-     */
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\Regex('/[a-zA-Z0-9]+/')]
+    #[Assert\Length(max: 100)]
     private $title;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Assert\DateTime()
-     */
+    #[ORM\Column(type: 'datetime')]
     private $snapDate;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $content;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $motivation;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private $versionNumber;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Article", inversedBy="versioning")
-     */
+    #[ORM\ManyToOne(targetEntity: \Article::class, inversedBy: 'versioning')]
     private $recordedArticle;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="ProposalVersion", mappedBy="articleVersions")
-     */
+    #[ORM\ManyToMany(targetEntity: \ProposalVersion::class, mappedBy: 'articleVersions')]
     private $proposalVersions;
 
     public function __construct(Article $article)
