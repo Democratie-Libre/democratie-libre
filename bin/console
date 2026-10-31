@@ -16,8 +16,10 @@ if (is_file($envFile)) {
 }
 
 $input = new ArgvInput();
-$env = $input->getParameterOption(['--env', '-e'], getenv('SYMFONY_ENV') ?: 'dev');
-$debug = '0' !== getenv('SYMFONY_DEBUG') && !$input->hasParameterOption(['--no-debug', '']) && 'prod' !== $env;
+$envVar = static fn (string $name) => $_SERVER[$name] ?? $_ENV[$name] ?? (false !== getenv($name) ? getenv($name) : null);
+
+$env = $input->getParameterOption(['--env', '-e'], $envVar('SYMFONY_ENV') ?: 'dev');
+$debug = '0' !== $envVar('SYMFONY_DEBUG') &&!$input->hasParameterOption(['--no-debug', '']) && 'prod' !== $env;
 
 if ($debug) {
     umask(0000);
