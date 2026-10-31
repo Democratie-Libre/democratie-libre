@@ -14,3 +14,16 @@ web_profiler:
 
 swiftmailer:
     disable_delivery: true
+
+doctrine:
+    dbal:
+        host: "%env(TEST_DATABASE_HOST)%"
+        dbname: democratie_libre_test
+        user: root
+        password: ~
+
+security:
+    encoders:
+        App\Entity\User:
+            algorithm: bcrypt
+            cost: 4
