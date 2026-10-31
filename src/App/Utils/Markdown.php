@@ -8,6 +8,6 @@ class Markdown
 {
     public function toHtml($text)
     {
-        return MarkdownExtra::defaultTransform($text);
+        return MarkdownExtra::defaultTransform((string) $text);
     }
 }
