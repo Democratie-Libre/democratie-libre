@@ -46,7 +46,11 @@
                 </div>
                 <div class="form-group row">
                     <div class="col-md-2 col-md-offset-4">
-                        {{ form_widget(form.recaptcha) }}
+                        {% if form.turnstile.vars.enabled %}
+                            <div class="cf-turnstile" data-sitekey="{{ form.turnstile.vars.site_key }}"></div>
+                        {% endif %}
+                        {{ form_errors(form.turnstile) }}
+                        {% do form.turnstile.setRendered %}
                     </div>
                 </div>
                 <div class="form-group row">
@@ -57,5 +61,5 @@
             {{ form_end(form) }}
         </div>
     </div>
-<script src="//www.google.com/recaptcha/api.js?hl=en"></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 {% endblock content %}

@@ -10,8 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use App\Entity\User;
-use Beelab\Recaptcha2Bundle\Form\Type\RecaptchaType;
-use Beelab\Recaptcha2Bundle\Validator\Constraints\Recaptcha2;
+use App\Form\Type\TurnstileType;
 
 class RegisterType extends AbstractType
 {
@@ -24,9 +23,7 @@ class RegisterType extends AbstractType
                 'invalid_message' => 'Les mots de passe ne correspondent pas.',
                 'type'            => PasswordType::class,
             ])
-            ->add('recaptcha', RecaptchaType::class, [
-                'constraints' => new Recaptcha2()
-            ])
+            ->add('turnstile', TurnstileType::class)
         ;
     }
 

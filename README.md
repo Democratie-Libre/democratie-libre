@@ -18,7 +18,7 @@ After installing `docker` (with the compose plugin):
     make install        # builds images, composer install, creates database and schema
     make up             # starts the stack
 
-The app reads its configuration (database, secret, reCAPTCHA keys) only from the `.env` environment variables.
+The app reads its configuration (database, secret, Cloudflare Turnstile keys) only from the `.env` environment variables.
 
 The project is available on `http://localhost`, and an adminer on `http://localhost:9000` (server `db`, user `root`, empty password).
 

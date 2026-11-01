@@ -23,7 +23,6 @@
     "doctrine/orm": "^2.20",
     "gedmo/doctrine-extensions": "^3.20",
     "michelf/php-markdown": "^2.0",
-    "beelab/recaptcha2-bundle": "^2.14",
     "stof/doctrine-extensions-bundle": "^1.14",
     "symfony/asset": "7.4.*",
     "symfony/console": "7.4.*",

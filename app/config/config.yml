@@ -8,8 +8,9 @@ parameters:
     env(DATABASE_USER): root
     env(DATABASE_PASSWORD): ''
     env(APP_SECRET): ThisTokenIsNotSoSecretChangeIt
-    env(GOOGLE_RECAPTCHA_SITE_KEY): recaptcha
-    env(GOOGLE_RECAPTCHA_SECRET): recaptcha
+    env(TURNSTILE_SITE_KEY): turnstile
+    env(TURNSTILE_SECRET): turnstile
+    turnstile_enabled: true
 
 framework:
     secret: "%env(APP_SECRET)%"
@@ -81,6 +82,3 @@ stof_doctrine_extensions:
             tree: true
             sluggable: true
 
-beelab_recaptcha2:
-    site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
-    secret: '%env(GOOGLE_RECAPTCHA_SECRET)%'
