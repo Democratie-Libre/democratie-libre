@@ -1,48 +1,57 @@
-version: '3.1'
+name: democratie-libre
 
 services:
-    php:
-        build: './docker/php'
-        volumes:
-            - '.:/usr/share/www/DL'
-        environment:
-            DATABASE_HOST: "${DATABASE_HOST}"
-            DATABASE_NAME: "${DATABASE_NAME}"
-            DATABASE_PASSWORD: "${DATABASE_PASSWORD}"
+  php:
+    build: docker/php
+    working_dir: /app
+    volumes:
+      - .:/app
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SYMFONY_DEPRECATIONS_HELPER: disabled
+      TEST_DATABASE_HOST: db
 
-    php-fpm:
-        build: './docker/php-fpm'
-        volumes:
-            - '.:/usr/share/www/DL'
-        depends_on:
-            - 'db'
-        environment:
-            DATABASE_HOST: "${DATABASE_HOST}"
-            DATABASE_NAME: "${DATABASE_NAME}"
-            DATABASE_PASSWORD: "${DATABASE_PASSWORD}"
+  php-fpm:
+    build: docker/php-fpm
+    volumes:
+      - .:/app
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
 
-    nginx:
-        build: './docker/nginx'
-        volumes:
-            - '.:/usr/share/www/DL:ro'
-        ports:
-            - '80:80'
-        depends_on:
-            - 'php-fpm'
+  nginx:
+    build: docker/nginx
+    volumes:
+      - .:/app:ro
+    ports:
+      - '80:80'
+    depends_on:
+      - php-fpm
 
-    db:
-        image: 'mariadb:10.2.15'
-        volumes:
-            - 'db_data:/var/lib/mysql'
-        environment:
-            MYSQL_ROOT_PASSWORD: "${DATABASE_PASSWORD}"
+  db:
+    image: mariadb:10.11
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+    volumes:
+      - mariadb_data:/var/lib/mysql
 
-    adminer:
-        image: 'adminer'
-        ports:
-            - '9000:8080'
-        depends_on:
-            - 'db'
+  adminer:
+    image: adminer
+    ports:
+      - '9000:8080'
+    depends_on:
+      db:
+        condition: service_healthy
 
 volumes:
-    db_data:
+  mariadb_data:

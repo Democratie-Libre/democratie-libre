@@ -1,17 +1,13 @@
-FROM php:7.1-alpine
+FROM php:8.5-cli
 
-RUN mkdir -p /usr/share/www/DL && adduser -D -u 1000 user
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends git unzip libicu-dev libzip-dev \
+    && docker-php-ext-install pdo_mysql intl zip \
+    && apt-get clean
 
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
-    && php -r "if (hash_file('SHA384', 'composer-setup.php') === '544e09ee996cdf60ece3804abc52599c22b1f40f4323403c44d44fdfdd586475ca9813a858088ffbc1f233e9b180f061') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" \
-    && php composer-setup.php \
-    && php -r "unlink('composer-setup.php');" \
-    && mv composer.phar /usr/bin/composer
+# Opcache is built in PHP 8.5 but disabled for the CLI by default.
+RUN echo 'opcache.enable_cli=1' > /usr/local/etc/php/conf.d/opcache-cli.ini
 
-RUN docker-php-ext-install pdo pdo_mysql
+COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 
-USER user
-
-RUN composer global require hirak/prestissimo
-
-WORKDIR /usr/share/www/DL
+WORKDIR /app

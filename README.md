@@ -10,16 +10,19 @@ The documentation can be found here : www.github.com/Democratie-Libre/democratie
 
 ---
 
-### With Docker
+### With Docker (PHP 8.5, MariaDB 10.11)
 
-After installing `docker` and `docker-compose`, copy `.env.dist` to `.env` and change the few parameters there. The app reads its configuration (database, secret, reCAPTCHA keys) only from these environment variables; there is no `parameters.yml` anymore.
+After installing `docker` (with the compose plugin):
 
-    - To fix cache and logs permissions: `make configure`
-    - To install the project: `make install`
-    - To launch it: `make up`
+    cp .env.dist .env   # then adjust the few parameters if needed
+    make install        # builds images, composer install, creates database and schema
+    make up             # starts the stack
 
-The project will be available on `http://localhost`.
-An adminer is available on `http://localhost:9000` for debug purpose.
+The app reads its configuration (database, secret, reCAPTCHA keys) only from the `.env` environment variables.
+
+The project is available on `http://localhost`, and an adminer on `http://localhost:9000` (server `db`, user `root`, empty password).
+
+Other commands: `make down`, `make test` (PHPUnit), `make specs`, `make stan`.
 
 ### Without Docker
 

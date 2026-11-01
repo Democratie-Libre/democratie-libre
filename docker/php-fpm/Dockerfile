@@ -1,7 +1,8 @@
-from php:7.1-fpm-alpine
+FROM php:8.5-fpm
 
-RUN docker-php-ext-install pdo pdo_mysql
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libicu-dev libzip-dev \
+    && docker-php-ext-install pdo_mysql intl zip \
+    && apt-get clean
 
-RUN mkdir -p /usr/share/www/DL
-
-WORKDIR /usr/share/www/DL/web
+WORKDIR /app
