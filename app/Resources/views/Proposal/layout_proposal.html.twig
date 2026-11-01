@@ -19,18 +19,18 @@
             <div class="section-header-menu col-md-12 col-xs-12">
                 {% if is_granted('neutral', proposal) %}
                     <div class="col-md-1 col-md-offset-10">
-                        <a href="{{ path('proposal_support', {'slug': proposal.slug}) }}" class="btn btn-default custom-btn" title="Soutenir cette proposition"><i class="icofont icofont-thumbs-up"></i></a>
+                        <a href="{{ path('proposal_support', {'slug': proposal.slug}) }}" class="btn btn-default custom-btn" title="Soutenir cette proposition" aria-label="Soutenir cette proposition"><i class="icofont icofont-thumbs-up"></i></a>
                     </div>
                     <div class="col-md-1">
-                        <a href="{{ path('proposal_oppose', {'slug': proposal.slug}) }}" class="btn btn-default custom-btn" title="S'opposer à cette proposition"><i class="icofont icofont-thumbs-down"></i></a>
+                        <a href="{{ path('proposal_oppose', {'slug': proposal.slug}) }}" class="btn btn-default custom-btn" title="S'opposer à cette proposition" aria-label="S'opposer à cette proposition"><i class="icofont icofont-thumbs-down"></i></a>
                     </div>
                 {% elseif is_granted('supporter', proposal) %}
                     <div class="col-md-1 col-md-offset-10">
-                        <a href="{{ path('proposal_removesupport', {'slug': proposal.slug}) }}" class="btn btn-default custom-inverse-btn" title="Ne plus soutenir cette proposition"><i class="icofont icofont-thumbs-up"></i></a>
+                        <a href="{{ path('proposal_removesupport', {'slug': proposal.slug}) }}" class="btn btn-default custom-inverse-btn" title="Ne plus soutenir cette proposition" aria-label="Ne plus soutenir cette proposition"><i class="icofont icofont-thumbs-up"></i></a>
                     </div>
                 {% elseif is_granted('opponent', proposal) %}
                     <div class="col-md-1 col-md-offset-10">
-                        <a href="{{ path('proposal_removeoppose', {'slug': proposal.slug}) }}" class="btn btn-default custom-inverse-btn" title="Ne plus s'opposer à cette proposition"><i class="icofont icofont-thumbs-down"></i></a>
+                        <a href="{{ path('proposal_removeoppose', {'slug': proposal.slug}) }}" class="btn btn-default custom-inverse-btn" title="Ne plus s'opposer à cette proposition" aria-label="Ne plus s'opposer à cette proposition"><i class="icofont icofont-thumbs-down"></i></a>
                     </div>
                 {% endif %}
             </div>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html prefix="og: http://ogp.me/ns#">
+<html lang="fr" prefix="og: http://ogp.me/ns#">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -28,12 +28,12 @@
             <div class="container-fluid">
                 <nav class="row top-menu">
                     {% block top_menu %}
-                        <a href="{{ path('index') }}" class="col-md-1 col-md-offset-1 col-xs-2 logo"><img src="{{ asset('img/dL_gold_40.png') }}"></a>
+                        <a href="{{ path('index') }}" class="col-md-1 col-md-offset-1 col-xs-2 logo"><img src="{{ asset('img/dL_gold_40.png') }}" alt="Démocratie Libre"></a>
                         <div class="navblock-top-menu col-md-9 col-xs-10">
                             <div class="row">
                                 <a href="{{ path('roots') }}" class="navlink-top-menu col-md-2 col-xs-2" title="Arbre"><span class="icofont icofont-tree"></span><span class="text-top-menu">Arbre</span></a>
                                 <div class="dropdown dropdown-top-menu col-md-1 col-xs-1">
-                                    <a href="#" class="dropdown-toggle navlink-top-menu col-md-12 col-xs-12" data-toggle="dropdown"><span class="glyphicon glyphicon-chevron-down"></span></a>
+                                    <a href="#" class="dropdown-toggle navlink-top-menu col-md-12 col-xs-12" data-toggle="dropdown" aria-label="Plus de pages"><span class="glyphicon glyphicon-chevron-down"></span></a>
                                     <ul class="dropdown-menu dropdown-menu-custom">
                                         <li><a href="{{ path('roots') }}">Arbre</a></li>
                                         <li><a href="{{ path('project') }}">Projet</a></li>

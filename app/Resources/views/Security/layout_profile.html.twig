@@ -14,9 +14,9 @@
     <div class="profile-header row">
         <div class="col-md-3 col-xs-4">
             {% if app.user.webPath is empty %}
-                <img src="{{ asset('img/defaultProfile_128.png') }}" class="marginAuto">
+                <img src="{{ asset('img/defaultProfile_128.png') }}" class="marginAuto" alt="">
             {% else %}
-                <img src="{{ asset(app.user.webPath) }}" class="marginAuto">
+                <img src="{{ asset(app.user.webPath) }}" class="marginAuto" alt="">
             {% endif %}
         </div>
         <div class="col-md-9 col-xs-8">

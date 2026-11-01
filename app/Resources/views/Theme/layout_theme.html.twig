@@ -31,9 +31,9 @@
         </div>
         <div class="section-header-image col-md-3 col-xs-4">
             {% if theme.webPath is empty %}
-                <img src="{{ asset('img/defaultTheme_128.png') }}">
+                <img src="{{ asset('img/defaultTheme_128.png') }}" alt="">
             {% else %}
-                <img src="{{ asset(theme.webPath) }}">
+                <img src="{{ asset(theme.webPath) }}" alt="">
             {% endif %}
         </div>
         <div class="section-header-title col-md-6 col-xs-8">

@@ -32,9 +32,9 @@
                     {{ form_label(form.file, 'Image', {'label_attr': {'class': 'control-label col-md-2'}}) }}
                     <div class="col-md-10">
                         {% if theme.webPath is empty %}
-                            <img src="{{ asset('img/defaultTheme_128.png') }}" class="marginAuto">
+                            <img src="{{ asset('img/defaultTheme_128.png') }}" class="marginAuto" alt="">
                         {% else %}
-                            <img src="{{ asset(theme.webPath) }}" class="marginAuto">
+                            <img src="{{ asset(theme.webPath) }}" class="marginAuto" alt="">
                         {% endif %}
                         {{ form_widget(form.file) }}
                     </div>

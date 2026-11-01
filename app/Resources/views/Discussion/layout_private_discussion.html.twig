@@ -18,7 +18,7 @@
             </div>
         {% endif %}
         <div class="section-header-title col-md-6 col-xs-8">
-            <div>discussion privée | <a href="{{ path('profile_private_discussions') }}" title="Messagerie"><span class="glyphicon glyphicon-envelope"></span></a></div>
+            <div>discussion privée | <a href="{{ path('profile_private_discussions') }}" title="Messagerie" aria-label="Messagerie"><span class="glyphicon glyphicon-envelope"></span></a></div>
             <h1>{{ discussion.title }}</h1>
             {% if discussion.locked %}
                 discussion fermée
