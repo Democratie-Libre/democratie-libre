@@ -696,6 +696,11 @@ a:hover {
     padding-left: 20px;
 }
 
+.post-content ul,
+.post-content ol {
+    padding-left: 20px;
+}
+
 .post-form {
     margin-left: 30px;
     margin-top: 50px;
@@ -744,6 +749,299 @@ a:hover {
     font-size: 40px;
     font-weight: bold;
     line-height: 1;
+}
+
+/***************/
+/** Responsive **/
+/***************/
+
+img, iframe, video {
+    max-width: 100%;
+}
+
+.container-fluid {
+    overflow-x: hidden;
+}
+
+.table td, .table th {
+    overflow-wrap: anywhere;
+}
+
+/* Tablets and below */
+@media (max-width: 991px) {
+    .section-header-image {
+        margin-left: 0;
+    }
+
+    .root-frame,
+    .index-frame {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .root-frame {
+        height: auto;
+        min-height: 300px;
+    }
+
+    .index-link,
+    .root-link {
+        height: auto;
+        min-height: 200px;
+    }
+
+    .index-title,
+    .root-title {
+        height: auto;
+        min-height: 60px;
+        margin-bottom: 10px;
+    }
+
+    .custom-btn,
+    .custom-admin-btn {
+        margin-bottom: 10px;
+    }
+
+    .video {
+        width: 100%;
+        height: 50vw;
+    }
+}
+
+/* Phones */
+@media (max-width: 767px) {
+    body {
+        font-size: 15px;
+    }
+
+    /* Top menu: one compact flex row, icons only */
+    .top-menu {
+        margin-left: 0;
+        margin-right: 0;
+        padding-top: 5px;
+    }
+
+    .top-menu .logo {
+        padding-left: 5px;
+        padding-right: 5px;
+        width: 50px;
+    }
+
+    .top-menu .navblock-top-menu {
+        width: calc(100% - 50px);
+        padding-left: 0;
+        padding-right: 5px;
+    }
+
+    .navblock-top-menu > .row {
+        display: flex;
+        align-items: center;
+        margin: 0;
+    }
+
+    .navblock-top-menu > .row:before,
+    .navblock-top-menu > .row:after {
+        display: none;
+    }
+
+    .navblock-top-menu > .row > * {
+        float: none;
+        width: auto;
+        margin-left: 0;
+        padding-left: 12px;
+        padding-right: 12px;
+        flex: 0 0 auto;
+    }
+
+    .navblock-top-menu > .row > .dropdown-top-menu {
+        padding: 0;
+    }
+
+    .navblock-top-menu .dropdown-top-menu > a {
+        float: none;
+        width: auto;
+        display: block;
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    /* Everything after the dropdown goes to the right */
+    .navblock-top-menu > .row > .dropdown-top-menu + a {
+        margin-left: auto;
+    }
+
+    .navlink-user {
+        max-width: 40vw;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .text-top-menu {
+        display: none;
+    }
+
+    .navlink-top-menu {
+        height: 42px;
+        padding-top: 8px;
+        font-size: 16px;
+    }
+
+    .section {
+        margin-top: 65px;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    /* Titles */
+    .section-header-title > h1,
+    .theme-title,
+    .proposal-title,
+    .profile-title,
+    .global-room-title,
+    .project-title {
+        font-size: 28px;
+        word-wrap: break-word;
+    }
+
+    .article-title {
+        font-size: 24px;
+    }
+
+    .section-header-image img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    /* Breadcrumb and tabs */
+    .section-path {
+        margin-top: 0;
+    }
+
+    .section-path > ul,
+    .section-menu > ul {
+        padding-left: 0;
+    }
+
+    .section-path > ul > li > a {
+        padding: 6px 4px;
+    }
+
+    .section-menu > ul > li > a {
+        padding: 10px 8px;
+    }
+
+    .section-menu > ul {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .section-menu > ul > li {
+        display: block;
+    }
+
+    .section-header-menu > a,
+    .section-header-menu > .custom-btn-group {
+        margin-bottom: 10px;
+    }
+
+    /* Panels with side padding to keep readable */
+    .subsection-panel-heading {
+        font-size: 19px;
+    }
+
+    .subsection-title-index {
+        font-size: 24px;
+    }
+
+    .subsection-abstract-index,
+    .welcome-paragraph,
+    .proposal-motivation > p,
+    .proposal-motivation > ul > li,
+    .project-paragraph > p,
+    .project-paragraph > ul > li {
+        font-size: 16px;
+    }
+
+    .proposal-motivation > ul,
+    .project-paragraph > ul {
+        margin-left: 20px;
+    }
+
+    /* Index carousel */
+    .carousel-inner {
+        height: auto;
+        min-height: 300px;
+    }
+
+    .carousel-inner h1 {
+        font-size: 22px;
+    }
+
+    .carousel-link {
+        height: auto;
+        padding-top: 100px;
+        padding-left: 0;
+        padding-right: 0;
+        text-align: center;
+    }
+
+    /* Posts: date and actions on one flex row */
+    .post-header {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 4px 12px;
+        margin: 0;
+    }
+
+    .post-header:before,
+    .post-header:after {
+        display: none;
+    }
+
+    .post-header > span {
+        float: none;
+        width: auto;
+        margin-left: 0;
+        padding: 0;
+    }
+
+    .post-header > span:last-child {
+        margin-left: auto;
+    }
+
+    .post-content {
+        padding-left: 0;
+    }
+
+    .post-form {
+        margin-left: 0;
+        margin-top: 30px;
+        width: 100%;
+    }
+
+    .form-label {
+        font-size: 16px;
+    }
+
+    /* Buttons full width and finger friendly */
+    .btn {
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+
+    .dropdown-menu > li > a {
+        padding: 8px 20px;
+        white-space: normal;
+    }
+}
+
+/* Small phones: roots on a single column */
+@media (max-width: 479px) {
+    .root-frame {
+        width: 100%;
+    }
 }
 
 /*********************/

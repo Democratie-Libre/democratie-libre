@@ -29,14 +29,14 @@
                 </div>
             {% endif %}
         </div>
-        <div class="section-header-image col-md-3 col-xs-3">
+        <div class="section-header-image col-md-3 col-xs-4">
             {% if theme.webPath is empty %}
                 <img src="{{ asset('img/defaultTheme_128.png') }}">
             {% else %}
                 <img src="{{ asset(theme.webPath) }}">
             {% endif %}
         </div>
-        <div class="section-header-title col-md-6 col-xs-6">
+        <div class="section-header-title col-md-6 col-xs-8">
             <div>thématique | niveau {{ theme.lvl }}</div>
             <div class="theme-title">{{ theme.title }}</div>
         </div>

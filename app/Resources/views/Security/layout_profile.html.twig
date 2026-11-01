@@ -12,14 +12,14 @@
         </div>
     </div>
     <div class="profile-header row">
-        <div class="col-md-3 col-xs-3">
+        <div class="col-md-3 col-xs-4">
             {% if app.user.webPath is empty %}
                 <img src="{{ asset('img/defaultProfile_128.png') }}" class="marginAuto">
             {% else %}
                 <img src="{{ asset(app.user.webPath) }}" class="marginAuto">
             {% endif %}
         </div>
-        <div class="col-md-9 col-xs-3">
+        <div class="col-md-9 col-xs-8">
             <span class="profile-title">{{ app.user.username }}</span><br>
             <span>{{ app.user.email }}</span><br>
         </div>

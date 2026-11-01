@@ -28,7 +28,7 @@
                 {% endif %}
             </ul>
         </div>
-        <div class="subsection-content col-md-10 col-xs-10">
+        <div class="subsection-content col-md-10 col-xs-12">
             {% for proposal in theme.proposals %}
                 {% if locked_proposals %}
                     {% if is_granted('locked', proposal) %}

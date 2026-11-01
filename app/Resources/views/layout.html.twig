@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html prefix="og: http://ogp.me/ns#">
     <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         {% block stylesheets %}
             <link rel="stylesheet" href="{{ asset('css/icofont.css') }}">
             <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
@@ -44,7 +46,7 @@
                                     </ul>
                                 </div>
                                 {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                                    <a class="col-md-2 col-md-offset-5 col-xs-2 col-xs-offset-5 navlink-top-menu" href="{{ path('profile_private_discussions') }}">{{ app.user.username }}</a>
+                                    <a class="col-md-2 col-md-offset-5 col-xs-2 col-xs-offset-5 navlink-top-menu navlink-user" href="{{ path('profile_private_discussions') }}">{{ app.user.username }}</a>
                                     <a class="col-md-2 col-xs-2 navlink-top-menu" href="{{ path('logout') }}" title="Déconnexion"><span class="glyphicon glyphicon-off"></span><span class="text-top-menu">Déconnexion</span></a>
                                 {% else %}
                                     <a class="col-md-2 col-md-offset-5 col-xs-2 col-xs-offset-5 navlink-top-menu" href="{{ path('register') }}" title="Inscription"><span class="glyphicon glyphicon-tasks"></span><span class="text-top-menu">Inscription</span></a>
@@ -55,7 +57,7 @@
                     {% endblock top_menu %}
                 </nav>
                 <div class="row section">
-                    <div class="col-md-8 col-md-offset-2 col-xs-10 col-xs-offset-2">
+                    <div class="col-md-8 col-md-offset-2 col-xs-12 section-main">
                         {% block alerts %}
                             <div id="errors">
                                 {% for label, flashes in app.flashes %}
